@@ -18,10 +18,10 @@ A dynamic developer profile that combines:
 - Vite
 
 ### Backend
--Node.js
--Express
--MongoDB
--JWT
+- Node.js
+- Express
+- MongoDB
+- JWT
 
 
 ## Planned Features
