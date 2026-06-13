@@ -1,6 +1,8 @@
 import express from "express"
 import dotenv from 'dotenv'
 import connectDB from "./configs/db.js"
+import cookieParser from "cookie-parser"
+import authRoutes from "./routes/authRoutes.js"
 
 dotenv.config({path:"../.env"})
 
@@ -10,10 +12,8 @@ connectDB()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-
-app.get("/",(req,res)=>{
-    res.send("Backend working")
-})
+app.use(cookieParser())
+app.use("/api/auth",authRoutes)
 
 
 const PORT=process.env.PORT
