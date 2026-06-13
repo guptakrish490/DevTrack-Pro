@@ -14,3 +14,15 @@ export const createProject = async (req, res) => {
         res.status(500).json({ error: err.message })
     }
 }
+
+export const getProjects=async(req,res)=>{
+    try{
+        const user=req.user
+        const projects=await Project.find({user:user._id})
+
+        res.status(200).json(projects)
+    }
+    catch(err){
+        res.status(500).json({ error: err.message })
+    }
+}
