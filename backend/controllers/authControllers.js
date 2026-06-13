@@ -2,25 +2,36 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import User from '../models/user.js'
 
-export const registerUser=async(req,res)=>{
-    const {name, username, email, password, leetcodeURL, githubURL, bio, avatarURL}=req.body
+export const registerUser = async (req, res) => {
+    const { name, username, email, password, leetcodeURL, githubURL, bio, avatarURL } = req.body
 
     //duplicate user middleware
     //validation middleware
     //jwt middleware
 
-    try{
-        if(password.length<6 || username.length<3){
-            return res.status(400).json({message:"credentials too small!!!"})
+    try {
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] })
+        if (existingUser.email===email) {
+            return res.status(400).json({ message: "Email already exist" })
+        }
+        if (existingUser.username===username) {
+            return res.status(400).json({ message: "Username already exist" })
         }
 
-        const hash=await bcrypt.hash(password,parseInt(process.env.BCRYPT_SALT_ROUNDS))
-        const newUser=new User({name,username,email,password:hash,leetcodeURL,githubURL,bio,avatarURL})
+        if (password.length < 6 || username.length < 3) {
+            return res.status(400).json({ message: "credentials too small!!!" })
+        }
+
+        const hash = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUNDS))
+        const newUser = new User({ name, username, email, password: hash, leetcodeURL, githubURL, bio, avatarURL })
 
         await newUser.save();
-        res.status(201).json({message:"User created successfully"})
-    } 
-    catch(err){
+        res.status(201).json({ message: "User created successfully" })
+    }
+    catch (err) {
+        if (err.code === 11000) {
+            return res.status(400).json({ message: "Duplicate field value entered" });
+        }
         res.status(500).json({ error: err.message })
     }
 }
