@@ -28,3 +28,26 @@ export const getGoals = async (req, res) => {
         res.status(500).json({ error: err.message })
     }
 }
+
+export const updateGoals = async (req, res) => {
+    try {
+        const user = req.user
+        const { newTitle, newDescription, newStartDate, newEndDate, isCompleted } = req.body
+
+        const goal = await Goal.findByIdAndUpdate(req.params.id,
+            {
+                title: newTitle,
+                description: newDescription,
+                startDate: newStartDate,
+                endDate: newEndDate,
+                isCompleted
+            },
+            { new: true }
+        )
+        res.status(200).json(goal)
+
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+}
