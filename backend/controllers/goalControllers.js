@@ -31,7 +31,6 @@ export const getGoals = async (req, res) => {
 
 export const updateGoals = async (req, res) => {
     try {
-        const user = req.user
         const { newTitle, newDescription, newStartDate, newEndDate, isCompleted } = req.body
 
         const goal = await Goal.findByIdAndUpdate(req.params.id,
@@ -46,6 +45,17 @@ export const updateGoals = async (req, res) => {
         )
         res.status(200).json(goal)
 
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+}
+
+export const deleteGoals = async (req, res) => {
+    try {
+        await Goal.findByIdAndDelete(req.params.id)
+
+        res.status(200).json({ message: "goal deleted successfully" })
     }
     catch (err) {
         res.status(500).json({ error: err.message })
