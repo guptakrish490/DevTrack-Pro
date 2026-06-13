@@ -11,10 +11,10 @@ export const registerUser = async (req, res) => {
 
     try {
         const existingUser = await User.findOne({ $or: [{ email }, { username }] })
-        if (existingUser.email===email) {
+        if (existingUser.email === email) {
             return res.status(400).json({ message: "Email already exist" })
         }
-        if (existingUser.username===username) {
+        if (existingUser.username === username) {
             return res.status(400).json({ message: "Username already exist" })
         }
 
@@ -36,24 +36,33 @@ export const registerUser = async (req, res) => {
     }
 }
 
-export const loginUser=async(req,res)=>{
-    const {email,password}=req.body
+export const loginUser = async (req, res) => {
+    const { email, password } = req.body
 
-    try{
-        
-        const user=await User.findOne({email})
-        if(!user){
-            return res.status(400).json({message:"User not found"})
+    try {
+
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({ message: "User not found" })
         }
 
-        const isMatch=await bcrypt.compare(password,user.password)
-        if(!isMatch){
-            return res.status(400).json({message:"wrong password, please try again"})
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.status(400).json({ message: "wrong password, please try again" })
         }
-        
-        res.status(200).json({message:"loggedIn successfully"})
+
+        const token = jwt.sign(
+            { id: user._id, username: user.username, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: "2h" }
+        )
+        res.cookie("token", token,
+            { httpOnly: true }
+        );
+
+        res.status(200).json({ message: "loggedIn successfully", token })
     }
-    catch(err){
+    catch (err) {
         res.status(500).json({ error: err.message })
     }
 }
