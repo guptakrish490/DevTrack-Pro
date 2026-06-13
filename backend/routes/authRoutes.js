@@ -1,5 +1,5 @@
 import express from 'express'
-import { registerUser } from '../controllers/authControllers.js'
+import { loginUser, registerUser } from '../controllers/authControllers.js'
 
 
 const router=express.Router()
@@ -9,6 +9,12 @@ const router=express.Router()
 duplicate user middleware
 jwt middleware */
 router.post('/register',registerUser)
+
+//recieves login data and fetches it
+/* validation middleware
+jwt token middleware */
+router.post('/login',loginUser)
+
 
 
 export default router
