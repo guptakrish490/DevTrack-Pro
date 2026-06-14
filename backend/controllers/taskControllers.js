@@ -25,3 +25,15 @@ export const createTasks = async (req, res) => {
         res.status(500).json({ error: err.message })
     }
 }
+
+export const readTasks= async(req,res)=>{
+    try{
+        const user=req.user
+        const tasks=await Task.find({user:user._id})
+
+        res.status(200).json(tasks)
+    }
+    catch(err){
+        res.status(500).json({error:err.message})
+    }
+}
