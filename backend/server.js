@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js"
 import goalRoutes from "./routes/goalRoutes.js"
 import projectRoutes from "./routes/projectRoutes.js"
 import taskRoutes from "./routes/taskRoutes.js"
+import dashboardRoutes from "./routes/dashboardRoutes.js"
 
 dotenv.config({ path: "../.env" })
 
@@ -20,6 +21,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/goals", goalRoutes)
 app.use("/api/projects", projectRoutes)
 app.use("/api/tasks", taskRoutes)
+app.use("/dashboard", dashboardRoutes)
 
 
 const PORT = process.env.PORT
