@@ -15,39 +15,50 @@ export const createProject = async (req, res) => {
     }
 }
 
-export const getProjects=async(req,res)=>{
-    try{
-        const user=req.user
-        const projects=await Project.find({user:user._id})
+export const getProjects = async (req, res) => {
+    try {
+        const user = req.user
+        const projects = await Project.find({ user: user._id })
 
         res.status(200).json(projects)
     }
-    catch(err){
+    catch (err) {
         res.status(500).json({ error: err.message })
     }
 }
 
-export const updateProjects=async(req,res)=>{
-    try{
+export const updateProjects = async (req, res) => {
+    try {
         const { newTitle, newDescription, newRelatedGoal, newRepoURL, newLiveURL, newStartDate, newEndDate, newStatus } = req.body
 
         const project = await Project.findByIdAndUpdate(req.params.id,
             {
-                title:newTitle,
-                description:newDescription,
-                relatedGoal:newRelatedGoal,
-                repoURL:newRepoURL,
-                liveURL:newLiveURL,
-                startDate:newStartDate,
-                endDate:newEndDate,
-                status:newStatus
+                title: newTitle,
+                description: newDescription,
+                relatedGoal: newRelatedGoal,
+                repoURL: newRepoURL,
+                liveURL: newLiveURL,
+                startDate: newStartDate,
+                endDate: newEndDate,
+                status: newStatus
             },
-            {new:true}
+            { new: true }
         )
 
         res.status(200).json(project);
     }
-    catch(err){
-        res.status(500).json({error:err.message})
+    catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+}
+
+export const deleteProjects = async (req, res) => {
+    try {
+        await Project.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({ message: "project deleted successfully" })
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
