@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser"
 import authRoutes from "./routes/authRoutes.js"
 import goalRoutes from "./routes/goalRoutes.js"
 import projectRoutes from "./routes/projectRoutes.js"
+import taskRoutes from "./routes/taskRoutes.js"
 
 dotenv.config({ path: "../.env" })
 
@@ -18,6 +19,7 @@ app.use(cookieParser())
 app.use("/api/auth", authRoutes)
 app.use("/api/goals", goalRoutes)
 app.use("/api/projects", projectRoutes)
+app.use("/api/tasks", taskRoutes)
 
 
 const PORT = process.env.PORT
