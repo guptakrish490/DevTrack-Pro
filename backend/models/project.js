@@ -1,46 +1,51 @@
 import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
-    user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required:true
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    title:{
-        type:String,
-        required:true,
-        maxlength:100
+    title: {
+        type: String,
+        required: true,
+        maxlength: 100
     },
-    description:{
-        type:String,
-        required:true,
-        maxlength:200
+    description: {
+        type: String,
+        required: true,
+        maxlength: 200
     },
-    relatedGoal:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Goal',
-        required:false
+    techStack: {
+        type: [String],
+        default: [],
+        unique:true
     },
-    repoURL:{
-        type:String,
-        required:false
+    relatedGoal: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Goal',
+        required: false
     },
-    liveURL:{
-        type:String,
-        required:false
+    repoURL: {
+        type: String,
+        required: false
     },
-    startDate:{
-        type:Date,
-        default:Date.now
+    liveURL: {
+        type: String,
+        required: false
     },
-    endDate:{
-        type:Date,
-        default:null
+    startDate: {
+        type: Date,
+        default: Date.now
     },
-    status:{
-        type:String,
-        enum:["Planned","In Progress","Completed"],
-        default:"Planned"
+    endDate: {
+        type: Date,
+        default: null
+    },
+    status: {
+        type: String,
+        enum: ["Planned", "In Progress", "Completed"],
+        default: "Planned"
     }
 
 }, { timestamps: true })
