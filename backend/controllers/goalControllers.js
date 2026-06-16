@@ -21,7 +21,23 @@ export const getGoals = async (req, res) => {
     try {
         const user = req.user
 
-        const goals = await Goal.find({ user: user._id })
+        const { q, completed, sortBy } = req.query
+        const query = {
+            user: req.user._id
+        }
+        if (q) {
+            query.title = {
+                $regex: q,
+                $options: "i"
+            }
+        }
+        if (completed) {
+            query.isCompleted = completed === "true"
+        }
+        const sortOrder = sortBy === "oldest" ? 1 : -1;
+
+
+        const goals = await Goal.find(query).sort({ startDate: sortOrder })
         res.status(200).json(goals)
     }
     catch (err) {
