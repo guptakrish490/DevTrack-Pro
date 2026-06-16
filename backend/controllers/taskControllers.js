@@ -28,9 +28,31 @@ export const createTasks = async (req, res) => {
 
 export const readTasks = async (req, res) => {
     try {
+        //user from verification middleware
         const user = req.user
-        const tasks = await Task.find({ user: user._id })
 
+        // query processing for search, sort, filter
+        const { q, status, sortBy, priority } = req.query
+
+        const query = { user: user._id };
+
+        if (q) {
+            query.title = { $regex: q, $options: "i" };
+        }
+
+        if (status) {
+            query.status = { $regex: status, $options: "i" };
+        }
+
+        if (priority) {
+            query.priority = { $regex: priority, $options: "i" };
+        }
+
+        const sortOrder = sortBy === "oldest" ? 1 : -1;
+
+
+        //fetching tasks
+        const tasks = await Task.find(query).sort({ createdAt: sortOrder })
         res.status(200).json(tasks)
     }
     catch (err) {
