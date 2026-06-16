@@ -19,7 +19,12 @@ const projectSchema = new mongoose.Schema({
     techStack: {
         type: [String],
         default: [],
-        unique:true
+        validate: {
+            validator: function (arr) {
+                return arr.length === new Set(arr).size;
+            },
+            message: "Duplicate values in techStack"
+        }
     },
     relatedGoal: {
         type: mongoose.Schema.Types.ObjectId,
