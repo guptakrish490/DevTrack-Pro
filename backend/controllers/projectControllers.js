@@ -3,9 +3,9 @@ import Project from "../models/project.js"
 export const createProject = async (req, res) => {
     try {
         const user = req.user
-        const { title, description, relatedGoal, repoURL, liveURL, startDate, endDate, status } = req.body
+        const { title, description, relatedGoal, techStack, repoURL, liveURL, startDate, endDate, status } = req.body
 
-        const newProject = new Project({ user: user._id, title, description, relatedGoal, repoURL, liveURL, startDate, endDate, status })
+        const newProject = new Project({ user: user._id, title, description, relatedGoal, techStack, repoURL, liveURL, startDate, endDate, status })
         await newProject.save()
 
         res.status(201).json({ message: "new project created successfully" })
@@ -18,8 +18,33 @@ export const createProject = async (req, res) => {
 export const getProjects = async (req, res) => {
     try {
         const user = req.user
-        const projects = await Project.find({ user: user._id })
 
+
+        const { q, status, techStack, sortBy } = req.query
+
+        const query = {
+            user: req.user._id
+        }
+
+        if (q) {
+            query.title = {
+                $regex: q,
+                $options: "i"
+            }
+        }
+
+        if (status) {
+            query.status = { $regex: status, $options: "i" }
+        }
+
+        if (techStack) {
+            query.techStack = { $regex: techStack, $options: "i" };
+        }
+
+        const sortOrder = sortBy === "oldest" ? 1 : -1;
+
+
+        const projects = await Project.find(query).sort({ startDate: sortOrder })
         res.status(200).json(projects)
     }
     catch (err) {
