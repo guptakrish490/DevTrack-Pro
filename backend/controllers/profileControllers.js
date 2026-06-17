@@ -3,6 +3,7 @@ import Goal from "../models/goal.js";
 import Project from "../models/project.js";
 import Task from "../models/task.js";
 import User from "../models/user.js";
+import { logActivity } from "../utils/logActivity.js";
 
 export const getProfile = async (req, res) => {
     const user = req.user
@@ -55,6 +56,12 @@ export const updateProfile = async (req, res) => {
             githubURL: newGithubURL,
             leetcodeURL: newLeetcodeURL
         }, { new: true })
+
+        await logActivity({
+            user: user._id,
+            type: "profile_updated",
+            title: `Updated Profile`,
+        })
 
         res.status(200).json(updatedUser)
     }
