@@ -1,4 +1,5 @@
 import Goal from "../models/goal.js"
+import { logActivity } from "../utils/logActivity.js"
 
 export const createGoal = async (req, res) => {
 
@@ -8,6 +9,13 @@ export const createGoal = async (req, res) => {
 
         const newGoal = new Goal({ user: user._id, title, description, startDate, endDate })
         await newGoal.save()
+
+        await logActivity({
+            user: user._id,
+            type: "goal_created",
+            title: `Created Goal: ${newGoal.title}`,
+            relatedGoal: newGoal._id
+        })
 
         res.status(201).json({ message: "new goal created successfully" })
 
@@ -59,6 +67,13 @@ export const updateGoals = async (req, res) => {
             },
             { new: true }
         )
+
+        await logActivity({
+            user: user._id,
+            type: "goal_completed",
+            title: `Completed Goal: ${goal._title}`,
+            relatedGoal: goal._id
+        })
         res.status(200).json(goal)
 
     }
