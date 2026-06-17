@@ -1,4 +1,5 @@
 import Task from "../models/task.js"
+import { logActivity } from "../utils/logActivity.js"
 
 export const createTasks = async (req, res) => {
     try {
