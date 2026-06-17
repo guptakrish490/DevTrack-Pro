@@ -13,7 +13,7 @@ export const createProject = async (req, res) => {
             user: user._id,
             type: "project_created",
             title: `Created Project: ${newProject.title}`,
-            relatedProject: project._id
+            relatedProject: newProject._id
         })
 
         res.status(201).json({ message: "new project created successfully" })
