@@ -1,4 +1,5 @@
 import Project from "../models/project.js"
+import { logActivity } from "../utils/logActivity.js"
 
 export const createProject = async (req, res) => {
     try {
@@ -7,6 +8,13 @@ export const createProject = async (req, res) => {
 
         const newProject = new Project({ user: user._id, title, description, relatedGoal, techStack, repoURL, liveURL, startDate, endDate, status })
         await newProject.save()
+
+        await logActivity({
+            user: user._id,
+            type: "project_created",
+            title: `Created Project: ${newProject._title}`,
+            relatedProject: project._id
+        })
 
         res.status(201).json({ message: "new project created successfully" })
     }
@@ -69,6 +77,13 @@ export const updateProjects = async (req, res) => {
             },
             { new: true }
         )
+
+        await logActivity({
+            user: user._id,
+            type: "project_completed",
+            title: `Completed Project: ${project._title}`,
+            relatedProject: project._id
+        })
 
         res.status(200).json(project);
     }
