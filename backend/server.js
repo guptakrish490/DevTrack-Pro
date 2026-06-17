@@ -7,6 +7,7 @@ import goalRoutes from "./routes/goalRoutes.js"
 import projectRoutes from "./routes/projectRoutes.js"
 import taskRoutes from "./routes/taskRoutes.js"
 import dashboardRoutes from "./routes/dashboardRoutes.js"
+import activityRoutes from "./routes/activityRoutes.js"
 
 dotenv.config({ path: "../.env" })
 
@@ -21,6 +22,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/goals", goalRoutes)
 app.use("/api/projects", projectRoutes)
 app.use("/api/tasks", taskRoutes)
+app.use("/api/activity",activityRoutes)
 app.use("/dashboard", dashboardRoutes)
 
 
