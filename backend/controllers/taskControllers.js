@@ -19,6 +19,13 @@ export const createTasks = async (req, res) => {
 
         await newTask.save()
 
+        await logActivity({
+            user: user._id,
+            type: "task_created",
+            title: `Created Task: ${newTask._title}`,
+            relatedTask: newTask._id
+        })
+
         res.status(201).json(newTask)
     }
     catch (err) {
@@ -73,6 +80,13 @@ export const updateTasks = async (req, res) => {
             completedAt: newCompletedAt,
             dueDate: newDueDate
         }, { new: true })
+
+        await logActivity({
+            user: user._id,
+            type: "task_completed",
+            title: `Completed Task: ${task._title}`,
+            relatedTask: task._id
+        })
 
         res.status(200).json(task)
     }
