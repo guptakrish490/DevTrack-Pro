@@ -5,7 +5,6 @@ DevTrack Pro is a full-stack developer productivity platform designed to help de
 It aims to provide a centralized workspace for planning, tracking, and visualizing long-term development journeys.
 
 ---
----
 
 
 ## ⚡Features
@@ -94,7 +93,6 @@ Automatic event tracking for:
 - LeetCode account links
 
 ---
----
 
 
 ## 🎯Vision
@@ -106,7 +104,6 @@ A dynamic developer profile that combines:
 - Activity timeline
 - Github and Leetcode,etc Integration (Future)
 
----
 ---
 
 ## 🛠️Tech Stack
@@ -124,7 +121,6 @@ A dynamic developer profile that combines:
 - JWT
 - bcrypt
 
----
 ---
 
 
@@ -209,7 +205,6 @@ Completed
 Currently under development.
 
 ---
----
 
 
 # 🔧Future Enhancements
@@ -241,8 +236,6 @@ Currently under development.
 - Email verification
 
 ---
----
-
 
 
 # 📁Installation
@@ -288,14 +281,12 @@ Copy-Item .env.example .env
 ##### Then update the values inside <i>.env</i>
 
 ---
----
 
 
 
 # License
 ### MIT License
 
----
 ---
 
 ##### Built with❤️using MERN stack.
