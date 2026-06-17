@@ -22,7 +22,7 @@ export const createTasks = async (req, res) => {
         await logActivity({
             user: user._id,
             type: "task_created",
-            title: `Created Task: ${newTask._title}`,
+            title: `Created Task: ${newTask.title}`,
             relatedTask: newTask._id
         })
 
@@ -84,7 +84,7 @@ export const updateTasks = async (req, res) => {
         await logActivity({
             user: user._id,
             type: "task_completed",
-            title: `Completed Task: ${task._title}`,
+            title: `Completed Task: ${task.title}`,
             relatedTask: task._id
         })
 

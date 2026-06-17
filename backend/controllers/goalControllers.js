@@ -71,9 +71,10 @@ export const updateGoals = async (req, res) => {
         await logActivity({
             user: user._id,
             type: "goal_completed",
-            title: `Completed Goal: ${goal._title}`,
+            title: `Completed Goal: ${goal.title}`,
             relatedGoal: goal._id
         })
+        
         res.status(200).json(goal)
 
     }

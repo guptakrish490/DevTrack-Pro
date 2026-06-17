@@ -12,7 +12,7 @@ export const createProject = async (req, res) => {
         await logActivity({
             user: user._id,
             type: "project_created",
-            title: `Created Project: ${newProject._title}`,
+            title: `Created Project: ${newProject.title}`,
             relatedProject: project._id
         })
 
@@ -81,7 +81,7 @@ export const updateProjects = async (req, res) => {
         await logActivity({
             user: user._id,
             type: "project_completed",
-            title: `Completed Project: ${project._title}`,
+            title: `Completed Project: ${project.title}`,
             relatedProject: project._id
         })
 
