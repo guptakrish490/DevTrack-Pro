@@ -1,7 +1,9 @@
 function App() {
 
   return (
-    <h1 className="text-4xl font-bold">DevTrack Pro</h1>
+    <div>
+      <h1>Devtrack Pro</h1>
+    </div>
   )
 }
 
