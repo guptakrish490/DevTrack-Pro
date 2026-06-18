@@ -1,5 +1,6 @@
 import express from "express"
 import dotenv from 'dotenv'
+import cors from 'cors'
 import connectDB from "./configs/db.js"
 import cookieParser from "cookie-parser"
 import authRoutes from "./routes/authRoutes.js"
@@ -16,6 +17,7 @@ const app = express()
 
 connectDB()
 
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
