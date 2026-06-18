@@ -11,11 +11,13 @@ export const registerUser = async (req, res) => {
 
     try {
         const existingUser = await User.findOne({ $or: [{ email }, { username }] })
-        if (existingUser.email === email) {
-            return res.status(400).json({ message: "Email already exist" })
-        }
-        if (existingUser.username === username) {
-            return res.status(400).json({ message: "Username already exist" })
+        if(existingUser){
+            if (existingUser.email === email) {
+                return res.status(400).json({ message: "Email already exist" })
+            }
+            if (existingUser.username === username) {
+                return res.status(400).json({ message: "Username already exist" })
+            }
         }
 
         if (password.length < 6 || username.length < 3) {
