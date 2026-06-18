@@ -11,7 +11,7 @@ export const registerUser = async (req, res) => {
 
     try {
         const existingUser = await User.findOne({ $or: [{ email }, { username }] })
-        if(existingUser){
+        if (existingUser) {
             if (existingUser.email === email) {
                 return res.status(400).json({ message: "Email already exist" })
             }
@@ -28,11 +28,23 @@ export const registerUser = async (req, res) => {
         const newUser = new User({ name, username, email, password: hash, leetcodeURL, githubURL, bio, avatarURL })
 
         await newUser.save();
+
+        const token = jwt.sign(
+            { id: newUser._id, username, email },
+            process.env.JWT_SECRET,
+            { expiresIn: "2h" }
+        )
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict"
+        });
+
         res.status(201).json({ message: "User created successfully" })
     }
     catch (err) {
         if (err.code === 11000) {
-            return res.status(400).json({ message: "Duplicate field value entered" });
+            return res.status(400).json({ message: "Duplicate field value entered", token });
         }
         res.status(500).json({ error: err.message })
     }
@@ -58,9 +70,11 @@ export const loginUser = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: "2h" }
         )
-        res.cookie("token", token,
-            { httpOnly: true }
-        );
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict"
+        });
 
         res.status(200).json({ message: "loggedIn successfully", token })
     }
