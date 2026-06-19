@@ -1,6 +1,16 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 
+import Welcome from "./components/Welcome"
+import StatsCards from "./components/StatsCards"
+import ProgressOverview from "./components/ProgressOverview"
+import UpcomingTasks from "./components/UpcomingTasks"
+import RecentActivity from "./components/RecentActivity"
+import ProjectsCards from "./components/ProjectsCards"
+import TaskStats from "./components/TaskStats"
+
+
+
 const Dashboard = () => {
 
   const [data, setData] = useState(null)
@@ -9,7 +19,6 @@ const Dashboard = () => {
     const fetchDashboard = async () => {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/dashboard`, { withCredentials: true })
       setData(res.data)
-      console.log(res.data)
     }
 
     fetchDashboard()
@@ -17,37 +26,51 @@ const Dashboard = () => {
 
   if (!data || data.length === 0) return <p>Loading...</p>
 
+  const taskCounts = data.tasks.reduce(
+    (acc, task) => {
+      if (task.status === "Completed") acc.completed++;
+      else if (task.status === "In Progress") acc.inProgress++;
+      else if (task.status === "Planned") acc.planned++;
+      return acc;
+    },
+    { completed: 0, inProgress: 0, planned: 0 }
+  );
+
+
+
+
   return (
-    <div>
-      <h1>Dashboard page</h1>
+    <main className="p-4 text-white">
 
-      <p>Welcome, {data.user?.name}</p>
-      <p>Goals: {data.goalCount}</p>
-      <p>Projects: {data.projectCount}</p>
-      <p>Completed Tasks: {data.completedTaskCount}</p>
-      <p>Pending Tasks: {data.pendingTaskCount}</p>
+      {/* Welcome box */}
+      <Welcome data={data} />
 
-      <h2 className="text-2xl font-bold mt-4">Goals</h2>
-      <ul>
-        {data.goals?.map((goal, idx) => (
-          <li key={idx}>{goal.title}</li>
-        ))}
-      </ul>
 
-      <h2 className="text-2xl font-bold mt-4">Projects</h2>
-      <ul>
-        {data.projects?.map((project, idx) => (
-          <li key={idx}>{project.name}</li>
-        ))}
-      </ul>
+      {/* overview cards */}
+      <StatsCards data={data} />
 
-      <h2 className="text-2xl font-bold mt-4">Tasks</h2>
-      <ul>
-        {data.tasks?.map((task, idx) => (
-          <li key={idx}>{task.title} - {task.status}</li>
-        ))}
-      </ul>
-    </div>
+
+      {/* progress and tasks */}
+      <div className="w-full h-54  rounded-md mt-5 p-1 flex gap-4">
+        <ProgressOverview data={data} />
+
+        <div className="flex gap-4 w-1/2">
+          <UpcomingTasks data={data} />
+          <RecentActivity data={data} />
+        </div>
+
+      </div>
+
+
+      {/* Projects and donut chart */}
+      <div className="w-full h-48 mt-3 flex gap-4 bg-white/5 border border-white/20 rounded-md py-4">
+
+        <ProjectsCards data={data} />
+        <TaskStats taskCounts={taskCounts} />
+
+      </div>
+
+    </main>
   )
 }
 
