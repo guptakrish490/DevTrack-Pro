@@ -1,15 +1,18 @@
 import Goal from "../models/goal.js"
 import Project from "../models/project.js"
 import Task from "../models/task.js"
+import Activity from "../models/activity.js"
 
 export const getDashboardData = async (req, res) => {
     try {
         const user = req.user
 
-        const [goals, projects, tasks] = await Promise.all([
+        const [goals, projects, tasks, activities] = await Promise.all([
             Goal.find({ user: user._id }),
             Project.find({ user: user._id }),
-            Task.find({ user: user._id })
+            Task.find({ user: user._id }),
+            Activity.find({user:user._id})
+            
         ]);
 
         const goalCount = goals.length
@@ -28,7 +31,8 @@ export const getDashboardData = async (req, res) => {
             streaksCount,
             goals,
             projects,
-            tasks
+            tasks,
+            activities
         })
 
     }
