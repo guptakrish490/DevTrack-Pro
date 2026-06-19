@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 70" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="wordmarkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="60%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#A855F7" />
+    </linearGradient>
+
+    <filter id="subtleGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g transform="translate(10, 10)">
+    <circle cx="25" cy="25" r="15" fill="url(#wordmarkGradient)" opacity="0.2" filter="url(#subtleGlow)" />
+    
+    <rect x="0" y="0" width="50" height="50" rx="14" fill="#0E1322" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" />
+    
+    <g transform="translate(2, 2) scale(0.46)" filter="url(#subtleGlow)">
+      <path d="M 28,34 L 46,50 L 28,66" stroke="url(#wordmarkGradient)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 46,50 L 58,38 L 72,52 L 72,26 L 46,26" stroke="url(#wordmarkGradient)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 62,26 L 72,26 L 72,36" stroke="#FFFFFF" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+  </g>
+
+  <g transform="translate(75, 42)">
+    <text font-family="Inter, system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5px">DevTrack</text>
+    
+    <text x="104" y="0" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="22" font-weight="400" fill="url(#wordmarkGradient)" letter-spacing="-0.5px">Pro</text>
+  </g>
+</svg>
