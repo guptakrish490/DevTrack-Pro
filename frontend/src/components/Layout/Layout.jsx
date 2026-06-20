@@ -1,25 +1,36 @@
 import Navbar from "./Navbar"
 import Sidebar from "./Sidebar"
 import bg from "../../assets/images/background.png"
+import { useState, useEffect } from "react"
+import axios from "axios"
+
 
 const Layout = ({ children }) => {
+
+  const [data, setData] = useState(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/dashboard`, { withCredentials: true })
+      setData(res.data)
+    }
+
+    fetchUser()
+  }, [])
+
+
+
   return (
-    <div>
+    <div className="absolute h-full w-screen bg-[#02000f] flex">
 
-      <div className="absolute h-screen w-screen bg-cover bg-center bg-black bg-no-repeat" style={{ backgroundImage: `url(${bg})` }} >
-
-        <div className="flex relative w-screen">
-          <Navbar />
-        </div >
-
-        <div className=" mt-12 md:mt-16 w-full h-[calc(100vh-4rem)]">
-          <Sidebar />
-          <div className="h-full w-full overflow-y-auto pt-4 md:pl-[28%] lg:pl-70 pl-4 scrollbar-custom  text-white">
-              {children}
-          </div>
+        <Sidebar data={data} />
+        <div className="flex-1">
+          <Navbar data={data} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+          <main className="flex-1 text-white overflow-y-auto scrollbar-custom">
+            {children}
+          </main>
         </div>
 
-      </div>
     </div>
   )
 }
