@@ -6,17 +6,18 @@ const RecentActivity = ({ data }) => {
             <h3 className="font-semibold text-lg">Recent Activity</h3>
             <hr className="text-gray-500 font-extralight" />
 
-            {data.tasks.length === 0 ?
+            {data.activities.length === 0 ?
                 <div className='w-full h-full flex justify-center items-center -translate-y-7'>
                     <em className='text-gray-300'>No recent activity yet...</em>
                 </div> : (
-                    <div className="flex flex-col gap-2 mt-3 px-4">
-                        {data.tasks.slice(0, 5).map((task) => (
-                            <div className="flex gap-2 text-sm" key={task._id}>
+                    <div className="flex flex-col gap-3 mt-3 px-2">
+                        {data.activities.slice(0, 5).map((activity) => (
+                            <div className="flex gap-2 text-xs whitespace-nowrap overflow-hidden" key={activity._id}>
                                 <input type="checkbox" />
-                                <span>{task.title}</span>
+                                <span className='truncate'>{activity.title}</span>
                             </div>
                         ))}
+                        
                     </div>
                 )}
         </div>
