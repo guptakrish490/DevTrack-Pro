@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Puritan:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Pliant:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
 .scrollbar-custom::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .scrollbar-custom::-webkit-scrollbar-track {
@@ -20,9 +21,10 @@
 
 .scrollbar-custom {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  scrollbar-color: rgba(114, 114, 115, 0.3) transparent;
 }
 
 @theme {
   --font-display: "Outfit", sans-serif; 
+  --font-Manrope: "Manrope", sans-serif;
 }

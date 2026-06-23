@@ -38,39 +38,42 @@ const Dashboard = () => {
 
 
 
-
   return (
-    <main className="p-4 text-white">
-
+    <>
       {/* Welcome box */}
       <Welcome data={data} />
 
-
-      {/* overview cards */}
+      {/* stats cards */}
       <StatsCards data={data} />
 
+      {/* goals progress and tasks chart */}
+      <div className="w-full h-auto my-4 rounded-md p-1 grid lg:grid-rows-1 grid-rows-2 grid-cols-1 lg:grid-cols-10 gap-6">
+        <div className="lg:col-span-7 col-span-4">
+          <ProgressOverview data={data} />
+        </div>
+        <div className="lg:col-span-3 col-span-4">
+          <TaskStats taskCounts={taskCounts} />
+        </div>
+      </div>
 
-      {/* progress and tasks */}
-      <div className="w-full h-54  rounded-md mt-5 p-1 flex gap-4">
-        <ProgressOverview data={data} />
 
-        <div className="flex gap-4 w-1/2">
+      {/* upcoming tasks and recent activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full my-4 mt-6">
+        <div className="lg:col-span-1">
           <UpcomingTasks data={data} />
+        </div>
+        <div className="lg:col-span-1">
           <RecentActivity data={data} />
         </div>
-
       </div>
 
 
-      {/* Projects and donut chart */}
-      <div className="w-full h-48 mt-3 flex gap-4 bg-white/5 border border-white/20 rounded-md py-4">
-
+      {/* projects */}
+      <div className="w-full my-4 h-auto px-1 py-4 rounded-2xl bg-[#111118] text-display border-2 border-white/15 ">
         <ProjectsCards data={data} />
-        <TaskStats taskCounts={taskCounts} />
-
       </div>
 
-    </main>
+    </>
   )
 }
 
