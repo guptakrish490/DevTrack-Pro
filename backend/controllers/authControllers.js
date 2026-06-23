@@ -5,9 +5,6 @@ import User from '../models/user.js'
 export const registerUser = async (req, res) => {
     const { name, username, email, password, leetcodeURL, githubURL, bio, avatarURL } = req.body
 
-    //duplicate user middleware
-    //validation middleware
-    //jwt middleware
 
     try {
         const existingUser = await User.findOne({ $or: [{ email }, { username }] })

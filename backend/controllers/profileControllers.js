@@ -4,6 +4,7 @@ import Project from "../models/project.js";
 import Task from "../models/task.js";
 import User from "../models/user.js";
 import { logActivity } from "../utils/logActivity.js";
+import { updateStreak } from "../utils/streakCount.js";
 
 export const getProfile = async (req, res) => {
     const user = req.user
@@ -62,6 +63,8 @@ export const updateProfile = async (req, res) => {
             type: "profile_updated",
             title: `Updated Profile`,
         })
+
+        await updateStreak(user._id)
 
         res.status(200).json(updatedUser)
     }

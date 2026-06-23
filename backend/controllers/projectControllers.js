@@ -1,5 +1,6 @@
 import Project from "../models/project.js"
 import { logActivity } from "../utils/logActivity.js"
+import { updateStreak } from "../utils/streakCount.js"
 
 export const createProject = async (req, res) => {
     try {
@@ -15,6 +16,8 @@ export const createProject = async (req, res) => {
             title: `Created Project: ${newProject.title}`,
             relatedProject: newProject._id
         })
+
+        await updateStreak(user._id)
 
         res.status(201).json({ message: "new project created successfully" })
     }
@@ -62,6 +65,8 @@ export const getProjects = async (req, res) => {
 
 export const updateProjects = async (req, res) => {
     try {
+
+        const user = req.user
         const { newTitle, newDescription, newRelatedGoal, newRepoURL, newLiveURL, newStartDate, newEndDate, newStatus } = req.body
 
         const project = await Project.findByIdAndUpdate(req.params.id,
@@ -78,12 +83,17 @@ export const updateProjects = async (req, res) => {
             { new: true }
         )
 
-        await logActivity({
-            user: user._id,
-            type: "project_completed",
-            title: `Completed Project: ${project.title}`,
-            relatedProject: project._id
-        })
+        if (project.status === "Completed") {
+            await logActivity({
+                user: user._id,
+                type: "project_completed",
+                title: `Completed Project: ${project.title}`,
+                relatedProject: project._id
+            })
+
+            await updateStreak(user._id)
+        }
+
 
         res.status(200).json(project);
     }

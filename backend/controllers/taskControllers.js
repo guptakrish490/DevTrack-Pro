@@ -1,5 +1,6 @@
 import Task from "../models/task.js"
 import { logActivity } from "../utils/logActivity.js"
+import { updateStreak } from "../utils/streakCount.js"
 
 export const createTasks = async (req, res) => {
     try {
@@ -26,6 +27,8 @@ export const createTasks = async (req, res) => {
             title: `Created Task: ${newTask.title}`,
             relatedTask: newTask._id
         })
+
+        await updateStreak(user._id)
 
         res.status(201).json(newTask)
     }
@@ -70,6 +73,9 @@ export const readTasks = async (req, res) => {
 
 export const updateTasks = async (req, res) => {
     try {
+
+        const user = req.user
+
         const { newTitle, newDescription, newRelatedProject, newPriority, newStatus, newStartDate, newCompletedAt, newDueDate } = req.body
         const task = await Task.findByIdAndUpdate(req.params.id, {
             title: newTitle,
@@ -82,12 +88,16 @@ export const updateTasks = async (req, res) => {
             dueDate: newDueDate
         }, { new: true })
 
-        await logActivity({
-            user: user._id,
-            type: "task_completed",
-            title: `Completed Task: ${task.title}`,
-            relatedTask: task._id
-        })
+        if (task.status === "Completed") {
+            await logActivity({
+                user: user._id,
+                type: "task_completed",
+                title: `Completed Task: ${task.title}`,
+                relatedTask: task._id
+            })
+
+            await updateStreak(user._id)
+        }
 
         res.status(200).json(task)
     }

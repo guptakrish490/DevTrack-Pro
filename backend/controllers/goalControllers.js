@@ -1,5 +1,6 @@
 import Goal from "../models/goal.js"
 import { logActivity } from "../utils/logActivity.js"
+import { updateStreak } from "../utils/streakCount.js"
 
 export const createGoal = async (req, res) => {
 
@@ -16,6 +17,8 @@ export const createGoal = async (req, res) => {
             title: `Created Goal: ${newGoal.title}`,
             relatedGoal: newGoal._id
         })
+
+        await updateStreak(user._id)
 
         res.status(201).json({ message: "new goal created successfully" })
 
@@ -55,6 +58,8 @@ export const getGoals = async (req, res) => {
 
 export const updateGoals = async (req, res) => {
     try {
+
+        const user = req.user
         const { newTitle, newDescription, newStartDate, newEndDate, isCompleted } = req.body
 
         const goal = await Goal.findByIdAndUpdate(req.params.id,
@@ -68,13 +73,17 @@ export const updateGoals = async (req, res) => {
             { new: true }
         )
 
-        await logActivity({
-            user: user._id,
-            type: "goal_completed",
-            title: `Completed Goal: ${goal.title}`,
-            relatedGoal: goal._id
-        })
-        
+        if (goal.isCompleted) {
+            await logActivity({
+                user: user._id,
+                type: "goal_completed",
+                title: `Completed Goal: ${goal.title}`,
+                relatedGoal: goal._id
+            })
+
+            await updateStreak(user._id)
+        }
+
         res.status(200).json(goal)
 
     }

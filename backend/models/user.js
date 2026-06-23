@@ -34,6 +34,18 @@ const userSchema = new mongoose.Schema({
     avatarURL: {
         type: String,
         default: "https://example.com/default-avatar.png"
+    },
+    currentStreak:{
+        type:Number,
+        default:0
+    },
+    longestStreak:{
+        type:Number,
+        default:0
+    },
+    lastActivityDate:{
+        type:Date,
+        default:null
     }
 
 }, { timestamps: true })
