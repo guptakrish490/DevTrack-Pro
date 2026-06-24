@@ -16,18 +16,14 @@ const goalSchema = new mongoose.Schema({
         required: true,
         maxlength: 100
     },
-    progress: {
-        type: Number,
-        required: true,
-        default: 0
-    },
     startDate: {
         type: Date,
         default: Date.now,
+        required: true
     },
     endDate: {
         type: Date,
-        default: null,
+        required: true
     },
     isCompleted: {
         type: Boolean,

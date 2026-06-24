@@ -48,7 +48,7 @@ export const getGoals = async (req, res) => {
         const sortOrder = sortBy === "oldest" ? 1 : -1;
 
 
-        const goals = await Goal.find(query).sort({ startDate: sortOrder })
+        const goals = await Goal.find(query).sort({ createdAt: sortOrder })
         res.status(200).json(goals)
     }
     catch (err) {
