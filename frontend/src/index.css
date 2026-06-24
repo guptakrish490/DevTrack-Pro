@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Puritan:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Pliant:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Pliant:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
 .scrollbar-custom::-webkit-scrollbar {
@@ -27,4 +27,31 @@
 @theme {
   --font-display: "Outfit", sans-serif; 
   --font-Manrope: "Manrope", sans-serif;
+  --font-open-sans: "Open Sans", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
 }
+
+.custom-date::-webkit-calendar-picker-indicator {
+  filter: invert(61%) sepia(20%) saturate(0%) hue-rotate(210deg) brightness(95%);
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95);}
+  to { opacity: 1; transform: scale(1);}
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+
