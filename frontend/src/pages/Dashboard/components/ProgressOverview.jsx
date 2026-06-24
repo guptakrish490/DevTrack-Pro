@@ -1,6 +1,8 @@
 import { NavLink } from "react-router-dom"
+import { calculateTimeProgress } from "../../../utils/goals/progress.js"
 
 const ProgressOverview = ({ data }) => {
+
     return (
 
         <div className="h-full p-3 my-3 rounded-2xl bg-[#111118] text-display border-2 border-white/15">
@@ -16,26 +18,28 @@ const ProgressOverview = ({ data }) => {
                 :
 
                 (<div className="flex flex-col gap-2 justify-between max-h-72 scrollbar-custom px-2 py-5 pb-8 overflow-y-auto">
-                    {data.goals.filter(goal => !goal.isCompleted).map((goal) => (
-                        <div key={goal._id} className="w-full p-2 text-xs flex flex-col h-1/3 rounded-md">
+                    {data.goals.filter(goal => !goal.isCompleted).map((goal) => {
+                        const progress=calculateTimeProgress(goal.startDate, goal.endDate, goal.isCompleted)
+
+                        return <div key={goal._id} className="w-full p-2 text-xs flex flex-col h-1/3 rounded-md">
 
                             {/* Title + percentage row */}
                             <div className="flex justify-between items-center mb-2">
                                 <p className="font-semibold text-sm max-w-[70%] whitespace-nowrap text-ellipsis overflow-hidden">
                                     {goal.title}
                                 </p>
-                                <span className='text-violet-500 font-semibold text-sm'>{goal.progress}%</span>
+                                <span className='text-violet-500 font-semibold text-sm'>{progress}%</span>
                             </div>
 
                             {/* Progress bar */}
                             <div className="w-full bg-white/20 rounded-full h-1.5 overflow-hidden">
-                                <div className="bg-linear-to-r from-violet-600 to-blue-400 h-full rounded-full transition-all duration-1000" style={{ width: `${goal.progress}%` }}></div>
+                                <div className="bg-linear-to-r from-violet-600 to-blue-400 h-full rounded-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
                             </div>
 
                             <span className='font-Manrope text-sm text-gray-400 mt-2 truncate'>{goal.description}</span>
 
                         </div>
-                    ))}
+                    })}
                 </div>)
             }
 
