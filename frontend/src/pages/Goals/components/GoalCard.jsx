@@ -1,8 +1,13 @@
 import { calculateTimeProgress } from "../../../utils/goals/progress.js"
 
-const GoalCard = ({ goal }) => {
+const GoalCard = ({ goal, fetchGoals, setDeleteModalOpen, setGoalToDelete }) => {
 
   const progress = calculateTimeProgress(goal.startDate, goal.endDate, goal.isCompleted)
+
+  const handleDelete = () => {
+    setGoalToDelete(goal)
+    setDeleteModalOpen(true)
+  }
 
   return (
     <div className='font-open-sans w-full h-auto p-4 sm:p-5 border rounded-3xl border-white/20 hover:border-purple-800/50 bg-[#18181f]'>
@@ -19,7 +24,7 @@ const GoalCard = ({ goal }) => {
             <span className={`px-1.5 rounded-full text-xs sm:text-sm border border-white/20 ${!goal.isCompleted ? "bg-[#162928] text-green-500" : "bg-[#241e36] text-violet-600"}`}>{!goal.isCompleted ? "Active" : "Completed"}</span>
             <div className='flex gap-2 sm:gap-4 ml-auto text-sm sm:text-lg sm:mr-0'>
               <button><i className="cursor-pointer text-gray-500 ri-pencil-line"></i></button>
-              <button><i className="cursor-pointer text-gray-500 ri-delete-bin-6-line"></i></button>
+              <button onClick={handleDelete}><i className="cursor-pointer text-gray-500 ri-delete-bin-6-line"></i></button>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import CreateButton from "../../../components/ui/CreateButton.jsx"
 import GoalCard from "./GoalCard.jsx"
 
 
-const GoalContainer = ({ goals, params, setParams, setModal }) => {
+const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDeleteModalOpen, setGoalToDelete }) => {
   return (
     <div className='font-open-sans w-full h-auto bg-[#111118] rounded-2xl border border-white/15 mt-6 sm:p-5 p-3'>
 
@@ -27,7 +27,7 @@ const GoalContainer = ({ goals, params, setParams, setModal }) => {
           (
             <div className="w-full h-auto flex flex-col gap-5 ">
               {goals.map(goal => (
-                <GoalCard key={goal._id} goal={goal} />
+                <GoalCard setGoalToDelete={setGoalToDelete} fetchGoals={fetchGoals} setDeleteModalOpen={setDeleteModalOpen} key={goal._id} goal={goal} />
               ))}
             </div>
           )
