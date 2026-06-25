@@ -18,7 +18,7 @@ const ProgressOverview = ({ data }) => {
                 :
 
                 (<div className="flex flex-col gap-2 justify-between max-h-72 scrollbar-custom px-2 py-5 pb-8 overflow-y-auto">
-                    {data.goals.filter(goal => !goal.isCompleted).map((goal) => {
+                    {data.goals.map((goal) => {
                         const progress=calculateTimeProgress(goal.startDate, goal.endDate, goal.isCompleted)
 
                         return <div key={goal._id} className="w-full p-2 text-xs flex flex-col h-1/3 rounded-md">
