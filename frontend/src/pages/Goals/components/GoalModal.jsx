@@ -38,6 +38,7 @@ const GoalModal = ({ modal, setModal, onSaved }) => {
         { withCredentials: true, })
 
       setModal(false)
+      cancelModal();
 
       if (onSaved) onSaved();
       console.log(res.data)
