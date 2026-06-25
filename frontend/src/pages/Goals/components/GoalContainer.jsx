@@ -3,7 +3,7 @@ import CreateButton from "../../../components/ui/CreateButton.jsx"
 import GoalCard from "./GoalCard.jsx"
 
 
-const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDeleteModalOpen, setGoalToDelete }) => {
+const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDeleteModalOpen, setGoalToDelete, handleDelete, setMode, setGoalToEdit, handleCreate, handleEdit, goalCompleted, setGoalCompleted, handleGoalCompletion }) => {
   return (
     <div className='font-open-sans w-full h-auto bg-[#111118] rounded-2xl border border-white/15 mt-6 sm:p-5 p-3'>
 
@@ -11,7 +11,7 @@ const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDele
       <hr className="mt-2 text-white/20" />
 
       <div className="w-full flex justify-end p-3">
-        <CreateButton setModal={setModal} innerText="New Goal" />
+        <CreateButton onClick={handleCreate} innerText="New Goal" />
       </div>
 
       <div className="flex flex-col h-auto">
@@ -27,7 +27,20 @@ const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDele
           (
             <div className="w-full h-auto flex flex-col gap-5 ">
               {goals.map(goal => (
-                <GoalCard setGoalToDelete={setGoalToDelete} fetchGoals={fetchGoals} setDeleteModalOpen={setDeleteModalOpen} key={goal._id} goal={goal} />
+                <GoalCard
+                  key={goal._id}
+                  fetchGoals={fetchGoals}
+                  handleDelete={handleDelete}
+                  setMode={setMode}
+                  setModal={setModal}
+                  setDeleteModalOpen={setDeleteModalOpen}
+                  setGoalToEdit={setGoalToEdit}
+                  setGoalToDelete={setGoalToDelete}
+                  handleEdit={handleEdit}
+                  goalCompleted={goalCompleted}
+                  setGoalCompleted={setGoalCompleted}
+                  handleGoalCompletion={handleGoalCompletion}
+                  goal={goal} />
               ))}
             </div>
           )
