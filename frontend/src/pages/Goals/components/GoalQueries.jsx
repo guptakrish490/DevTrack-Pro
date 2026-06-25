@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react"
 
 const GoalQueries = ({ setParams }) => {
+
+  // filter options
   const filterOptions = [
     { name: "All", value: "" },
     { name: "Completed", value: true },
     { name: "In Progress", value: false }
   ];
 
+  // states for query handling
   const [selectedFilter, setSelectedFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("");
   const [search, setSearch] = useState("");
@@ -30,8 +33,8 @@ const GoalQueries = ({ setParams }) => {
               key={option.name}
               onClick={() => setSelectedFilter(option.value)}
               className={`px-2 py-1 rounded-xl border text-xs md:text-md whitespace-nowrap transition-all duration-200 cursor-pointer border-white/15 ${selectedFilter === option.value
-                  ? "bg-violet-400/25 text-violet-400"
-                  : "bg-[#1d1d24]"
+                ? "bg-violet-400/25 text-violet-400"
+                : "bg-[#1d1d24]"
                 }`}
             >
               {option.name}
@@ -53,6 +56,7 @@ const GoalQueries = ({ setParams }) => {
             ▼
           </span>
         </div>
+        
       </div>
 
       <div className="flex w-full">
@@ -60,7 +64,7 @@ const GoalQueries = ({ setParams }) => {
           onChange={(e) => setSearch(e.target.value)}
           value={search}
           type="text"
-          className="h-7 sm:h-8 text-sm w-full outline-none rounded-full px-4 bg-[#1d1d24] border-2 border-white/10"
+          className="h-7 sm:h-10 text-sm w-full outline-none rounded-xl px-4 bg-[#1d1d24] border-2 border-white/10"
           placeholder="Search Goals..."
         />
       </div>

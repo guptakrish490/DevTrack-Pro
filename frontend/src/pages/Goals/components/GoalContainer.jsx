@@ -17,14 +17,21 @@ const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDele
       <div className="flex flex-col h-auto">
         {goals.length === 0 ?
           (
-            <div className="self-center h-30 translate-y-7">
-              <em>No goals added yet...</em>
+            // empty goal state
+            <div className="relative h-60">
+              <div className="flex flex-col w-full gap-2 justify-center items-center h-auto absolute top-1/2 left-1/2  -translate-y-1/2 -translate-x-1/2">
+                <i className="ri-focus-2-line text-2xl px-3 py-2 rounded-2xl text-gray-400 bg-white/10"></i>
+                <h2 className="font-open-sans">No Goals found</h2>
+                <p className="text-center text-sm font-open-sans text-gray-500">Set your first goal to start tracking progress</p>
+                <CreateButton innerText="Create Goal" onClick={handleCreate} />
+              </div>
             </div>
           )
 
           :
 
           (
+            // non-empty goals cards
             <div className="w-full h-auto flex flex-col gap-5 ">
               {goals.map(goal => (
                 <GoalCard

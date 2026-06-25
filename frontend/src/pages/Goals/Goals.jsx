@@ -8,6 +8,7 @@ import axios from "axios"
 
 const Goals = () => {
 
+  // states to manage goals page
   const [goals, setGoals] = useState([])
   const [params, setParams] = useState({});
   const [modal, setModal] = useState(false)
@@ -17,6 +18,7 @@ const Goals = () => {
   const [goalToDelete, setGoalToDelete] = useState(null)
   const [goalCompleted, setGoalCompleted] = useState(false)
 
+  // render goals without page reload
   const fetchGoals = async () => {
     const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/goals`, {
       withCredentials: true,
@@ -26,27 +28,32 @@ const Goals = () => {
     console.log(res.data)
   }
 
+  // re-render on search,sort,filter
   useEffect(() => {
     fetchGoals()
   }, [params])
 
+  // create functionality handler
   const handleCreate = () => {
     setMode("create")
     setGoalToEdit(null)
     setModal(true)
   }
 
+  // edit functionality handler
   const handleEdit = (goal) => {
     setMode("edit")
     setGoalToEdit(goal)
     setModal(true)
   }
 
+  // delete functionality handler
   const handleDelete = (goal) => {
     setGoalToDelete(goal)
     setDeleteModalOpen(true)
   }
 
+  // for marking goals as completed/uncompleted
   const handleGoalCompletion = async (goal) => {
     try {
       const updated = !goal.isCompleted;

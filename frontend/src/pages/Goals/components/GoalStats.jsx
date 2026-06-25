@@ -1,10 +1,12 @@
 const GoalStats = ({ goals }) => {
 
+  // goal stats for top cards
   const completedGoalsCount = goals.filter(goal => goal.isCompleted).length
   const activeGoalsCount = goals.filter(goal => !goal.isCompleted).length
 
   return (
     <div className='grid grid-cols-1 sm:grid-cols-3 w-full h-auto gap-2'>
+
       <div className='h-auto p-5 m-1 rounded-2xl bg-[#111118] border border-white/15'>
         <div className="flex justify-between items-center w-full">
           <h2 className="text-sm text-gray-400 font-semibold">ACTIVE GOALS</h2>
@@ -14,6 +16,7 @@ const GoalStats = ({ goals }) => {
         <h1 className="text-4xl font-bold">{activeGoalsCount}</h1>
 
       </div>
+
       <div className='h-auto p-5 m-1 rounded-2xl bg-[#111118] border border-white/15'>
         <div className="flex justify-between items-center w-full">
           <h2 className="text-sm text-gray-400 font-semibold">COMPLETED GOALS</h2>
@@ -23,6 +26,7 @@ const GoalStats = ({ goals }) => {
         <h1 className="text-4xl font-bold">{completedGoalsCount}</h1>
 
       </div>
+
       <div className='h-auto p-5 m-1 rounded-2xl bg-[#111118] border border-white/15'>
         <div className="flex justify-between items-center w-full">
           <h2 className="text-sm text-gray-400 font-semibold">TOTAL GOALS</h2>
@@ -32,6 +36,7 @@ const GoalStats = ({ goals }) => {
         <h1 className="text-4xl font-bold">{goals.length}</h1>
 
       </div>
+
     </div>
   )
 }

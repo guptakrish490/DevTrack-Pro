@@ -1,6 +1,7 @@
 import axios from "axios";
 import CreateButton from "../../../components/ui/CreateButton.jsx"
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
 
@@ -9,6 +10,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  // escape character on modal
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") setModal(false);
@@ -17,6 +19,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [setModal]);
 
+  // prefill edit form
   useEffect(() => {
     if (mode === "edit" && initialData) {
       setTitle(initialData.title);
@@ -33,7 +36,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
     }
   }, [mode, initialData, modal])
 
-
+  // cancel form operation
   const cancelModal = () => {
     setTitle("");
     setDescription("");
@@ -43,6 +46,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
     setModal(false)
   }
 
+  // handle modal submit according to mode
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
@@ -56,7 +60,13 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
           },
           { withCredentials: true })
 
-          console.log(res.data)
+        toast.success("Goal created successfully!", {
+          autoClose: 2000,
+          icon: "🎯",
+          className: "bg-[#111118] text-green-400 border border-green-600 rounded-lg",
+          progressClassName: "bg-green-500"
+        });
+
       }
       else if (mode === "edit") {
         const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/goals/${initialData._id}`,
@@ -68,17 +78,27 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
           },
           { withCredentials: true })
 
-          console.log(res.data)
+        toast.info("Goal updated!", {
+          autoClose: 3000,
+          className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",
+          progressClassName: "bg-blue-500"
+        });
+
       }
 
-      if(onSaved) onSaved();
+      if (onSaved) onSaved();
       cancelModal();
 
     }
     catch (err) {
+      toast.error("Failed to save goal", {
+        autoClose: 6000,
+        className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
+        progressClassName: "bg-red-400"
+      });
       console.log(err)
     }
-    
+
   }
 
   if (!modal) return null;
@@ -100,6 +120,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
         </div>
 
         <div className="flex flex-col flex-1 w-full">
+
           <div className="w-full flex-2 flex flex-col p-3 pt-7 justify-end gap-1">
             <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">TITLE</span>
             <input
@@ -121,6 +142,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
               placeholder="Describe what you want to achieve..."
               type="text" />
           </div>
+
           <div className="w-full flex-2 flex gap-3 text-sm text-[#6b6b82] font-semibold p-5">
 
             <div className="flex py-1 flex-col justify-start w-1/2">
@@ -144,6 +166,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
             </div>
 
           </div>
+
           <div className="w-full flex-2 flex p-5 gap-4 text-sm font-semibold">
             <button
               type="button"
@@ -157,6 +180,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
               Save Goal
             </button>
           </div>
+          
         </div>
 
       </form>
