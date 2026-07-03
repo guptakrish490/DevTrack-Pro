@@ -55,7 +55,7 @@ export const getProjects = async (req, res) => {
         const sortOrder = sortBy === "oldest" ? 1 : -1;
 
 
-        const projects = await Project.find(query).sort({ startDate: sortOrder }).populate("relatedGoal")
+        const projects = await Project.find(query).sort({ createdAt: sortOrder }).populate("relatedGoal")
         res.status(200).json(projects)
     }
     catch (err) {
