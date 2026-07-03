@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateButton from "../../../components/ui/CreateButton.jsx"
 
-const ProjectQueries = () => {
+const ProjectQueries = ({ setParams }) => {
 
   const [selectedFilter, setSelectedFilter] = useState("");
+  const [search, setSearch] = useState("")
   const [sortOrder, setSortOrder] = useState("");
 
   const filterOptions = [
@@ -12,6 +13,14 @@ const ProjectQueries = () => {
     { name: "Planned", value: "Planned" },
     { name: "In Progress", value: "In Progress" }
   ]
+
+  useEffect(() => {
+    setParams({
+      sortBy: sortOrder,
+      q: search,
+      status: selectedFilter
+    })
+  }, [sortOrder, search, selectedFilter, setParams])
 
 
   return (
@@ -22,6 +31,8 @@ const ProjectQueries = () => {
         {/* search */}
         <div className="w-full sm:w-1/3 flex flex-col sm:flex-row gap-1 sm:gap-2 sm:justify-between sm:items-center">
           <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             type="text"
             className="h-7 sm:h-9 text-sm w-full placeholder:text-xs outline-none rounded-xl px-4 bg-[#1d1d24] border-2 border-white/10"
             placeholder="Search Projects..."

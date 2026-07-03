@@ -1,11 +1,12 @@
 import ProjectQueries from "./ProjectQueries.jsx"
 import ProjectCard from "./ProjectCard.jsx"
 
-const ProjectContainer = ({ projects }) => {
+const ProjectContainer = ({ projects, params, setParams }) => {
   return (
     <div className='font-open-sans w-full h-auto border border-white/15 bg-[#111118] sm:p-5 p-3 rounded-2xl mt-6 '>
 
-      <ProjectQueries />
+      <ProjectQueries
+        setParams={setParams} />
       <hr className="my-2 text-white/20" />
 
 
