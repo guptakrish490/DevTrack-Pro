@@ -3,6 +3,8 @@ import ProjectContainer from "./components/ProjectContainer.jsx"
 
 import { useState, useEffect } from "react"
 import axios from "axios"
+import ProjectModal from "./components/ProjectModal.jsx"
+import ConfirmModal from "./components/ConfirmModal.jsx"
 
 const Projects = () => {
 
@@ -29,12 +31,22 @@ const Projects = () => {
 
   useEffect(() => {
     fetchProjects()
-  }, [params])
+  }, [params,])
 
+  const handleCreate = () => {
+    setMode("create")
+    setModal(true)
+  }
 
 
   return (
     <>
+      <ProjectModal
+        fetchProjects={fetchProjects}
+        mode={mode}
+        modal={modal}
+        setModal={setModal} />
+
       <h1 className="text-2xl sm:text-4xl font-bold font-display my-3 mx-2">Your Projects 📂</h1>
       <ProjectStats
         projects={projects} />
@@ -42,7 +54,11 @@ const Projects = () => {
       <ProjectContainer
         projects={projects}
         params={params}
-        setParams={setParams} />
+        setParams={setParams}
+        setModal={setModal}
+        mode={mode}
+        setMode={setMode}
+        handleCreate={handleCreate} />
     </>
   )
 }

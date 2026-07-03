@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CreateButton from "../../../components/ui/CreateButton.jsx"
 
-const ProjectQueries = ({ setParams }) => {
+const ProjectQueries = ({ setParams, mode, modal, setModal, handleCreate }) => {
 
   const [selectedFilter, setSelectedFilter] = useState("");
   const [search, setSearch] = useState("")
@@ -81,7 +81,9 @@ const ProjectQueries = ({ setParams }) => {
       <hr className="text-white/15 my-2" />
 
       <div className="w-full flex justify-end p-1 sm:p-3">
-        <CreateButton innerText="New Project" />
+        <CreateButton
+          onClick={handleCreate}
+          innerText="New Project" />
       </div>
     </>
   )
