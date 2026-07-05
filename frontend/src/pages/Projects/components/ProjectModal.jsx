@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 
 
-const ProjectModal = ({ fetchProjects, mode, modal, setModal }) => {
+const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) => {
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -20,6 +20,29 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal }) => {
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [setModal]);
+
+  useEffect(() => {
+    if (mode === "edit" && projectToEdit) {
+      setTitle(projectToEdit.title || "")
+      setDescription(projectToEdit.description || "")
+      setTechStack(projectToEdit.techStack || [])
+      setStartDate(projectToEdit.startDate || "")
+      setEndDate(projectToEdit.endDate || "")
+      setRepoURL(projectToEdit.repoURL || "")
+      setLiveURL(projectToEdit.liveURL || "")
+    }
+
+    if (mode === "create") {
+      setTitle("")
+      setDescription("")
+      setTechStack([])
+      setTechInput("")
+      setStartDate("")
+      setEndDate("")
+      setRepoURL("")
+      setLiveURL("")
+    }
+  }, [mode, modal, projectToEdit])
 
   const cancelModal = () => {
     setTitle("")
@@ -70,7 +93,23 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal }) => {
             techStack,
             liveURL,
           },
-          { withCredentials: true })
+          { withCredentials: true }
+        )
+      }
+
+      else if(mode==="edit"){
+        const res=await axios.put(`${import.meta.env.VITE_API_URL}/api/projects/${projectToEdit._id}`,
+          {
+            newTitle:title, 
+            newDescription:description,
+            newTechStack:techStack,
+            newRepoURL:repoURL, 
+            newLiveURL:liveURL, 
+            newStartDate:startDate, 
+            newEndDate:endDate, 
+          },
+          {withCredentials:true}
+        )
       }
 
       if (fetchProjects) await fetchProjects();
@@ -78,7 +117,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal }) => {
 
     }
     catch (err) {
-      console.log(err.response.data)
+      console.error(err.response?.data || err.message);
     }
 
   }

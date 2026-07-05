@@ -1,6 +1,28 @@
+import axios from "axios";
+import { useState } from "react";
 import { NavLink } from "react-router-dom"
 
-const ProjectCard = ({ project, setProjectToDelete, handleDelete }) => {
+
+
+const ProjectCard = ({ project, setProjectToDelete, handleDelete, handleEdit, fetchProjects }) => {
+
+  const [status, setStatus] = useState(project.status)
+
+  const changeStatus = async (project, newStatus) => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/projects/${project._id}`,
+        { newStatus },
+        { withCredentials: true }
+      );
+      await fetchProjects();
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+    }
+  };
+
+
+
   return (
     <div className="h-auto rounded-2xl flex flex-col justify-between border border-white/20 p-1 bg-[#18181f] font-roboto">
 
@@ -8,14 +30,18 @@ const ProjectCard = ({ project, setProjectToDelete, handleDelete }) => {
         <h1 className="sm:text-xl font-semibold">{project.title.charAt(0).toUpperCase() + project.title.slice(1)}</h1>
         <div className="flex items-center gap-4 text-[15px]">
           <select
-            defaultValue={project.status}
-            onChange={() => console.log("changed status")}
+            value={status}
+            onChange={(e) => {
+              const newStatus = e.target.value;
+              setStatus(newStatus);
+              changeStatus(project, newStatus);
+            }}
             className={`outline-none max-w-23 sm:mx-2 px-2 py-1 rounded-full text-[10px] text-nowrap sm:text-xs border ${project.status === "Planned" ? "bg-sky-500/20 text-sky-400" : project.status === "In Progress" ? "bg-green-500/20 text-green-500" : "bg-violet-500/20 text-violet-500"}`}>
             <option value="Planned">Planned</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </select>
-          <i className="cursor-pointer text-gray-500 ri-pencil-line"></i>
+          <i onClick={() => handleEdit(project)} className="cursor-pointer text-gray-500 ri-pencil-line"></i>
           <i onClick={() => handleDelete(project)} className="cursor-pointer text-gray-500 ri-delete-bin-6-line"></i>
         </div>
       </div>
@@ -23,7 +49,6 @@ const ProjectCard = ({ project, setProjectToDelete, handleDelete }) => {
       <div className="w-full flex flex-col px-5 mb-2 gap-2">
         <div>
           <p className="text-gray-500 text-sm">{project.description.charAt(0).toUpperCase() + project.description.slice(1)}</p>
-          {project.relatedGoal ? <em className={`text-white/50 text-xs`}>Related goal- {project.relatedGoal.title}</em> : ""}
         </div>
         <div className="text-xs flex flex-wrap gap-3 text-[#85868c]">
           {project.techStack.map((tech) => (

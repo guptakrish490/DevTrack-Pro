@@ -1,7 +1,7 @@
 import ProjectQueries from "./ProjectQueries.jsx"
 import ProjectCard from "./ProjectCard.jsx"
 
-const ProjectContainer = ({ projects, params, setParams, mode, setMode, modal, setModal, handleCreate, handleDelete, setProjectToDelete }) => {
+const ProjectContainer = ({ projects, fetchProjects, params, setParams, mode, setMode, modal, setModal, handleCreate, handleDelete, setProjectToDelete, handleEdit}) => {
   return (
     <div className='font-open-sans w-full h-auto border border-white/15 bg-[#111118] sm:p-5 p-3 rounded-2xl mt-6 '>
 
@@ -18,10 +18,12 @@ const ProjectContainer = ({ projects, params, setParams, mode, setMode, modal, s
       <div className="max-h-120 h-auto w-full grid grid-cols-1 md:grid-cols-2 gap-5 overflow-y-auto scrollbar-custom">
         {projects.map(project => (
           <ProjectCard
+            fetchProjects={fetchProjects}
             handleDelete={handleDelete}
             setProjectToDelete={setProjectToDelete}
             project={project}
-            key={project._id} />
+            key={project._id}
+            handleEdit={handleEdit} />
         ))}
       </div>
 

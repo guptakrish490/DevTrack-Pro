@@ -14,6 +14,7 @@ const Projects = () => {
   const [mode, setMode] = useState("create")
   const [projectToDelete, setProjectToDelete] = useState(null)
   const [deleteModal, setDeleteModal] = useState(false)
+  const [projectToEdit,setProjectToEdit]=useState(null)
 
   //render projects without page reload
   const fetchProjects = async () => {
@@ -45,6 +46,12 @@ const Projects = () => {
     setDeleteModal(true)
   }
 
+  const handleEdit=(project)=>{
+    setProjectToEdit(project)
+    setMode("edit")
+    setModal(true)
+  }
+
 
   return (
     <>
@@ -52,7 +59,8 @@ const Projects = () => {
         fetchProjects={fetchProjects}
         mode={mode}
         modal={modal}
-        setModal={setModal} />
+        setModal={setModal}
+        projectToEdit={projectToEdit} />
 
       <ConfirmModal
         deleteModal={deleteModal}
@@ -65,6 +73,7 @@ const Projects = () => {
         projects={projects} />
 
       <ProjectContainer
+        fetchProjects={fetchProjects}
         projects={projects}
         params={params}
         setParams={setParams}
@@ -73,7 +82,8 @@ const Projects = () => {
         setMode={setMode}
         handleCreate={handleCreate}
         handleDelete={handleDelete}
-        setProjectToDelete={setProjectToDelete} />
+        setProjectToDelete={setProjectToDelete}
+        handleEdit={handleEdit} />
     </>
   )
 }
