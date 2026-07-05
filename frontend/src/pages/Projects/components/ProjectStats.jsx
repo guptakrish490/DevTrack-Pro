@@ -6,6 +6,7 @@ const ProjectStats = ({ projects }) => {
   return (
     <div className='grid grid-cols-1 sm:grid-cols-3 w-full h-auto gap-2'>
 
+      {/* active projects count */}
       <div className='h-auto p-5 m-1 rounded-2xl bg-[#111118] border border-white/15'>
         <div className="flex justify-between items-center w-full">
           <h2 className="text-sm text-gray-400 font-semibold">ACTIVE PROJECTS</h2>
@@ -16,6 +17,7 @@ const ProjectStats = ({ projects }) => {
 
       </div>
 
+      {/* completed projects count */}
       <div className='h-auto p-5 m-1 rounded-2xl bg-[#111118] border border-white/15'>
         <div className="flex justify-between items-center w-full">
           <h2 className="text-sm text-gray-400 font-semibold">COMPLETED PROJECTS</h2>
@@ -26,6 +28,7 @@ const ProjectStats = ({ projects }) => {
 
       </div>
 
+      {/* total projects count */}
       <div className='h-auto p-5 m-1 rounded-2xl bg-[#111118] border border-white/15'>
         <div className="flex justify-between items-center w-full">
           <h2 className="text-sm text-gray-400 font-semibold">TOTAL PROJECTS</h2>

@@ -32,20 +32,24 @@ const Projects = () => {
     }
   }
 
+  //re-render projects on sort, search or filter
   useEffect(() => {
     fetchProjects()
   }, [params,])
 
+  // create functionality handler
   const handleCreate = () => {
     setMode("create")
     setModal(true)
   }
 
+  // delete functionality haandler
   const handleDelete = (project) => {
     setProjectToDelete(project)
     setDeleteModal(true)
   }
 
+  // edit functionality handler
   const handleEdit=(project)=>{
     setProjectToEdit(project)
     setMode("edit")

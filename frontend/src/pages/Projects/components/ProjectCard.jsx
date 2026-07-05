@@ -6,8 +6,10 @@ import { NavLink } from "react-router-dom"
 
 const ProjectCard = ({ project, setProjectToDelete, handleDelete, handleEdit, fetchProjects }) => {
 
+  // project-status state
   const [status, setStatus] = useState(project.status)
 
+  // change project-status functionality
   const changeStatus = async (project, newStatus) => {
     try {
       await axios.put(
@@ -20,7 +22,6 @@ const ProjectCard = ({ project, setProjectToDelete, handleDelete, handleEdit, fe
       console.error(err.response?.data || err.message);
     }
   };
-
 
 
   return (

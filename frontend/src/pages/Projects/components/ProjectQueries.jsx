@@ -3,10 +3,12 @@ import CreateButton from "../../../components/ui/CreateButton.jsx"
 
 const ProjectQueries = ({ setParams, mode, modal, setModal, handleCreate }) => {
 
+  // query states for projects
   const [selectedFilter, setSelectedFilter] = useState("");
   const [search, setSearch] = useState("")
   const [sortOrder, setSortOrder] = useState("");
 
+  // filter options for project based on project-status
   const filterOptions = [
     { name: "All", value: "" },
     { name: "Completed", value: "Completed" },
@@ -14,6 +16,7 @@ const ProjectQueries = ({ setParams, mode, modal, setModal, handleCreate }) => {
     { name: "In Progress", value: "In Progress" }
   ]
 
+  // set params when any query is changed
   useEffect(() => {
     setParams({
       sortBy: sortOrder,

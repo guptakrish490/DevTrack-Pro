@@ -1,23 +1,31 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 
 const ConfirmModal = ({ deleteModal, setDeleteModal, projectToDelete, fetchProjects }) => {
 
+  // hide delete modal on default
   if (!deleteModal || !projectToDelete) return null;
 
   // handle delete confirmation
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/projects/${projectToDelete._id}`,{
-        withCredentials: true 
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/projects/${projectToDelete._id}`, {
+        withCredentials: true
       }
       )
 
+      toast.success("Project deleted successfully!")
       await fetchProjects()
 
     }
     catch (err) {
+      toast.error("Failed to delete Project", {
+        autoClose: 3000,
+        className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
+        progressClassName: "bg-red-400"
+      });
       console.error(err.response?.data || err.message);
     }
     finally {
@@ -27,8 +35,10 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, projectToDelete, fetchProje
 
   return (
     <div>
+      {/* overlay */}
       <div onClick={() => setDeleteModal(false)} className="fixed z-30 inset-0 bg-black/30 backdrop-blur-sm animate-fadeIn"></div>
 
+      {/* delete confirmation modal */}
       <form
         onSubmit={handleSubmit}
         role="dialog"
@@ -37,7 +47,7 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, projectToDelete, fetchProje
       >
         <div className='flex justify-between items-center px-5 py-1.5 sm:py-3 font-bold border-b border-white/10'>
           <h1 className='w-full text-sm sm:text-xl '>Delete Project</h1>
-          <i onClick={()=>setDeleteModal(false)} className="ri-close-large-fill cursor-pointer font-normal text-gray-500"></i>
+          <i onClick={() => setDeleteModal(false)} className="ri-close-large-fill cursor-pointer font-normal text-gray-500"></i>
         </div>
 
         <div className='w-full h-auto my-1 sm:my-3 flex items-center justify-center px-5 py-3 text-xs sm:text-sm text-gray-500'>

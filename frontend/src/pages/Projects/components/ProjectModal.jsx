@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 
 const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) => {
 
+  // input states for modal
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [techStack, setTechStack] = useState([])
@@ -13,6 +15,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
   const [repoURL, setRepoURL] = useState("")
   const [liveURL, setLiveURL] = useState("")
 
+  // escape key to close modal
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") setModal(false);
@@ -21,6 +24,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
     return () => window.removeEventListener("keydown", handleEsc);
   }, [setModal]);
 
+  // prefill form for edit mode
   useEffect(() => {
     if (mode === "edit" && projectToEdit) {
       setTitle(projectToEdit.title || "")
@@ -44,6 +48,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
     }
   }, [mode, modal, projectToEdit])
 
+  // close modal and form reset
   const cancelModal = () => {
     setTitle("")
     setDescription("")
@@ -57,6 +62,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
     setModal(false)
   }
 
+  // add techstack and store as array
   const addTech = () => {
     const tech = techInput.trim();
 
@@ -67,10 +73,12 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
     setTechInput("")
   }
 
+  // remove techstack by closing
   const removeTech = (tech) => {
     setTechStack(techStack.filter(t => t !== tech));
   }
 
+  // press Enter key to add multiple tech stacks
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -78,6 +86,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
     }
   }
 
+  // submit functionality handler for create/edit modal
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -95,21 +104,33 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
           },
           { withCredentials: true }
         )
+
+        toast.success("Project created successfully!", {
+          autoClose: 2000,
+          className: "bg-[#111118] text-green-400 border border-green-600 rounded-lg",
+          progressClassName: "bg-green-500"
+        });
       }
 
-      else if(mode==="edit"){
-        const res=await axios.put(`${import.meta.env.VITE_API_URL}/api/projects/${projectToEdit._id}`,
+      else if (mode === "edit") {
+        const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/projects/${projectToEdit._id}`,
           {
-            newTitle:title, 
-            newDescription:description,
-            newTechStack:techStack,
-            newRepoURL:repoURL, 
-            newLiveURL:liveURL, 
-            newStartDate:startDate, 
-            newEndDate:endDate, 
+            newTitle: title,
+            newDescription: description,
+            newTechStack: techStack,
+            newRepoURL: repoURL,
+            newLiveURL: liveURL,
+            newStartDate: startDate,
+            newEndDate: endDate,
           },
-          {withCredentials:true}
+          { withCredentials: true }
         )
+
+        toast.info("Project updated!", {
+          autoClose: 3000,
+          className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",
+          progressClassName: "bg-blue-500"
+        });
       }
 
       if (fetchProjects) await fetchProjects();
@@ -117,6 +138,11 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
 
     }
     catch (err) {
+      toast.error("Failed to save project", {
+        autoClose: 4000,
+        className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
+        progressClassName: "bg-red-400"
+      });
       console.error(err.response?.data || err.message);
     }
 
