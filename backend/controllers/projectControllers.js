@@ -67,13 +67,13 @@ export const updateProjects = async (req, res) => {
     try {
 
         const user = req.user
-        const { newTitle, newDescription, newRelatedGoal, newRepoURL, newLiveURL, newStartDate, newEndDate, newStatus } = req.body
+        const { newTitle, newDescription, newTechStack, newRepoURL, newLiveURL, newStartDate, newEndDate, newStatus } = req.body
 
         const project = await Project.findByIdAndUpdate(req.params.id,
             {
                 title: newTitle,
                 description: newDescription,
-                relatedGoal: newRelatedGoal,
+                techStack:newTechStack,
                 repoURL: newRepoURL,
                 liveURL: newLiveURL,
                 startDate: newStartDate,
