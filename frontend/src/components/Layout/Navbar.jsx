@@ -5,7 +5,7 @@ import bg from '../../assets/icons/logo.svg'
 const Navbar = ({ data ,sidebarOpen, setSidebarOpen}) => (
     <nav className="sticky top-0 z-10 w-full h-13 md:h-16 border border-white/10 text-white flex items-center px-2 md:px-5 justify-between md:gap-5">
 
-        <i onMouseEnter={()=>setSidebarOpen(true)} onClick={()=>setSidebarOpen(!sidebarOpen)} className="cursor-pointer text-xl mx-2 ri-menu-fill"></i>
+        <i onClick={()=>setSidebarOpen(!sidebarOpen)} className="cursor-pointer text-xl mx-2 ri-menu-fill"></i>
         
         {/* Search (desktop only) */}
         <div className="relative hidden md:flex flex-1 items-center ml-5">

@@ -8,7 +8,7 @@ import axios from "axios"
 const Layout = ({ children }) => {
 
   const [data, setData] = useState(null)
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(()=>window.innerWidth>=640);
 
   useEffect(() => {
     const fetchUser = async () => {

@@ -1,19 +1,25 @@
-import React from 'react'
 import { NavLink } from 'react-router-dom'
 import bg from '../../assets/icons/logo.svg'
 
 const Sidebar = ({ data, sidebarOpen, setSidebarOpen }) => {
-  console.log(data)
+
+  // helper: close only on mobile
+  const handleNavClick = () => {
+    if (window.innerWidth < 640) {
+      setSidebarOpen(false);
+    }
+  }
+
   return (
     <aside style={{ width: sidebarOpen ? "18rem" : "0rem" }} className="transition-[width] w-16 sm:w-18 duration-300 ease-in-out overflow-hidden flex flex-col h-full bg-[#0c0c14] border border-white/10 text-white font-display fixed sm:static z-30" >
-      
+
       {/* sidebar top */}
       <div className='w-full h-1/8 flex items-center p-5 justify-start gap-2 '>
-        <NavLink onClick={() => setSidebarOpen(!sidebarOpen)} to='/dashboard' className='rounded-[30%] flex items-center max-h-12 border border-white/5 overflow-hidden h-full shadow-[0_20px_50px_rgba(0,0,205,0.3)]'>
+        <NavLink to='/dashboard' className='rounded-[30%] flex items-center max-h-12 border border-white/5 overflow-hidden h-full shadow-[0_20px_50px_rgba(0,0,205,0.3)]'>
           <img className="h-full max-h-12" src={bg} alt="" />
         </NavLink>
         <h2 className='font-semibold text-lg'>DevTrack Pro</h2>
-        <i onClick={() => { setSidebarOpen(!sidebarOpen) }} className="cursor-pointer text-xl text-gray-300 ml-auto ri-contract-left-line"></i>
+        <i onClick={() => setSidebarOpen(!sidebarOpen)} className="cursor-pointer text-xl text-gray-300 ml-auto ri-contract-left-line"></i>
       </div>
 
 
@@ -23,7 +29,9 @@ const Sidebar = ({ data, sidebarOpen, setSidebarOpen }) => {
 
         <ul className="flex flex-col">
 
-          <NavLink onClick={() => setSidebarOpen(!sidebarOpen)} to="/dashboard">
+          <NavLink
+            onClick={handleNavClick}
+            to="/dashboard">
             {({ isActive }) => (
               <div className={`w-full px-4 h-12 flex items-center gap-2 rounded-md transition-colors
                 ${isActive ? "bg-[#516db1]/15 text-violet-600 font-semibold" : "text-zinc-500 hover:bg-white/5 hover:hover:font-medium hover:hover:text-white"}`}>
@@ -36,7 +44,9 @@ const Sidebar = ({ data, sidebarOpen, setSidebarOpen }) => {
             )}
           </NavLink>
 
-          <NavLink onClick={() => setSidebarOpen(!sidebarOpen)} to="/goals">
+          <NavLink 
+            onClick={handleNavClick}
+            to="/goals">
             {({ isActive }) => (
               <div className={`w-full px-4 h-12 flex items-center gap-2 rounded-md transition-colors
                 ${isActive ? "bg-[#516db1]/15 text-violet-600 font-semibold" : "text-zinc-500 hover:bg-white/5 hover:font-medium hover:text-white"}`}>
@@ -49,7 +59,9 @@ const Sidebar = ({ data, sidebarOpen, setSidebarOpen }) => {
             )}
           </NavLink>
 
-          <NavLink onClick={() => setSidebarOpen(!sidebarOpen)} to="/projects">
+          <NavLink 
+            onClick={handleNavClick}
+            to="/projects">
             {({ isActive }) => (
               <div className={`w-full px-4 h-12 flex items-center gap-2 rounded-md transition-colors
                 ${isActive ? "bg-[#516db1]/15 text-violet-600 font-semibold" : "text-zinc-500 hover:bg-white/5 hover:font-medium hover:text-white"}`}>
@@ -62,7 +74,9 @@ const Sidebar = ({ data, sidebarOpen, setSidebarOpen }) => {
             )}
           </NavLink>
 
-          <NavLink onClick={() => setSidebarOpen(!sidebarOpen)} to="/tasks">
+          <NavLink 
+            onClick={handleNavClick}
+            to="/tasks">
             {({ isActive }) => (
               <div className={`w-full px-4 h-12 flex items-center gap-2 rounded-md transition-colors
                 ${isActive ? "bg-[#516db1]/15 text-violet-600 font-semibold" : "text-zinc-500 hover:bg-white/5 hover:font-medium hover:text-white"}`}>
@@ -82,7 +96,9 @@ const Sidebar = ({ data, sidebarOpen, setSidebarOpen }) => {
             )}
           </NavLink>
 
-          <NavLink onClick={() => setSidebarOpen(!sidebarOpen)} to="/activity">
+          <NavLink 
+            onClick={handleNavClick}
+            to="/activity">
             {({ isActive }) => (
               <div className={`w-full px-4 h-12 flex items-center gap-2 rounded-md transition-colors
                 ${isActive ? "bg-[#516db1]/15 text-violet-600 font-semibold" : "text-zinc-500 hover:bg-white/5 hover:font-medium hover:text-white"}`}>
@@ -95,7 +111,9 @@ const Sidebar = ({ data, sidebarOpen, setSidebarOpen }) => {
             )}
           </NavLink>
 
-          <NavLink onClick={() => setSidebarOpen(!sidebarOpen)} to="/profile">
+          <NavLink 
+            onClick={handleNavClick}
+            to="/profile">
             {({ isActive }) => (
               <div className={`w-full px-4 h-12 flex items-center gap-2 rounded-md transition-colors
                 ${isActive ? "bg-[#516db1]/15 text-violet-600 font-semibold" : "text-zinc-500 hover:bg-white/5 hover:font-medium hover:text-white"}`}>
@@ -114,7 +132,7 @@ const Sidebar = ({ data, sidebarOpen, setSidebarOpen }) => {
 
       {/* profile */}
       <div className='w-full h-1/8'>
-        <NavLink onClick={() => setSidebarOpen(!sidebarOpen)} to='/profile' className='p-4 flex items-center h-full gap-3'>
+        <NavLink to='/profile' className='p-4 flex items-center h-full gap-3'>
           <img className='rounded-full h-9 w-9 object-cover' src={data?.user.avatarURL} alt="" />
           <div className='flex justify-between w-full items-center'>
             <div className='flex flex-col justify-center'>
