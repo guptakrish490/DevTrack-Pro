@@ -1,5 +1,3 @@
-import React from 'react'
-
 const RecentActivity = ({ data }) => {
     return (
         <div className="text-Manrope w-full h-64 flex flex-col p-3 rounded-2xl my-4 bg-[#111118] border-2 border-white/15 ">
@@ -21,9 +19,9 @@ const RecentActivity = ({ data }) => {
                                     activity.type==="project_created"?"bg-yellow-600/50 text-yellow-500 ri-folder-3-line":
                                     activity.type==="task_created"?"bg-amber-700/60 text-amber-500 ri-todo-line":
                                     activity.type==="goal_completed"?"bg-violet-500/30 text-violet-500 ri-trophy-line":
-                                    activity.type==="project_created"?"bg-green-500/40 text-green-400 ri-task-line":
+                                    activity.type==="project_completed"?"bg-green-400/40 text-green-400 ri-folder-check-line":
                                     activity.type==="task_completed"?"bg-green-500/40 text-green-400 ri-task-line":
-                                    activity.type==="profile_updated"?"bg-blue-400/30 text-blue-600 ri-file-edit-line":""}`}>
+                                    activity.type==="profile_updated"?"bg-blue-400/20 text-blue-600 ri-file-edit-line":""}`}>
                                 </i>
                             </div>
 
