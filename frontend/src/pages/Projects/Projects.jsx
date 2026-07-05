@@ -12,6 +12,8 @@ const Projects = () => {
   const [params, setParams] = useState({})
   const [modal, setModal] = useState(false)
   const [mode, setMode] = useState("create")
+  const [projectToDelete, setProjectToDelete] = useState(null)
+  const [deleteModal, setDeleteModal] = useState(false)
 
   //render projects without page reload
   const fetchProjects = async () => {
@@ -38,6 +40,11 @@ const Projects = () => {
     setModal(true)
   }
 
+  const handleDelete = (project) => {
+    setProjectToDelete(project)
+    setDeleteModal(true)
+  }
+
 
   return (
     <>
@@ -46,6 +53,12 @@ const Projects = () => {
         mode={mode}
         modal={modal}
         setModal={setModal} />
+
+      <ConfirmModal
+        deleteModal={deleteModal}
+        setDeleteModal={setDeleteModal}
+        projectToDelete={projectToDelete}
+        fetchProjects={fetchProjects} />
 
       <h1 className="text-2xl sm:text-4xl font-bold font-display my-3 mx-2">Your Projects 📂</h1>
       <ProjectStats
@@ -58,7 +71,9 @@ const Projects = () => {
         setModal={setModal}
         mode={mode}
         setMode={setMode}
-        handleCreate={handleCreate} />
+        handleCreate={handleCreate}
+        handleDelete={handleDelete}
+        setProjectToDelete={setProjectToDelete} />
     </>
   )
 }

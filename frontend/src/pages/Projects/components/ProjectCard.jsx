@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom"
 
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, setProjectToDelete, handleDelete }) => {
   return (
     <div className="h-auto rounded-2xl flex flex-col justify-between border border-white/20 p-1 bg-[#18181f] font-roboto">
 
@@ -16,7 +16,7 @@ const ProjectCard = ({ project }) => {
             <option value="Completed">Completed</option>
           </select>
           <i className="cursor-pointer text-gray-500 ri-pencil-line"></i>
-          <i className="cursor-pointer text-gray-500 ri-delete-bin-6-line"></i>
+          <i onClick={() => handleDelete(project)} className="cursor-pointer text-gray-500 ri-delete-bin-6-line"></i>
         </div>
       </div>
 
@@ -26,8 +26,8 @@ const ProjectCard = ({ project }) => {
           {project.relatedGoal ? <em className={`text-white/50 text-xs`}>Related goal- {project.relatedGoal.title}</em> : ""}
         </div>
         <div className="text-xs flex flex-wrap gap-3 text-[#85868c]">
-          {project.techStack.map((tech, idx) => (
-            <span key={idx} className="px-2 py-1 rounded-full border border-[#85868c] bg-[#444850]/40">{tech}</span>
+          {project.techStack.map((tech) => (
+            <span key={tech} className="px-2 py-1 rounded-full border border-[#85868c] bg-[#444850]/40">{tech.charAt(0).toUpperCase() + tech.slice(1)}</span>
           ))}
         </div>
 
