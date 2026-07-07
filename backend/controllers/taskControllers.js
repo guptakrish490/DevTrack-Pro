@@ -63,7 +63,7 @@ export const readTasks = async (req, res) => {
 
 
         //fetching tasks
-        const tasks = await Task.find(query).sort({ createdAt: sortOrder })
+        const tasks = await Task.find(query).sort({ createdAt: sortOrder }).populate("relatedProject")
         res.status(200).json(tasks)
     }
     catch (err) {
