@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const TaskQueries = () => {
+const TaskQueries = ({ params, setParams }) => {
 
   const filterOptions = [
     { name: "All", value: "" },
@@ -9,9 +9,21 @@ const TaskQueries = () => {
     { name: "Completed", value: "Completed" }
   ]
 
-  const [selectedFilter, setSelectedFilter] = useState("");
+  const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const [priority, setPriority] = useState("");
+  const [sort, setSort] = useState("")
+
+  useEffect(() => {
+    setParams(
+      {
+        q: search,
+        status: status,
+        sortBy: sort,
+        priority: priority
+      }
+    )
+  }, [search, status, priority, sort, setParams])
 
   return (
     <div className="w-full h-auto flex flex-col gap-2">
@@ -35,17 +47,27 @@ const TaskQueries = () => {
         <option value="High">High</option>
       </select>
 
-      <div className="flex items-center gap-1 sm:gap-6 flex-wrap text-gray-400">
-        {filterOptions.map(option => (
-          <button
-            onClick={() => setSelectedFilter(option.value)}
-            key={option.name}
-            className={`sm:px-2 sm:py-1 px-1 py-0.5 rounded-xl border text-[8px] md:text-xs whitespace-nowrap transition-all duration-200 cursor-pointer border-white/15 
-              ${selectedFilter === option.value ? "bg-violet-400/25 text-violet-400" : "bg-[#1d1d24]"}`}
-          >
-            {option.name}
-          </button>
-        ))}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1 sm:gap-6 flex-wrap text-gray-400">
+          {filterOptions.map(option => (
+            <button
+              onClick={() => setStatus(option.value)}
+              key={option.name}
+              className={`sm:px-2 sm:py-1 px-1 py-0.5 rounded-xl border text-[8px] md:text-xs whitespace-nowrap transition-all duration-200 cursor-pointer border-white/15 
+              ${status === option.value ? "bg-violet-400/25 text-violet-400" : "bg-[#1d1d24]"}`}
+            >
+              {option.name}
+            </button>
+          ))}
+        </div>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="sm:min-w-30 sm:max-w-full outline-none sm:h-8 h-6 text-[10px] md:text-xs text-gray-500 bg-[#1d1d24] border border-white/20 rounded-full px-3">
+          <option value="">Sort By</option>
+          <option value="latest">Latest</option>
+          <option value="oldest">Oldest</option>
+        </select>
       </div>
 
       <hr className="text-white/30" />

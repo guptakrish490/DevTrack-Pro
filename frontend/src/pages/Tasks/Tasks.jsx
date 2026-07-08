@@ -8,11 +8,15 @@ import { useState, useEffect } from "react"
 const Tasks = () => {
 
   const [tasks, setTasks] = useState([])
+  const [params, setParams] = useState({});
 
   const fetchTasks = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/tasks`,
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          params: params
+        }
       )
       setTasks(res.data)
     }
@@ -23,7 +27,7 @@ const Tasks = () => {
 
   useEffect(() => {
     fetchTasks()
-  }, [])
+  }, [params])
 
   return (
     <>
@@ -34,7 +38,9 @@ const Tasks = () => {
         tasks={tasks} />
 
       <TaskContainer
-        tasks={tasks} />
+        tasks={tasks}
+        params={params}
+        setParams={setParams} />
 
     </>
   )
