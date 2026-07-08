@@ -9,6 +9,8 @@ const Tasks = () => {
 
   const [tasks, setTasks] = useState([])
   const [params, setParams] = useState({});
+  const [modal, setModal] = useState(false)
+  const [mode, setMode] = useState("create")
 
   const fetchTasks = async () => {
     try {
@@ -29,18 +31,28 @@ const Tasks = () => {
     fetchTasks()
   }, [params])
 
+  const handleCreate = () => {
+    setMode("create")
+    setModal(true);
+  }
+
   return (
     <>
 
-      {/* <ConfirmModal />
-      <TaskModal /> */}
+      {/* <ConfirmModal /> */}
+      <TaskModal
+        mode={mode}
+        modal={modal}
+        setModal={setModal}
+        fetchTasks={fetchTasks} />
       <TaskStats
         tasks={tasks} />
 
       <TaskContainer
         tasks={tasks}
         params={params}
-        setParams={setParams} />
+        setParams={setParams}
+        handleCreate={handleCreate} />
 
     </>
   )
