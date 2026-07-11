@@ -12,6 +12,8 @@ const Tasks = () => {
   const [modal, setModal] = useState(false)
   const [mode, setMode] = useState("create")
   const [taskToEdit, setTaskToEdit] = useState(null)
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [taskToDelete, setTaskToDelete] = useState(null)
 
   const fetchTasks = async () => {
     try {
@@ -43,10 +45,20 @@ const Tasks = () => {
     setModal(true);
   }
 
+  const handleDelete = (task) => {
+    setTaskToDelete(task)
+    setDeleteModal(true)
+  }
+
   return (
     <>
 
-      {/* <ConfirmModal /> */}
+      <ConfirmModal
+        deleteModal={deleteModal}
+        setDeleteModal={setDeleteModal}
+        taskToDelete={taskToDelete}
+        fetchTasks={fetchTasks} />
+
       <TaskModal
         mode={mode}
         modal={modal}
@@ -62,7 +74,8 @@ const Tasks = () => {
         params={params}
         setParams={setParams}
         handleCreate={handleCreate}
-        handleEdit={handleEdit} />
+        handleEdit={handleEdit}
+        handleDelete={handleDelete} />
 
     </>
   )

@@ -2,7 +2,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { NavLink } from 'react-router-dom'
 
-const TaskCard = ({ task, handleEdit, fetchTasks }) => {
+const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
 
     const [status, setStatus] = useState(task.status)
     const [priority, setPriority] = useState(task.priority)
@@ -49,6 +49,7 @@ const TaskCard = ({ task, handleEdit, fetchTasks }) => {
                             title="Edit"
                             className="ri-pencil-line text-neutral-500 cursor-pointer hover:text-gray-300"></i>
                         <i
+                            onClick={() => handleDelete(task)}
                             aria-label="delete"
                             title="Delete"
                             className="ri-delete-bin-line text-neutral-500 cursor-pointer hover:text-red-400"></i>

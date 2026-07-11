@@ -2,7 +2,7 @@ import TaskQueries from "./TaskQueries"
 import CreateButton from "../../../components/ui/CreateButton"
 import TaskCard from "./TaskCard"
 
-const TaskContainer = ({ tasks, params, setParams, handleCreate, handleEdit, fetchTasks }) => {
+const TaskContainer = ({ tasks, params, setParams, handleCreate, handleEdit, fetchTasks, handleDelete }) => {
   return (
     <div className='font-open-sans w-full h-auto border border-white/15 bg-[#111118] sm:p-5 p-3 rounded-2xl mt-6 '>
       <div className="mb-3">
@@ -24,7 +24,8 @@ const TaskContainer = ({ tasks, params, setParams, handleCreate, handleEdit, fet
             key={task._id}
             task={task}
             handleEdit={handleEdit}
-            fetchTasks={fetchTasks} />
+            fetchTasks={fetchTasks}
+            handleDelete={handleDelete} />
         ))}
       </div>
     </div>
