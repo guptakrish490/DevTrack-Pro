@@ -1,11 +1,34 @@
-import { useState } from "react"
+import axios from "axios"
+import { useEffect, useState } from "react"
 import { NavLink } from 'react-router-dom'
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, handleEdit, fetchTasks }) => {
 
     const [status, setStatus] = useState(task.status)
     const [priority, setPriority] = useState(task.priority)
     const [expand, setExpand] = useState(false);
+
+    useEffect(() => {
+        setStatus(task.status);
+        setPriority(task.priority);
+    }, [task])
+
+    const handleChange = async (task, newStatus, newPriority) => {
+        try {
+            await axios.put(
+                `${import.meta.env.VITE_API_URL}/api/tasks/${task._id}`,
+                {
+                    newStatus: newStatus || task.status,
+                    newPriority: newPriority || task.priority
+                },
+                { withCredentials: true }
+            );
+            await fetchTasks();
+        } catch (err) {
+            console.error(err.response?.data || err.message);
+        }
+    };
+
 
     return (
         <div className="w-full font-poppins h-auto border rounded-md border-neutral-100/20 sm:p-5 p-4 transition-all duration-300 ease-in-out hover:border-violet-400">
@@ -21,6 +44,7 @@ const TaskCard = ({ task }) => {
                     </div>
                     <div className="flex gap-4 text-sm sm:text-lg">
                         <i
+                            onClick={() => handleEdit(task)}
                             aria-label="edit"
                             title="Edit"
                             className="ri-pencil-line text-neutral-500 cursor-pointer hover:text-gray-300"></i>
@@ -55,6 +79,7 @@ const TaskCard = ({ task }) => {
                             onChange={(e) => {
                                 const newPriority = e.target.value;
                                 setPriority(newPriority);
+                                handleChange(task, status, newPriority)
                             }}
                             className={`outline-none border max-w-23 px-1 h-5 sm:h-6 py-0.5 rounded-md text-[10px] text-nowrap sm:text-xs bg-gray-500/20 text-gray-400`}>
                             <option value="High">High</option>
@@ -71,6 +96,7 @@ const TaskCard = ({ task }) => {
                             onChange={(e) => {
                                 const newStatus = e.target.value;
                                 setStatus(newStatus);
+                                handleChange(task, newStatus, priority)
                             }}
                             className={`outline-none max-w-23 px-1 h-5 sm:h-6 py-0.5 rounded-full text-[10px] text-nowrap sm:text-xs border ${status === "Planned" ? "bg-gray-500/20 text-gray-400" : status === "In Progress" ? "bg-amber-500/20 text-amber-500" : "bg-violet-500/20 text-violet-500"}`}>
                             <option value="Planned">Planned</option>

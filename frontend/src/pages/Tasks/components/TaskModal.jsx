@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const TaskModal = ({ mode, modal, setModal, fetchTasks }) => {
+const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
 
   if (!modal) return null;
 
@@ -11,9 +11,22 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks }) => {
   const [description, setDescription] = useState("")
   const [priority, setPriority] = useState("")
   const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
+  const [completedAt, setCompletedAt] = useState("")
   const [dueDate, setDueDate] = useState("")
   const [relatedProject, setRelatedProject] = useState("")
+
+  useEffect(() => {
+    if (mode === "edit" && taskToEdit) {
+      setTitle(taskToEdit.title || "");
+      setDescription(taskToEdit.description || "");
+      setPriority(taskToEdit.priority || "");
+      setStartDate(taskToEdit.startDate?.slice(0, 10) || "");
+      setCompletedAt(taskToEdit.completedAt?.slice(0, 10) || "");
+      setDueDate(taskToEdit.dueDate?.slice(0, 10) || "");
+      setRelatedProject(taskToEdit.relatedProject._id || "");
+    }
+
+  }, [taskToEdit, mode, modal])
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -42,14 +55,27 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks }) => {
             description,
             priority,
             startDate,
-            endDate,
+            completedAt,
             dueDate,
             relatedProject
           },
           { withCredentials: true }
         )
       }
-      else if (mode === "edit") { }
+      else if (mode === "edit") {
+        await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${taskToEdit._id}`,
+          {
+            newTitle: title,
+            newDescription: description,
+            newPriority: priority,
+            newStartDate: startDate,
+            newCompletedAt: completedAt,
+            newDueDate: dueDate,
+            newRelatedProject: relatedProject
+          },
+          { withCredentials: true }
+        )
+      }
 
       fetchTasks();
       cancelModal();
@@ -66,7 +92,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks }) => {
     setDescription("");
     setPriority("")
     setStartDate("")
-    setEndDate("")
+    setCompletedAt("")
     setDueDate("")
     setRelatedProject("")
 
@@ -128,8 +154,8 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks }) => {
             <div className="flex py-1 flex-col justify-start w-1/2">
               <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">END DATE</span>
               <input
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                value={completedAt}
+                onChange={(e) => setCompletedAt(e.target.value)}
                 className="custom-date w-full p-2 border text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
                 type="date" />
             </div>
@@ -143,7 +169,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks }) => {
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="w-full p-2 border text-[#6f6f8a] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500">
+                className="w-full p-2 border text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500">
                 <option value="">Select Priority</option>
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
@@ -167,8 +193,8 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks }) => {
             <select
               value={relatedProject}
               onChange={(e) => setRelatedProject(e.target.value)}
-              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 text-[#6f6f8a] text-sm mx-1 h-9 border border-white/15 px-3 rounded-xl">
-              <option value="" className="bg-white/10">Related to...</option>
+              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 text-white text-sm mx-1 h-9 border border-white/15 px-3 rounded-xl">
+              <option value="" className="bg-white/20">Related to...</option>
               {projects.map(p => (
                 <option
                   value={p._id}
