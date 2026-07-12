@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
 
@@ -7,14 +8,16 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
 
   const [projects, setProjects] = useState([])
 
+  // input state for task create/edit modal form
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [priority, setPriority] = useState("")
   const [startDate, setStartDate] = useState("")
   const [completedAt, setCompletedAt] = useState("")
   const [dueDate, setDueDate] = useState("")
-  const [relatedProject, setRelatedProject] = useState("")
+  const [relatedProject, setRelatedProject] = useState(null)
 
+  // prefill modal on edit form
   useEffect(() => {
     if (mode === "edit" && taskToEdit) {
       setTitle(taskToEdit.title || "");
@@ -28,6 +31,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
 
   }, [taskToEdit, mode, modal])
 
+  // fetch projects for relatedProjects dropdown
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -44,6 +48,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
     fetchProjects();
   }, []);
 
+  // handle create/edit modal form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -61,6 +66,12 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
           },
           { withCredentials: true }
         )
+
+        toast.success("Task created successfully!", {
+          autoClose: 2000,
+          className: "bg-[#111118] text-green-400 border border-green-600 rounded-lg",
+          progressClassName: "bg-green-500"
+        });
       }
       else if (mode === "edit") {
         await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${taskToEdit._id}`,
@@ -75,6 +86,12 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
           },
           { withCredentials: true }
         )
+
+        toast.info("Task updated!", {
+          autoClose: 3000,
+          className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",
+          progressClassName: "bg-blue-500"
+        });
       }
 
       fetchTasks();
@@ -83,10 +100,16 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
     }
 
     catch (err) {
-      console.log(err.response?.data || err.message)
+      console.log(err.response?.data || err.message);
+      toast.error("Failed to save Task", {
+        autoClose: 4000,
+        className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
+        progressClassName: "bg-red-400"
+      });
     }
   }
 
+  // closes and resets modal form
   const cancelModal = () => {
     setTitle("");
     setDescription("");
@@ -194,7 +217,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
               value={relatedProject}
               onChange={(e) => setRelatedProject(e.target.value)}
               className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 text-white text-sm mx-1 h-9 border border-white/15 px-3 rounded-xl">
-              <option value="" className="bg-white/20">Related to...</option>
+              <option value={null} className="bg-white/20">Related to...</option>
               {projects.map(p => (
                 <option
                   value={p._id}

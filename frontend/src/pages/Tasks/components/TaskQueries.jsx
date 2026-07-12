@@ -14,6 +14,7 @@ const TaskQueries = ({ params, setParams }) => {
   const [priority, setPriority] = useState("");
   const [sort, setSort] = useState("")
 
+  // set parameters prop on query change
   useEffect(() => {
     setParams(
       {
@@ -27,6 +28,7 @@ const TaskQueries = ({ params, setParams }) => {
 
   return (
     <div className="w-full h-auto flex flex-col gap-2">
+      {/* search query */}
       <div className="relative">
         <i className="ri-search-line text-sm sm:text-lg absolute top-1/2 -translate-y-1/2 left-2 text-gray-500"></i>
         <input
@@ -37,6 +39,7 @@ const TaskQueries = ({ params, setParams }) => {
           type="text" />
       </div>
 
+      {/* filter priority */}
       <select
         value={priority}
         onChange={(e) => setPriority(e.target.value)}
@@ -48,6 +51,7 @@ const TaskQueries = ({ params, setParams }) => {
       </select>
 
       <div className="flex items-center justify-between">
+        {/* filter based on status */}
         <div className="flex items-center gap-1 sm:gap-6 flex-wrap text-gray-400">
           {filterOptions.map(option => (
             <button
@@ -60,6 +64,8 @@ const TaskQueries = ({ params, setParams }) => {
             </button>
           ))}
         </div>
+
+        {/* sort based on creation date */}
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}

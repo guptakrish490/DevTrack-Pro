@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 
 const ConfirmModal = ({ deleteModal, setDeleteModal, taskToDelete, fetchTasks }) => {
@@ -17,10 +18,16 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, taskToDelete, fetchTasks })
       )
 
       await fetchTasks()
+      toast.success("Task deleted successfully!")
 
     }
     catch (err) {
       console.error(err.response?.data || err.message);
+      toast.error("Failed to delete Task", {
+        autoClose: 3000,
+        className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
+        progressClassName: "bg-red-400"
+      });
     }
     finally {
       setDeleteModal(false)

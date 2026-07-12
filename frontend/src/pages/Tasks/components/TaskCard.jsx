@@ -8,11 +8,13 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
     const [priority, setPriority] = useState(task.priority)
     const [expand, setExpand] = useState(false);
 
+    // set local task and priority states
     useEffect(() => {
         setStatus(task.status);
         setPriority(task.priority);
     }, [task])
 
+    // update status/priority directly from select dropdown
     const handleChange = async (task, newStatus, newPriority) => {
         try {
             await axios.put(
@@ -42,6 +44,7 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
                             onClick={() => setExpand(!expand)}
                             className={`ri-arrow-down-s-line text-xl text-gray-300 transition-all ${expand ? "rotate-180" : ""}`}></i>
                     </div>
+
                     <div className="flex gap-4 text-sm sm:text-lg">
                         <i
                             onClick={() => handleEdit(task)}
@@ -54,6 +57,7 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
                             title="Delete"
                             className="ri-delete-bin-line text-neutral-500 cursor-pointer hover:text-red-400"></i>
                     </div>
+
                 </div>
                 <p className="text-sm text-neutral-300">{task.description}</p>
             </div>

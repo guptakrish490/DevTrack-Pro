@@ -1,13 +1,16 @@
 const TaskStats = ({ tasks }) => {
 
+  // active tasks count
   const activeTaskCount = tasks.filter(
     t => (t.status === "In Progress") || (t.status === "Planned")
   ).length
 
+  // completed tasks count
   const completedTaskCount = tasks.filter(
     t => (t.status === "Completed")
   ).length
 
+  // overdue tasks count
   const overdueTaskCount = tasks.filter(
     t => t.dueDate && new Date(t.dueDate).getTime() < Date.now()
   ).length;
