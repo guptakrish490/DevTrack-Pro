@@ -14,8 +14,8 @@ export const getAllActivities = async (req, res) => {
         }
         const sortOrder = sortBy === "oldest" ? 1 : -1;
 
-        const activities = await Activity.find({ user: user._id })
-            .sort({createdAt:sortOrder})
+        const activities = await Activity.find(query)
+            .sort({ createdAt: sortOrder })
             .populate("relatedGoal")
             .populate("relatedProject")
             .populate("relatedTask")
