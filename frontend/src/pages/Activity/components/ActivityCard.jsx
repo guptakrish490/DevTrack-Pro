@@ -7,6 +7,7 @@ const ActivityCard = ({ a, label }) => {
       className="font-poppins leading-tight text-[13px] flex justify-center text-white bg-[#111118] border border-neutral-500/30 p-4 rounded-xl flex-col"
     >
 
+      {/* fetch card with matching icon type */}
       <div className='flex items-center gap-2'>
         <i className={`px-1.5 py-1 text-[16px] font-medium rounded-[38%] border-none ${a.type === "goal_created" ? "bg-sky-600/20 text-sky-400 ri-focus-2-line" :
           a.type === "project_created" ? "bg-yellow-600/50 text-yellow-500 ri-folder-3-line" :
@@ -19,6 +20,7 @@ const ActivityCard = ({ a, label }) => {
         <span>{a.title}</span>
       </div>
 
+      {/* relative time using dayjs */}
       <span className="text-gray-500 text-xs ml-9">
         {label === "TODAY"
           ? a.relativeTime

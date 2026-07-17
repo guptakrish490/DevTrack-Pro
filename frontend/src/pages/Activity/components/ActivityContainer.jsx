@@ -3,8 +3,10 @@ import ActivityCard from './ActivityCard.jsx'
 
 const ActivityContainer = ({ activities }) => {
 
+  // group activity by dates using relative dates (dayjs)
   const grouped = groupByDate(activities)
 
+  // empty activities state
   if (!activities.length) {
     return (
       <div className="flex flex-col items-center justify-center md:h-100 h-80 gap-3 text-gray-400">
@@ -21,6 +23,7 @@ const ActivityContainer = ({ activities }) => {
     );
   }
 
+  // render activity cards
   return (
     <div className="flex flex-col gap-6 px-3 py-7">
       {Object.entries(grouped).map(([label, activity]) => (

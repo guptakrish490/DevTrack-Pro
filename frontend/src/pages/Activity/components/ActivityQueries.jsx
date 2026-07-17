@@ -2,10 +2,12 @@ import { useEffect, useState } from "react"
 
 const ActivityQueries = ({ params, setParams }) => {
 
+  // states for search, sort and filter queries
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
   const [sortOrder, setSortOrder] = useState("");
 
+  // sets params on every change for each query
   useEffect(() => {
     setParams({
       q: search,

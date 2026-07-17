@@ -10,6 +10,7 @@ const Activity = () => {
   const [params, setParams] = useState({})
   const [deleteModal, setDeleteModal] = useState(false)
 
+  // fetch activities from backend to frontend without manual reload
   const fetchActivities = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/activity`,
@@ -26,17 +27,20 @@ const Activity = () => {
     }
   }
 
+  // fetch activities whenever query params are changed or defined
   useEffect(() => {
     fetchActivities();
   }, [params])
 
   return (
     <>
+      {/* delete confirmation modal */}
       <ConfirmModal
         deleteModal={deleteModal}
         setDeleteModal={setDeleteModal}
         fetchActivities={fetchActivities} />
 
+      {/* header (heading and delete button) */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl sm:text-4xl font-bold font-poppins mb-2 mx-2">Your Activities⚡</h1>
         <button
@@ -47,10 +51,12 @@ const Activity = () => {
         </button>
       </div>
 
+      {/* search, sort and filter queries support */}
       <ActivityQueries
         params={params}
         setParams={setParams} />
 
+      {/* contains all activity cards */}
       <ActivityContainer
         activities={activities} />
     </>
