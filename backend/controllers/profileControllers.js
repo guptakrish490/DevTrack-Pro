@@ -10,31 +10,44 @@ export const getProfile = async (req, res) => {
     const user = req.user
     try {
         const [goals, projects, tasks, activities] = await Promise.all([
-            Goal.find({ user: user._id }),
-            Project.find({ user: user._id }),
-            Task.find({ user: user._id }),
-            Activity.find({ user: user._id })
+            Goal.find({ user: user._id }).sort({ createdAt: -1 }),
+            Project.find({ user: user._id }).sort({ createdAt: -1 }),
+            Task.find({ user: user._id }).sort({ createdAt: -1 }),
+            Activity.find({ user: user._id }).sort({ createdAt: -1 })
         ]);
 
         const goalCount = goals.length
         const projectCount = projects.length
+        const taskCount = tasks.length
+        const completedGoalCount = goals.filter(g => g.isCompleted === true).length
+        const completedProjectCount = projects.filter(p => p.status === "Completed").length
         const completedTaskCount = tasks.filter(t => t.status === "Completed").length;
-        const pendingTaskCount = tasks.filter(t => ["Planned", "In Progress"].includes(t.status)).length;
-        const streaksCount = 0;
+        const currentStreaksCount = user.currentStreak;
+        const maxStreaksCount = user.longestStreak;
 
         res.status(200).json({
             name: user.name,
             username: user.username,
             email: user.email,
             bio: user.bio,
-            leetcodeURL: user.leetcodeURL,
-            githubURL: user.githubURL,
+            links: user.links,
+            others: user.others,
             avatarURL: user.avatarURL,
+            joinedOn: user.createdAt,
+            lastActiveOn: activities[0].createdAt,
+
             goalCount,
+            completedGoalCount,
+
             projectCount,
+            completedProjectCount,
+
+            taskCount,
             completedTaskCount,
-            pendingTaskCount,
-            streaksCount,
+
+            currentStreaksCount,
+            maxStreaksCount,
+
             activities
         })
     }
