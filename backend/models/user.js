@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
     },
     avatarURL: {
         type: String,
-        default: "https://example.com/default-avatar.png"
+        default: "https://www.gravatar.com/avatar/?d=mp"
     },
     currentStreak: {
         type: Number,

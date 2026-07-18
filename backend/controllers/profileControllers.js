@@ -17,13 +17,17 @@ export const getProfile = async (req, res) => {
         ]);
 
         const goalCount = goals.length
-        const projectCount = projects.length
-        const taskCount = tasks.length
         const completedGoalCount = goals.filter(g => g.isCompleted === true).length
+
+        const projectCount = projects.length
         const completedProjectCount = projects.filter(p => p.status === "Completed").length
+
+        const taskCount = tasks.length
         const completedTaskCount = tasks.filter(t => t.status === "Completed").length;
+
         const currentStreaksCount = user.currentStreak;
         const maxStreaksCount = user.longestStreak;
+
 
         res.status(200).json({
             name: user.name,
