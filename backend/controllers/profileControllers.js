@@ -34,11 +34,13 @@ export const getProfile = async (req, res) => {
             username: user.username,
             email: user.email,
             bio: user.bio,
+            gender: user.gender,
+            location: user.Location,
             links: user.links,
             others: user.others,
             avatarURL: user.avatarURL,
             joinedOn: user.createdAt,
-            lastActiveOn: activities[0].createdAt,
+            lastActiveOn: activities.length > 0 ? activities[0].createdAt : null,
 
             goalCount,
             completedGoalCount,
@@ -64,15 +66,18 @@ export const updateProfile = async (req, res) => {
     try {
         const user = req.user
 
-        const { newName, newUsername, newBio, newAvatar, newGithubURL, newLeetcodeURL } = req.body
+        const { name, bio, gender, Location, username, email, others, links, avatarURL } = req.body
 
         const updatedUser = await User.findByIdAndUpdate(user._id, {
-            name: newName,
-            username: newUsername,
-            bio: newBio,
-            avatarURL: newAvatar,
-            githubURL: newGithubURL,
-            leetcodeURL: newLeetcodeURL
+            name,
+            bio,
+            gender,
+            Location,
+            username,
+            email,
+            others,
+            links,
+            avatarURL
         }, { new: true })
 
         await logActivity({
