@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom"
+
 const UserDetails = ({ userData }) => {
 
     console.log(userData)
@@ -49,10 +51,10 @@ const UserDetails = ({ userData }) => {
             </div>
 
             <div className="w-auto h-full flex flex-col justify-between">
-                <button className="flex-nowrap max-w-35 flex text-nowrap gap-1 items-center px-4 py-1 border border-neutral-400/20 rounded-xl bg-[#1d1d24] text-purple-100/55 cursor-pointer">
+                <NavLink to="/settings/profile" className="flex-nowrap max-w-35 flex text-nowrap gap-1 items-center px-4 py-1 border border-neutral-400/20 rounded-xl bg-[#1d1d24] text-purple-100/55 cursor-pointer">
                     <i className="ri-pencil-line text-xl"></i>
                     <span className="text-[14px] font-semibold">Edit Profile</span>
-                </button>
+                </NavLink>
             </div>
 
         </div>

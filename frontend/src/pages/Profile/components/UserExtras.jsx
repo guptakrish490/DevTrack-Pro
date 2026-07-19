@@ -32,7 +32,7 @@ const UserExtras = ({ userData }) => {
                                     {link.platform}
                                 </span>
                                 <a
-                                    href={link.url}
+                                    href={link.url.startsWith("http") ? link.url : `https://${link.url}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="font-poppins text-sm text-purple-300 hover:underline break-all"
@@ -43,7 +43,7 @@ const UserExtras = ({ userData }) => {
                         </div>
 
                         <a
-                            href={link.url}
+                            href={link.url.startsWith("http") ? link.url : `https://${link.url}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-gray-400 hidden sm:flex hover:text-purple-300 self-start sm:self-auto"
