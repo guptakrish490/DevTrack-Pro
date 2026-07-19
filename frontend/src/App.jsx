@@ -7,6 +7,7 @@ import Goals from "./pages/Goals/Goals"
 import Projects from "./pages/Projects/Projects"
 import Tasks from "./pages/Tasks/Tasks"
 import Activity from "./pages/Activity/Activity"
+import ProfileSettings from './pages/Settings/profile/ProfileSettings';
 import ProtectedRoute from "./components/auth/ProtectedRoute"
 import Layout from "./components/layout/Layout"
 import { ToastContainer } from "react-toastify";
@@ -63,6 +64,15 @@ function App() {
           <ProtectedRoute>
             <Layout>
               <Activity />
+            </Layout>
+          </ProtectedRoute>
+        } />
+
+
+        <Route path="/settings/profile" element={
+          <ProtectedRoute>
+            <Layout>
+              <ProfileSettings />
             </Layout>
           </ProtectedRoute>
         } />
