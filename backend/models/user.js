@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     others: {
         workplace: { type: String },
         role: { type: String },
-        instituteName: { type: String, required: true },
+        instituteName: { type: String },
         skills: [{ type: String }]
     },
     bio: {

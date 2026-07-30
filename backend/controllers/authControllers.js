@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import User from '../models/user.js'
 
 export const registerUser = async (req, res) => {
-    const { name, username, email, password, leetcodeURL, githubURL, bio, avatarURL } = req.body
+    const { name, username, email, password, linkedinURL, githubURL, gender, location, bio, avatarURL } = req.body
 
 
     try {
@@ -22,14 +22,27 @@ export const registerUser = async (req, res) => {
         }
 
         const hash = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUNDS))
-        const newUser = new User({ name, username, email, password: hash, leetcodeURL, githubURL, bio, avatarURL })
+        const newUser = new User({
+            name,
+            username,
+            email,
+            password: hash,
+            links: [
+                { platform: "Github", url: githubURL },
+                { platform: "Linked In", url: linkedinURL }
+            ],
+            gender,
+            Location: location,
+            bio,
+            avatarURL
+        })
 
         await newUser.save();
 
         const token = jwt.sign(
             { id: newUser._id, username, email },
             process.env.JWT_SECRET,
-            { expiresIn: "2h" }
+            { expiresIn: "12h" }
         )
         res.cookie("token", token, {
             httpOnly: true,
@@ -65,7 +78,7 @@ export const loginUser = async (req, res) => {
         const token = jwt.sign(
             { id: user._id, username: user.username, email: user.email },
             process.env.JWT_SECRET,
-            { expiresIn: "2h" }
+            { expiresIn: "12h" }
         )
         res.cookie("token", token, {
             httpOnly: true,
