@@ -43,7 +43,6 @@ const Login = ({ setIsRegistered }) => {
         navigate("/dashboard");
       } catch (err) {
         setLoginErr(err?.response?.data?.message || err.message)
-        console.log(err?.response?.data?.message || err.message)
       }
     }
   };
@@ -73,11 +72,12 @@ const Login = ({ setIsRegistered }) => {
             onChange={(e) => {
               setEmail(e.target.value);
               setEmailError(validateEmail(e.target.value.trim()));
+              setLoginErr("")
             }}
             placeholder="alex@example.com"
-            type="email"
+            type="text"
             aria-invalid={!!emailError}
-            className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${emailError
+            className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${emailError || loginErr
               ? "border-red-500 focus:ring-red-500"
               : "border-neutral-100/15 focus:ring-violet-500"
               } focus:outline-none focus:ring-2`}
@@ -98,11 +98,12 @@ const Login = ({ setIsRegistered }) => {
               onChange={(e) => {
                 setPassword(e.target.value);
                 setPasswordError(validatePassword(e.target.value.trim()));
+                setLoginErr("");
               }}
               placeholder="••••••••••"
-              type={!visiblePassword ? "text" : "password"}
+              type={visiblePassword ? "text" : "password"}
               aria-invalid={!!passwordError}
-              className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${passwordError
+              className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${passwordError || loginErr
                 ? "border-red-500 focus:ring-red-500"
                 : "border-neutral-100/15 focus:ring-violet-500"
                 } focus:outline-none focus:ring-2`}
@@ -111,7 +112,7 @@ const Login = ({ setIsRegistered }) => {
               type="button"
               onClick={() => setVisiblePassword(!visiblePassword)}
               className="absolute right-3 px-1 rounded-md flex items-center focus:ring ring-amber-50">
-              <i className={`text-neutral-300/80 ${!visiblePassword ? "ri-eye-fill" : "ri-eye-off-fill"}`}></i>
+              <i className={`text-neutral-300/80 ${visiblePassword ? "ri-eye-fill" : "ri-eye-off-fill"}`}></i>
             </button>
           </div>
           {passwordError && (

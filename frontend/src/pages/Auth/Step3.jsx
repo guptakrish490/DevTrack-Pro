@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 
-const Step3 = ({ step, setStep, formProps3, handleSubmit, registerErr }) => {
+const Step3 = ({ step, setStep, formProps3, handleSubmit, registerErr, setRegisterErr }) => {
 
     const [bioError, setBioError] = useState("");
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Step1 = ({ step, setStep, formProps1 }) => {
+const Step1 = ({ step, setStep, formProps1, registerErr, setRegisterErr }) => {
 
     const [nameError, setNameError] = useState("");
     const [emailError, setEmailError] = useState("");
@@ -96,11 +96,12 @@ const Step1 = ({ step, setStep, formProps1 }) => {
                         onChange={(e) => {
                             formProps1.setEmail(e.target.value);
                             setEmailError(validateEmail(e.target.value));
+                            setRegisterErr("");
                         }}
                         placeholder="alex@example.com"
                         type="text"
                         aria-invalid={!!emailError}
-                        className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${emailError ? "border-red-500 focus:ring-red-500" : "border-neutral-100/15 focus:ring-violet-500"} focus:outline-none focus:ring-2`} />
+                        className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${emailError || registerErr ? "border-red-500 focus:ring-red-500" : "border-neutral-100/15 focus:ring-violet-500"} focus:outline-none focus:ring-2`} />
                     {emailError && (
                         <span className="text-red-500 text-xs">{emailError}</span>
                     )}
@@ -117,11 +118,12 @@ const Step1 = ({ step, setStep, formProps1 }) => {
                         onChange={(e) => {
                             formProps1.setUsername(e.target.value);
                             setUsernameError(validateUsername(e.target.value));
+                            setRegisterErr("");
                         }}
                         placeholder="alexmercer_487"
                         type="text"
                         aria-invalid={!!usernameError}
-                        className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${usernameError ? "border-red-500 focus:ring-red-500" : "border-neutral-100/15 focus:ring-violet-500"} focus:outline-none focus:ring-2`} />
+                        className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${usernameError || registerErr ? "border-red-500 focus:ring-red-500" : "border-neutral-100/15 focus:ring-violet-500"} focus:outline-none focus:ring-2`} />
                     {usernameError && (
                         <span className="text-red-500 text-xs">{usernameError}</span>
                     )}
@@ -141,14 +143,14 @@ const Step1 = ({ step, setStep, formProps1 }) => {
                                 setPasswordError(validatePassword(e.target.value));
                             }}
                             placeholder="••••••••••"
-                            type={`${!visiblePassword ? "text" : "password"}`}
+                            type={`${visiblePassword ? "text" : "password"}`}
                             aria-invalid={!!passwordError}
                             className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${passwordError ? "border-red-500 focus:ring-red-500" : "border-neutral-100/15 focus:ring-violet-500"} focus:outline-none focus:ring-2`} />
                         <button
                             type="button"
                             onClick={() => setVisiblePassword(!visiblePassword)}
                             className="absolute right-3 px-1 rounded-md flex items-center focus:ring ring-amber-50">
-                            <i className={`text-neutral-300/80 ${!visiblePassword ? "ri-eye-fill" : "ri-eye-off-fill"}`}></i>
+                            <i className={`text-neutral-300/80 ${visiblePassword ? "ri-eye-fill" : "ri-eye-off-fill"}`}></i>
                         </button>
                     </div>
                     {passwordError && (

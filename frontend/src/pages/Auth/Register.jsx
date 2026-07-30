@@ -46,18 +46,16 @@ const Register = ({ setIsRegistered }) => {
         },
         { withCredentials: true }
       )
-      console.log(res.data)
       navigate("/dashboard")
 
     } catch (err) {
       setRegisterErr(err?.response?.data?.message || err.message)
-      console.log(err.response?.data || err.message)
     }
   }
 
 
   return (
-    <div className="w-full h-full min-h-scren rounded-xl text-white font-poppins flex flex-col p-7 justify-center gap-4 transition-all">
+    <div className="w-full h-full min-h-scren rounded-xl pt-14 text-white font-poppins flex flex-col p-7 justify-start gap-4 transition-all">
 
       <div className="flex w-full gap-1 h-1">
         <div className={`w-full h-full rounded-sm transition-colors duration-500 ${step >= 1 ? "bg-purple-500/70" : "bg-white/20"}`}></div>
@@ -81,7 +79,7 @@ const Register = ({ setIsRegistered }) => {
 
       {step === 1 && (
         <div className="animate-scaleIn">
-          <Step1 formProps1={formProps1} step={step} setStep={setStep} />
+          <Step1 formProps1={formProps1} step={step} setStep={setStep} registerErr={registerErr} setRegisterErr={setRegisterErr} />
         </div>
       )}
 
@@ -93,7 +91,7 @@ const Register = ({ setIsRegistered }) => {
 
       {step === 3 && (
         <div className="animate-fadeIn">
-          <Step3 registerErr={registerErr} handleSubmit={handleSubmit} formProps3={formProps3} step={step} setStep={setStep} />
+          <Step3 registerErr={registerErr} handleSubmit={handleSubmit} formProps3={formProps3} step={step} setStep={setStep} registerErr={registerErr} setRegisterErr={setRegisterErr} />
         </div>
       )}
 
