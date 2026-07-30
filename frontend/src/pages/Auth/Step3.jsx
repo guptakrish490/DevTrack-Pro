@@ -1,61 +1,122 @@
 import axios from 'axios'
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 
-const Step3 = ({ formData, setFormData, step, setStep }) => {
+const Step3 = ({ step, setStep, formProps3, handleSubmit, registerErr }) => {
 
-    const navigate = useNavigate()
+    const [bioError, setBioError] = useState("");
 
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setFormData({ ...formData, [name]: value })
-    }
+    const validateBio = (value) => {
+        if (!value) return "Bio is required";
+        if (value.length < 30) return "Bio must be at least 30 characters";
+        if (value.length > 500) return "Bio must be at most 500 characters";
+        return "";
+    };
 
-    const handlePrev = (e) => {
-        e.preventDefault()
-        setStep(step - 1)
-    }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, formData, { withCredentials: true })
-            const token = res.data.token
-            navigate('/dashboard')
+    const onSubmit = (e) => {
+        e.preventDefault();
 
+        const bErr = validateBio(formProps3.bio);
+        setBioError(bErr);
+
+        if (!bErr) {
+            handleSubmit(e);
         }
-        catch (err) {
-            console.error("Registration failed:", err.response?.data || err.message)
-        }
-
-    }
+    };
 
     return (
-        <div className="flex flex-col border-2 m-1 p-4 rounded-lg bg-zinc-300 border-gray-500">
-            <h2 className='font-semibold'>Step {step} of 3</h2>
+        <form
+            onSubmit={(e) => onSubmit(e)}
+            role="dialog"
+            aria-modal="true"
+            className="w-full h-auto rounded-xl text-white font-poppins flex flex-col  justify-center gap-5"
+        >
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5 p-8">
-                <input
-                    onChange={handleChange}
-                    name="avatarURL"
-                    value={formData.avatarURL}
-                    className="border-zinc-800 outline-none placeholder:text-black font-medium border-2 rounded px-5 py-2 text-black"
-                    type="text"
-                    placeholder="Enter Avatar URL" />
+            <div className="flex flex-col w-full gap-3 py-3">
 
-                <textarea
-                    onChange={handleChange}
-                    name="bio"
-                    value={formData.bio}
-                    className="border-zinc-800 outline-none placeholder:text-black font-medium border-2 rounded px-5 py-2 text-black"
-                    type="text"
-                    placeholder="Enter your Bio" />
+                {/* Gender */}
+                <div className="flex flex-col gap-1">
+                    <label className="text-[13px] text-purple-100/50 font-open-sans font-medium">
+                        GENDER
+                    </label>
+                    <select
+                        value={formProps3.gender}
+                        onChange={(e) => formProps3.setGender(e.target.value)}
+                        name="gender"
+                        className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border border-neutral-100/15 focus:ring-violet-500 focus:outline-none focus:ring-2`}>
+                        <option value="" disabled>Select gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    {/* {emailError && (
+                        <span className="text-red-500 text-xs">{emailError}</span>
+                    )} */}
+                </div>
 
+                {/* Location */}
+                <div className="flex flex-col gap-1">
+                    <label className="text-[13px] text-purple-100/50 font-open-sans font-medium">
+                        LOCATION
+                    </label>
+                    <input
+                        value={formProps3.location}
+                        onChange={(e) => {
+                            formProps3.setLocation(e.target.value);
+                            // setEmailError(validateEmail(e.target.value));
+                        }}
+                        placeholder="City, Country"
+                        type="text"
+                        // aria-invalid={!!emailError}
+                        className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border border-neutral-100/15 focus:ring-violet-500 focus:outline-none focus:ring-2`}
+                    />
+                    {/* {emailError && (
+                        <span className="text-red-500 text-xs">{emailError}</span>
+                    )} */}
+                </div>
 
-                <button onClick={handlePrev} className="w-full py-2 bg-amber-300 rounded-lg mt-4 self-center">Previous</button>
-                <button className="w-full py-2 bg-amber-300 rounded-lg mt-4 self-center">Submit</button>
-            </form>
+                {/* Bio */}
+                <div className="flex flex-col gap-1">
+                    <label className="text-[13px] text-purple-100/50 font-open-sans font-medium">
+                        BIO
+                        <span title="required" className="text-red-500"> *</span>
+                    </label>
+                    <textarea
+                        value={formProps3.bio}
+                        onChange={(e) => {
+                            formProps3.setBio(e.target.value);
+                            setBioError(validateBio(e.target.value));
+                        }}
+                        placeholder="Tell us about yourself, your interests, and what you're building..."
+                        type="text"
+                        aria-invalid={!!bioError}
+                        className={`p-3 w-full h-20 rounded-xl text-xs bg-[#131318] border ${bioError ? "border-red-500 focus:ring-red-500" : "border-neutral-100/15 focus:ring-violet-500"} focus:outline-none focus:ring-2`} />
+                    {bioError && (
+                        <span className="text-red-500 text-xs">{bioError}</span>
+                    )}
+                </div>
+            </div>
 
-        </div>
+            {registerErr && (
+                <span className="text-red-500 text-xs capitalize">{registerErr}</span>
+            )}
+
+            <div className="flex items-center gap-4 justify-between">
+                <button
+                    type="button"
+                    onClick={() => setStep(2)}
+                    className="w-1/4 py-2 text-sm text-neutral-300/50 rounded-xl flex items-center gap-1 justify-center bg-[#17171e] border border-neutral-100/15 transition-colors">
+                    <span>Back</span>
+                    <i className="ri-arrow-left-long-line"></i>
+                </button>
+                <button
+                    className="w-3/4 py-2 text-sm rounded-xl font-semibold flex items-center gap-1 justify-center bg-violet-600 hover:bg-violet-700 transition-colors">
+                    <span>Create Account</span>
+                </button>
+
+            </div>
+        </form>
     )
 }
 
