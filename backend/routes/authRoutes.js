@@ -1,20 +1,16 @@
 import express from 'express'
-import { loginUser, registerUser } from '../controllers/authControllers.js'
-
+import { loginUser, logoutUser, registerUser } from '../controllers/authControllers.js'
 
 const router = express.Router()
 
-//recieves register data and saves it
-/* validation middleware
-duplicate user middleware
-jwt middleware */
+// for user registration route
 router.post('/register', registerUser)
 
-//recieves login data and fetches it
-/* validation middleware
-jwt token middleware */
+// for user login route
 router.post('/login', loginUser)
 
+// for logout user route
+router.post('/logout',logoutUser)
 
 
 export default router

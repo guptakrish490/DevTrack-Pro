@@ -2,24 +2,21 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import User from '../models/user.js'
 
+// controller for new user registration
 export const registerUser = async (req, res) => {
     const { name, username, email, password, linkedinURL, githubURL, gender, location, bio, avatarURL } = req.body
-
 
     try {
         const existingUser = await User.findOne({ $or: [{ email }, { username }] })
         if (existingUser) {
             if (existingUser.email === email) {
-                return res.status(400).json({ message: "Email already exist" })
+                return res.status(400).json({ message: "Account with this email already exists!" })
             }
             if (existingUser.username === username) {
-                return res.status(400).json({ message: "Username already exist" })
+                return res.status(400).json({ message: "Account with this username already exists!" })
             }
         }
 
-        if (password.length < 6 || username.length < 3) {
-            return res.status(400).json({ message: "credentials too small!!!" })
-        }
 
         const hash = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUNDS))
         const newUser = new User({
@@ -32,7 +29,7 @@ export const registerUser = async (req, res) => {
                 { platform: "Linked In", url: linkedinURL }
             ],
             gender,
-            Location: location,
+            location,
             bio,
             avatarURL
         })
@@ -42,15 +39,16 @@ export const registerUser = async (req, res) => {
         const token = jwt.sign(
             { id: newUser._id, username, email },
             process.env.JWT_SECRET,
-            { expiresIn: "12h" }
+            { expiresIn: "24h" }
         )
+
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
             sameSite: "strict"
         });
 
-        res.status(201).json({ message: "User created successfully" })
+        res.status(201).json({ message: "User created successfully!" })
     }
     catch (err) {
         if (err.code === 11000) {
@@ -60,6 +58,7 @@ export const registerUser = async (req, res) => {
     }
 }
 
+// controller for user login
 export const loginUser = async (req, res) => {
     const { email, password } = req.body
 
@@ -67,18 +66,18 @@ export const loginUser = async (req, res) => {
 
         const user = await User.findOne({ email })
         if (!user) {
-            return res.status(400).json({ message: "User not found" })
+            return res.status(400).json({ message: "User not found!" })
         }
 
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) {
-            return res.status(400).json({ message: "wrong password, please try again" })
+            return res.status(400).json({ message: "Wrong password, please try again!" })
         }
 
         const token = jwt.sign(
             { id: user._id, username: user.username, email: user.email },
             process.env.JWT_SECRET,
-            { expiresIn: "12h" }
+            { expiresIn: "24h" }
         )
         res.cookie("token", token, {
             httpOnly: true,
@@ -86,9 +85,25 @@ export const loginUser = async (req, res) => {
             sameSite: "strict"
         });
 
-        res.status(200).json({ message: "loggedIn successfully", token })
+        res.status(200).json({ message: "LoggedIn successfully" })
     }
     catch (err) {
         res.status(500).json({ error: err.message })
     }
+}
+
+//controller for user logout
+export const logoutUser = async (req, res) => {
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict"
+        });
+        res.status(200).json({message:"Logged out successfully!"});
+    }
+    catch(err){
+        res.status(500).json({error: err.message});
+    }
+    
 }
