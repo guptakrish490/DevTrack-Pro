@@ -15,12 +15,12 @@ const Dashboard = () => {
 
   const [data, setData] = useState(null)
 
+  const fetchDashboard = async () => {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/dashboard`, { withCredentials: true })
+    setData(res.data)
+  }
+  
   useEffect(() => {
-    const fetchDashboard = async () => {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/dashboard`, { withCredentials: true })
-      setData(res.data)
-    }
-
     fetchDashboard()
   }, [])
 
@@ -60,7 +60,7 @@ const Dashboard = () => {
       {/* upcoming tasks and recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full my-4 mt-6">
         <div className="lg:col-span-1">
-          <UpcomingTasks data={data} />
+          <UpcomingTasks data={data} fetchDashboard={fetchDashboard} />
         </div>
         <div className="lg:col-span-1">
           <RecentActivity data={data} />

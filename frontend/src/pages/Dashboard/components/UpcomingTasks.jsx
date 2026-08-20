@@ -1,12 +1,33 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect } from 'react'
 
-const UpcomingTasks = ({ data }) => {
+const UpcomingTasks = ({ data, fetchDashboard }) => {
+
+    const handleChange = async (task) => {
+        try {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${task._id}`,
+                {
+                    status: "Completed"
+                },
+                { withCredentials: true }
+            )
+        }
+        catch (err) {
+            console.log(err.response?.data || err.message)
+        }
+    }
+
+    useEffect(() => {
+        fetchDashboard();
+    }, [handleChange])
+
+
     return (
 
-        <div className="text-Manrope w-full h-64 flex flex-col p-3 rounded-2xl my-4 bg-[#111118] border-2 border-white/15 ">
-            <h3 className="text-xl mt-2 font-Manrope font-extrabold px-3 my-2">Upcoming Tasks</h3>
+        <div className="font-poppins w-full h-64 flex flex-col p-3 rounded-2xl my-4 bg-[#111118] border-2 border-white/15 ">
+            <h3 className="mt-2 text-xl font-semibold font-poppins px-3 my-2">Upcoming Tasks</h3>
 
-            {data.tasks.length === 0 ?
+            {data.tasks.filter(task => task.status !== "Completed").length === 0 ?
                 (
                     <div className="w-full h-full flex justify-center items-center -translate-y-3">
                         <em className="text-gray-300">No upcoming tasks yet...</em>
@@ -20,7 +41,9 @@ const UpcomingTasks = ({ data }) => {
                         {data.tasks.map((task) => task.status !== "Completed" && (
                             <div className='w-full h-auto px-4 py-2 flex items-center justify-between gap-3 border-b border-white/10' key={task._id}>
                                 <div className='flex items-center gap-2'>
-                                    <input className='w-4 h-4 border-2 border-gray-400 rounded-full appearance-none checked:border-3 checked:bg-[#3f4da3] checked:border-blue-500' type="checkbox" />
+                                    <input
+                                        onChange={() => handleChange(task)}
+                                        className='w-4 h-4 border-2 border-gray-400 rounded-full appearance-none checked:border-3 checked:bg-[#3f4da3] checked:border-blue-500' type="checkbox" />
                                     <div className='flex flex-col'>
                                         <p className='text-sm'>{task.title}</p>
                                         <span className='text-xs text-gray-400'>
@@ -29,7 +52,7 @@ const UpcomingTasks = ({ data }) => {
                                     </div>
                                 </div>
                                 <div className='flex items-center gap-3'>
-                                    <span className={`text-xs px-2 py-0.5 flex items-center rounded-full text-center border ${task.priority === "High" ? "text-red-500 bg-red-500/15" : task.priority === "Medium" ? "text-amber-500 bg-amber-600/15" : "text-green-500 bg-green-500/15"}`} >
+                                    <span className={`text-[11px] px-2 py-0.5 flex items-center rounded-full text-center ${task.priority === "High" ? "text-red-500 bg-red-500/15" : task.priority === "Medium" ? "text-amber-500 bg-amber-600/15" : "text-green-500 bg-green-500/15"}`} >
                                         <span>{task.priority}</span>
                                     </span>
                                     <span className='text-xs text-gray-400'>

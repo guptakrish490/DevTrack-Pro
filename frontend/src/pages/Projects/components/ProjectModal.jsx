@@ -115,13 +115,13 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
       else if (mode === "edit") {
         const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/projects/${projectToEdit._id}`,
           {
-            newTitle: title,
-            newDescription: description,
-            newTechStack: techStack,
-            newRepoURL: repoURL,
-            newLiveURL: liveURL,
-            newStartDate: startDate,
-            newEndDate: endDate,
+            title,
+            description,
+            startDate,
+            endDate,
+            repoURL,
+            techStack,
+            liveURL
           },
           { withCredentials: true }
         )

@@ -12,11 +12,11 @@ const RadialChart = ({ taskCounts }) => {
   const renderLegend = (props) => {
     const { payload } = props;
     return (
-      <ul className="text-sm text-white/80 flex w-full justify-center lg:flex-col lg:items-start space-y-1">
+      <ul className="text-sm text-white/80 flex w-full sm:justify-between flex-col sm:flex-row items-start sm:items-center space-y-1">
         {payload.map((entry, index) => (
           <li key={`item-${index}`} className="flex lg:justify-start justify-center items-center gap-2 w-full px-4">
             <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }}></span>
-            <span className="text-sm">{entry.value}: {data[index].value}</span>
+            <span className="text-xs">{entry.value}: {data[index].value}</span>
           </li>
         ))}
       </ul>
@@ -24,7 +24,7 @@ const RadialChart = ({ taskCounts }) => {
   };
 
   return (
-    <div className="w-full h-full flex">
+    <div className="w-100 h-full flex font-poppins">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie

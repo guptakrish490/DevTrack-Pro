@@ -1,5 +1,4 @@
 import axios from "axios";
-import CreateButton from "../../../components/ui/CreateButton.jsx"
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -71,10 +70,10 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
       else if (mode === "edit") {
         const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/goals/${initialData._id}`,
           {
-            newTitle: title,
-            newDescription: description,
-            newStartDate: startDate,
-            newEndDate: endDate
+            title,
+            description,
+            startDate,
+            endDate
           },
           { withCredentials: true })
 

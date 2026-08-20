@@ -26,7 +26,7 @@ const GoalCard = ({ goal, fetchGoals, setDeleteModalOpen, setGoalToDelete, handl
 }, []);
 
   return (
-    <div className='font-open-sans w-full h-auto p-4 sm:p-5 border rounded-3xl border-white/20 hover:border-purple-800/50 bg-[#18181f]'>
+    <div className='capitalize font-open-sans w-full h-auto p-4 sm:p-5 border rounded-3xl border-white/20 hover:border-purple-800/50 bg-[#18181f]'>
 
       <div className='flex justify-between sm:items-center flex-col sm:flex-row'>
 

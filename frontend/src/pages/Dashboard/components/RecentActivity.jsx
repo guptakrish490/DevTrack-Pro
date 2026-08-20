@@ -1,7 +1,7 @@
 const RecentActivity = ({ data }) => {
     return (
-        <div className="text-Manrope w-full h-64 flex flex-col p-3 rounded-2xl my-4 bg-[#111118] border-2 border-white/15 ">
-            <h3 className="text-xl mt-2 font-Manrope font-extrabold px-3 my-2">Recent Activity</h3>
+        <div className="font-poppins w-full h-64 flex flex-col p-3 rounded-2xl my-4 bg-[#111118] border-2 border-white/15 ">
+            <h3 className="text-xl font-semibold font-poppins mt-2 px-3 my-3">Recent Activity</h3>
 
             {data.activities.length === 0 ?
                 (<div className="w-full h-full flex justify-center items-center -translate-y-3">

@@ -1,5 +1,3 @@
-import React from "react";
-
 const ProductivityOverview = ({ userData }) => {
     const calcPercent = (completed, total) =>
         total > 0 ? Math.round((completed / total) * 100) : 0;

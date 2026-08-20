@@ -63,6 +63,7 @@ const ProfileSettings = () => {
             )
 
             setProfileData(res.data);
+            
 
         }
         catch (err) {

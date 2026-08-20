@@ -1,6 +1,6 @@
 const StatsCards = ({ data }) => {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 my-3 mt-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 my-3 mt-7 font-poppins">
             
             <div className="bg-[#111118] px-5 pb-3 p-1 border border-white/20 rounded-2xl">
                 <div className="flex items-center pt-2 justify-between">

@@ -15,13 +15,13 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
     }, [task])
 
     // update status/priority directly from select dropdown
-    const handleChange = async (task, newStatus, newPriority) => {
+    const handleChange = async (task, status, priority) => {
         try {
             await axios.put(
                 `${import.meta.env.VITE_API_URL}/api/tasks/${task._id}`,
                 {
-                    newStatus: newStatus || task.status,
-                    newPriority: newPriority || task.priority
+                    status: status || task.status,
+                    priority: priority || task.priority
                 },
                 { withCredentials: true }
             );
@@ -38,7 +38,7 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
             <div className="flex flex-col">
                 <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1 cursor-pointer">
-                        <h3 title={task.title} className="md:text-lg text-sm font-semibold truncate max-w-30 sm:max-w-60 md:max-w-75 overflow-hidden whitespace-nowrap">{task.title}&nbsp;</h3>
+                        <h3 title={task.title} className="capitalize md:text-lg text-sm font-semibold truncate max-w-30 sm:max-w-60 md:max-w-75 overflow-hidden whitespace-nowrap">{task.title}&nbsp;</h3>
                         <i
                             title="Expand"
                             onClick={() => setExpand(!expand)}

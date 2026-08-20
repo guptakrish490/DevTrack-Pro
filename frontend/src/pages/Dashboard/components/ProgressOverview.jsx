@@ -5,9 +5,9 @@ const ProgressOverview = ({ data }) => {
 
     return (
 
-        <div className="h-full p-3 my-3 rounded-2xl bg-[#111118] text-display border-2 border-white/15">
+        <div className="h-full p-3 px-0.5 sm:px-3 my-3 font-poppins rounded-2xl bg-[#111118] border-2 border-white/15">
             <div className='flex items-center justify-between px-4'>
-                <h3 className="text-xl mt-2 font-Manrope font-extrabold">Progress Overview</h3>
+                <h3 className="mt-2 text-xl font-semibold font-poppins">Progress Overview</h3>
             </div>
 
             {data.goals.length === 0 ?

@@ -10,11 +10,11 @@ const ProjectCard = ({ project, setProjectToDelete, handleDelete, handleEdit, fe
   const [status, setStatus] = useState(project.status)
 
   // change project-status functionality
-  const changeStatus = async (project, newStatus) => {
+  const changeStatus = async (project, status) => {
     try {
       await axios.put(
         `${import.meta.env.VITE_API_URL}/api/projects/${project._id}`,
-        { newStatus },
+        { status },
         { withCredentials: true }
       );
       await fetchProjects();
@@ -28,7 +28,7 @@ const ProjectCard = ({ project, setProjectToDelete, handleDelete, handleEdit, fe
     <div className="h-auto rounded-2xl flex flex-col justify-between border border-white/20 p-1 bg-[#18181f] font-roboto">
 
       <div className="w-full flex flex-wrap justify-between items-center px-5 py-4">
-        <h1 className="sm:text-xl font-semibold">{project.title.charAt(0).toUpperCase() + project.title.slice(1)}</h1>
+        <h1 className="capitalize sm:text-xl font-semibold">{project.title.charAt(0).toUpperCase() + project.title.slice(1)}</h1>
         <div className="flex items-center gap-4 text-[15px]">
           <select
             value={status}
@@ -53,7 +53,7 @@ const ProjectCard = ({ project, setProjectToDelete, handleDelete, handleEdit, fe
         </div>
         <div className="text-xs flex flex-wrap gap-3 text-[#85868c]">
           {project.techStack.map((tech) => (
-            <span key={tech} className="px-2 py-1 rounded-full border border-[#85868c] bg-[#444850]/40">{tech.charAt(0).toUpperCase() + tech.slice(1)}</span>
+            <span key={tech} className="capitalize px-2 py-1 rounded-full border border-[#85868c] bg-[#444850]/40">{tech.charAt(0).toUpperCase() + tech.slice(1)}</span>
           ))}
         </div>
 
@@ -83,7 +83,7 @@ const ProjectCard = ({ project, setProjectToDelete, handleDelete, handleEdit, fe
       <div className="w-full flex justify-between px-5 py-3">
 
         <div>
-          <span className="text-gray-400 text-xs">last updated on {
+          <span className="text-gray-400 text-xs capitalize">last updated on {
             new Intl.DateTimeFormat("en-GB", {
               day: "2-digit",
               month: "short",

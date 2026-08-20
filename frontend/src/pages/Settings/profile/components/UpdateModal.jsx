@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
 
 const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData }) => {
 
@@ -64,7 +63,7 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                     name: formData?.name,
                     bio: formData?.bio,
                     gender: formData?.gender,
-                    Location: formData?.location,
+                    location: formData?.location,
                     username: formData?.username,
                     email: formData?.email,
                     others: {
@@ -201,32 +200,31 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                                                     :
 
                                                     // input form for skills edit
-                                                    mode === "skills" ?
-                                                        (
-                                                            <>
-                                                                <div className="flex flex-wrap gap-2 pb-2">
-                                                                    {formData?.skillSet?.map(s => (
-                                                                        <span key={s} className="text-white/80 w-fit text-sm py-0.5 px-2 text-center flex items-center border rounded-full border-white/60" key={mode}>
-                                                                            {s}&nbsp;
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() => removeSkill(s)}
-                                                                                className="ml-1 text-gray-300 font-extralight hover:text-red-400">
-                                                                                ✕
-                                                                            </button>
-                                                                        </span>
-                                                                    ))}
+                                                    mode === "skills" ? (
+                                                        <>
+                                                            <div className="flex flex-wrap gap-2 pb-2">
+                                                                {formData?.skillSet?.map(s => (
+                                                                    <span key={s} className="capitalize text-white/80 w-fit text-sm py-0.5 px-2 text-center flex items-center border rounded-full border-white/60">
+                                                                        {s}&nbsp;
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => removeSkill(s)}
+                                                                            className="ml-1 text-gray-300 font-extralight hover:text-red-400">
+                                                                            ✕
+                                                                        </button>
+                                                                    </span>
+                                                                ))}
 
-                                                                </div>
-                                                                <input
-                                                                    value={formData?.skillInput}
-                                                                    onKeyDown={handleKeyDown}
-                                                                    onChange={(e) => formData?.setSkillInput(e.target.value)}
-                                                                    placeholder={`Enter ${modalConfig[mode]?.title}`}
-                                                                    type="text"
-                                                                    className="w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
-                                                            </>
-                                                        )
+                                                            </div>
+                                                            <input
+                                                                value={formData?.skillInput}
+                                                                onKeyDown={handleKeyDown}
+                                                                onChange={(e) => formData?.setSkillInput(e.target.value)}
+                                                                placeholder={`Enter ${modalConfig[mode]?.title}`}
+                                                                type="text"
+                                                                className="w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
+                                                        </>
+                                                    )
 
                                                         :
 

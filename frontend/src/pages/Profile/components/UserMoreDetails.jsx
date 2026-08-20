@@ -1,5 +1,3 @@
-import React from 'react'
-
 const UserMoreDetails = ({ userData }) => {
 
     const others = userData?.others || {};

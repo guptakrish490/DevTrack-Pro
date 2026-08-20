@@ -76,13 +76,13 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
       else if (mode === "edit") {
         await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${taskToEdit._id}`,
           {
-            newTitle: title,
-            newDescription: description,
-            newPriority: priority,
-            newStartDate: startDate,
-            newCompletedAt: completedAt,
-            newDueDate: dueDate,
-            newRelatedProject: relatedProject
+            title,
+            description,
+            priority,
+            startDate,
+            completedAt,
+            dueDate,
+            relatedProject
           },
           { withCredentials: true }
         )
