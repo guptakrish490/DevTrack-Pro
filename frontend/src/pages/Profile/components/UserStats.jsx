@@ -9,7 +9,7 @@ const ProductivityOverview = ({ userData }) => {
     const taskPercent = calcPercent(userData?.completedTaskCount, userData?.taskCount);
 
     return (
-        <div className="w-full flex flex-col gap-6 p-6 border border-neutral-700/40 rounded-2xl bg-linear-to-br from-[#111118] to-[#1a1a22] shadow-md my-7 transition hover:shadow-purple-500/10">
+        <div className="capitalize w-full flex flex-col gap-6 p-6 border border-neutral-700/40 rounded-2xl bg-linear-to-br from-[#111118] to-[#1a1a22] shadow-md my-7 transition hover:shadow-purple-500/10">
             <h2 className="text-xl font-bold text-gray-200 mb-1">Productivity Overview</h2>
 
             {/* Goals */}

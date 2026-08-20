@@ -7,7 +7,7 @@ const UserMoreDetails = ({ userData }) => {
     if (!others) return null;
 
     return (
-        <div className="shadow-md transition hover:shadow-purple-500/10 w-full flex flex-col gap-4 p-6 border border-neutral-700/40 rounded-2xl bg-[#111118] my-7">
+        <div className="capitalize shadow-md transition hover:shadow-purple-500/10 w-full flex flex-col gap-4 p-6 border border-neutral-700/40 rounded-2xl bg-[#111118] my-7">
             <h2 className="text-xl font-bold text-gray-200 mb-1">Additional Details</h2>
 
             {/* Institute */}

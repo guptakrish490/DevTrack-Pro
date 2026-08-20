@@ -4,10 +4,13 @@ import UserExtras from "./components/UserExtras"
 import UserStats from "./components/UserStats"
 import axios from "axios"
 import UserMoreDetails from "./components/UserMoreDetails"
+import ConfirmLogoutModal from "./components/ConfirmLogoutModal"
 
 const Profile = () => {
 
   const [userData, setUserData] = useState(null)
+  const [logoutModal, setLogoutModal] = useState(false);
+
 
   const fetchUser = async () => {
     try {
@@ -22,14 +25,15 @@ const Profile = () => {
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchUser();
-  },[])
+  }, [])
 
   return (
     <>
       <UserDetails
-        userData={userData} />
+        userData={userData}
+        setLogoutModal={setLogoutModal} />
 
       <UserMoreDetails
         userData={userData} />
@@ -40,6 +44,9 @@ const Profile = () => {
       <UserExtras
         userData={userData} />
 
+      <ConfirmLogoutModal
+        logoutModal={logoutModal}
+        setLogoutModal={setLogoutModal} />
     </>
   )
 }

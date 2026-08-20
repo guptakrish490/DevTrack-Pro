@@ -28,7 +28,7 @@ const UserExtras = ({ userData }) => {
                         <div className="flex items-center gap-3">
                             <i className={`${iconClass} text-xl text-gray-300 px-2 py-1 bg-neutral-100/10 rounded-xl`} />
                             <div className="flex flex-col">
-                                <span className="text-sm font-semibold text-gray-200">
+                                <span className="capitalize text-sm font-semibold text-gray-200">
                                     {link.platform}
                                 </span>
                                 <a
