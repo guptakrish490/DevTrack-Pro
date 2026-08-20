@@ -42,4 +42,6 @@ const activitySchema = new mongoose.Schema({
 
 
 const Activity = mongoose.model('Activity', activitySchema)
+activitySchema.index({ user: 1, createdAt: -1 });
+
 export default Activity

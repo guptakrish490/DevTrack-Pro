@@ -34,4 +34,6 @@ const goalSchema = new mongoose.Schema({
 
 
 const Goal = mongoose.model('Goal', goalSchema)
+goalSchema.index({ user: 1, createdAt: -1 });
+
 export default Goal
