@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
         required: false,
         enum: ["Male", "Female", "Others"]
     },
-    Location: {
+    location: {
         type: String,
         required: false
     },
@@ -52,11 +52,16 @@ const userSchema = new mongoose.Schema({
     },
     currentStreak: {
         type: Number,
-        default: 0
+        default: 1
     },
     longestStreak: {
         type: Number,
-        default: 0
+        default: 1
+    },
+    lastActivity: {
+        type: Date,
+        required: false,
+        default: Date.now
     }
 
 }, { timestamps: true })

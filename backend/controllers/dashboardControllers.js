@@ -3,6 +3,7 @@ import Project from "../models/project.js"
 import Task from "../models/task.js"
 import Activity from "../models/activity.js"
 
+// controller to retrieve dashboard data
 export const getDashboardData = async (req, res) => {
     try {
         const user = req.user

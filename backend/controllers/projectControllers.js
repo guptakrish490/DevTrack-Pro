@@ -2,6 +2,7 @@ import Project from "../models/project.js"
 import { logActivity } from "../utils/logActivity.js"
 import { updateStreak } from "../utils/streakCount.js"
 
+// controller for project creation
 export const createProject = async (req, res) => {
     try {
         const user = req.user
@@ -19,17 +20,17 @@ export const createProject = async (req, res) => {
 
         await updateStreak(user._id)
 
-        res.status(201).json({ message: "new project created successfully" })
+        res.status(201).json({ message: "New Project created successfully" })
     }
     catch (err) {
         res.status(500).json({ error: err.message })
     }
 }
 
+// controller for project retrieval
 export const getProjects = async (req, res) => {
     try {
         const user = req.user
-
 
         const { q, status, techStack, sortBy } = req.query
 
@@ -63,23 +64,25 @@ export const getProjects = async (req, res) => {
     }
 }
 
+// controller for project updation
 export const updateProjects = async (req, res) => {
     try {
 
         const user = req.user
-        const { newTitle, newDescription, newTechStack, newRepoURL, newLiveURL, newStartDate, newEndDate, newStatus } = req.body
+        const { title, description, techStack, repoURL, liveURL, startDate, endDate, status } = req.body
 
         const project = await Project.findByIdAndUpdate(req.params.id,
             {
-                title: newTitle,
-                description: newDescription,
-                techStack:newTechStack,
-                repoURL: newRepoURL,
-                liveURL: newLiveURL,
-                startDate: newStartDate,
-                endDate: newEndDate,
-                status: newStatus
+                title,
+                description,
+                techStack,
+                repoURL,
+                liveURL,
+                startDate,
+                endDate,
+                status
             },
+
             { new: true }
         )
 
@@ -102,11 +105,12 @@ export const updateProjects = async (req, res) => {
     }
 }
 
+// controller for project deletion
 export const deleteProjects = async (req, res) => {
     try {
         await Project.findByIdAndDelete(req.params.id);
 
-        res.status(200).json({ message: "project deleted successfully" })
+        res.status(200).json({ message: "Project Deleted successfully" })
     }
     catch (err) {
         res.status(500).json({ error: err.message })

@@ -2,6 +2,7 @@ import Task from "../models/task.js"
 import { logActivity } from "../utils/logActivity.js"
 import { updateStreak } from "../utils/streakCount.js"
 
+// controller for task craetion
 export const createTasks = async (req, res) => {
     try {
         const user = req.user
@@ -37,6 +38,7 @@ export const createTasks = async (req, res) => {
     }
 }
 
+// controller for task retrieval
 export const readTasks = async (req, res) => {
     try {
         //user from verification middleware
@@ -71,22 +73,24 @@ export const readTasks = async (req, res) => {
     }
 }
 
+// controller for task updation
 export const updateTasks = async (req, res) => {
     try {
 
         const user = req.user
 
-        const { newTitle, newDescription, newRelatedProject, newPriority, newStatus, newStartDate, newCompletedAt, newDueDate } = req.body
+        const { title, description, relatedProject, priority, status, startDate, completedAt, dueDate } = req.body
         const task = await Task.findByIdAndUpdate(req.params.id, {
-            title: newTitle,
-            description: newDescription,
-            relatedProject: newRelatedProject,
-            priority: newPriority,
-            status: newStatus,
-            startDate: newStartDate,
-            completedAt: newCompletedAt,
-            dueDate: newDueDate
-        }, { new: true })
+            title,
+            description,
+            relatedProject,
+            priority,
+            status,
+            startDate,
+            completedAt,
+            dueDate
+        },
+        { new: true })
 
         if (task.status === "Completed") {
             await logActivity({
@@ -106,10 +110,11 @@ export const updateTasks = async (req, res) => {
     }
 }
 
+// controller for task deletion
 export const deleteTasks = async (req, res) => {
     try {
         await Task.findByIdAndDelete(req.params.id)
-        res.status(200).json({ message: "task deleted successfully" })
+        res.status(200).json({ message: "Task Deleted successfully" })
     }
     catch (err) {
         res.status(500).json({ error: err.message })

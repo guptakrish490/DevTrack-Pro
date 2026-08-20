@@ -14,7 +14,7 @@ const projectSchema = new mongoose.Schema({
     description: {
         type: String,
         required: true,
-        maxlength: 200
+        maxlength: 300
     },
     techStack: {
         type: [String],

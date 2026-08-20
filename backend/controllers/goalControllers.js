@@ -2,6 +2,7 @@ import Goal from "../models/goal.js"
 import { logActivity } from "../utils/logActivity.js"
 import { updateStreak } from "../utils/streakCount.js"
 
+// controller for goal creation
 export const createGoal = async (req, res) => {
 
     try {
@@ -20,7 +21,7 @@ export const createGoal = async (req, res) => {
 
         await updateStreak(user._id)
 
-        res.status(201).json({ message: "new goal created successfully" })
+        res.status(201).json({ message: "New Goal created successfully" })
 
     }
     catch (err) {
@@ -28,6 +29,7 @@ export const createGoal = async (req, res) => {
     }
 }
 
+// controller for goal retrieval
 export const getGoals = async (req, res) => {
     try {
         const user = req.user
@@ -56,18 +58,19 @@ export const getGoals = async (req, res) => {
     }
 }
 
+// controller for goal updation
 export const updateGoals = async (req, res) => {
     try {
 
         const user = req.user
-        const { newTitle, newDescription, newStartDate, newEndDate, isCompleted } = req.body
+        const { title, description, startDate, endDate, isCompleted } = req.body
 
         const goal = await Goal.findByIdAndUpdate(req.params.id,
             {
-                title: newTitle,
-                description: newDescription,
-                startDate: newStartDate,
-                endDate: newEndDate,
+                title,
+                description,
+                startDate,
+                endDate,
                 isCompleted
             },
             { new: true }
@@ -92,11 +95,12 @@ export const updateGoals = async (req, res) => {
     }
 }
 
+// controller for goal deletion
 export const deleteGoals = async (req, res) => {
     try {
         await Goal.findByIdAndDelete(req.params.id)
 
-        res.status(200).json({ message: "goal deleted successfully" })
+        res.status(200).json({ message: "Goal deleted successfully" })
     }
     catch (err) {
         res.status(500).json({ error: err.message })

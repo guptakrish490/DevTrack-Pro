@@ -6,6 +6,7 @@ import User from "../models/user.js";
 import { logActivity } from "../utils/logActivity.js";
 import { updateStreak } from "../utils/streakCount.js";
 
+// controller for profile retrieval
 export const getProfile = async (req, res) => {
     const user = req.user
     try {
@@ -35,7 +36,7 @@ export const getProfile = async (req, res) => {
             email: user.email,
             bio: user.bio,
             gender: user.gender,
-            location: user.Location,
+            location: user.location,
             links: user.links,
             others: user.others,
             avatarURL: user.avatarURL,
@@ -62,17 +63,18 @@ export const getProfile = async (req, res) => {
     }
 }
 
+// controller for profile updation
 export const updateProfile = async (req, res) => {
     try {
         const user = req.user
 
-        const { name, bio, gender, Location, username, email, others, links, avatarURL } = req.body
+        const { name, bio, gender, location, username, email, others, links, avatarURL } = req.body
 
         const updatedUser = await User.findByIdAndUpdate(user._id, {
             name,
             bio,
             gender,
-            Location,
+            location,
             username,
             email,
             others,
@@ -80,15 +82,16 @@ export const updateProfile = async (req, res) => {
             avatarURL
         }, { new: true })
 
+
         await logActivity({
             user: user._id,
             type: "profile_updated",
             title: `Updated Profile`,
         })
 
-        await updateStreak(user._id)
-
+      
         res.status(200).json(updatedUser)
+
     }
     catch (err) {
         res.status(500).json({ error: err.message })

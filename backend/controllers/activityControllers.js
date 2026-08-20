@@ -1,5 +1,6 @@
 import Activity from "../models/activity.js"
 
+// controller for activities retrieval
 export const getAllActivities = async (req, res) => {
     try {
         const user = req.user
@@ -27,12 +28,13 @@ export const getAllActivities = async (req, res) => {
     }
 }
 
+// controller for activities deletion
 export const deleteAllActivities = async (req, res) => {
     try {
         const user = req.user
 
         await Activity.deleteMany({ user: user._id })
-        res.status(200).json({ message: "Deleted activities successfully" })
+        res.status(200).json({ message: "Activities deleted successfully" })
     }
     catch (err) {
         res.status(500).json({ error: err.message })
