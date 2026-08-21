@@ -1,5 +1,5 @@
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../../../api/api.js";
 
 
 const ConfirmModal = ({ deleteModal, setDeleteModal, fetchActivities }) => {
@@ -9,9 +9,7 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, fetchActivities }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/activity`,
-                { withCredentials: true }
-            )
+            await api.delete("/api/activity")
 
             await fetchActivities();
             toast.success("Past activities deleted successfully!")

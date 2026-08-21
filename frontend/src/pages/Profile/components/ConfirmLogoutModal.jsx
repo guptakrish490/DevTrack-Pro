@@ -1,5 +1,5 @@
-import axios from "axios";
 import { NavLink } from "react-router-dom";
+import api from "../../../api/api.js";
 
 const ConfirmLogoutModal = ({logoutModal, setLogoutModal}) => {
 
@@ -7,10 +7,7 @@ const ConfirmLogoutModal = ({logoutModal, setLogoutModal}) => {
 
     const handleSubmit = async () => {
 
-        await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {},
-            { withCredentials: true }
-        )
-
+        await api.post(`/api/auth/logout`)
         setLogoutModal(false);
     }
 

@@ -1,6 +1,6 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
 import { NavLink } from 'react-router-dom'
+import api from "../../../api/api.js"
 
 const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
 
@@ -17,13 +17,11 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
     // update status/priority directly from select dropdown
     const handleChange = async (task, status, priority) => {
         try {
-            await axios.put(
-                `${import.meta.env.VITE_API_URL}/api/tasks/${task._id}`,
+            await api.put(`/api/tasks/${task._id}`,
                 {
                     status: status || task.status,
                     priority: priority || task.priority
-                },
-                { withCredentials: true }
+                }
             );
             await fetchTasks();
         } catch (err) {

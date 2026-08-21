@@ -1,4 +1,3 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
 
 import Welcome from "./components/Welcome"
@@ -8,6 +7,7 @@ import UpcomingTasks from "./components/UpcomingTasks"
 import RecentActivity from "./components/RecentActivity"
 import ProjectsCards from "./components/ProjectsCards"
 import TaskStats from "./components/TaskStats"
+import api from "../../api/api.js"
 
 
 
@@ -16,10 +16,10 @@ const Dashboard = () => {
   const [data, setData] = useState(null)
 
   const fetchDashboard = async () => {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/dashboard`, { withCredentials: true })
+    const res = await api.get("/dashboard");
     setData(res.data)
   }
-  
+
   useEffect(() => {
     fetchDashboard()
   }, [])

@@ -1,5 +1,5 @@
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../../../api/api.js";
 
 
 const ConfirmModal = ({ deleteModal, setDeleteModal, taskToDelete, fetchTasks }) => {
@@ -12,10 +12,7 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, taskToDelete, fetchTasks })
     e.preventDefault();
 
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/tasks/${taskToDelete._id}`, {
-        withCredentials: true
-      }
-      )
+      await api.delete(`/api/tasks/${taskToDelete._id}`)
 
       await fetchTasks()
       toast.success("Task deleted successfully!")

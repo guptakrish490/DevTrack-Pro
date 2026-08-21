@@ -1,4 +1,3 @@
-import axios from "axios"
 import ProfileExperience from "./components/ProfileExperience"
 import ProfileGeneral from "./components/ProfileGeneral"
 import ProfileImage from "./components/ProfileImage.jsx"
@@ -8,6 +7,7 @@ import ProfileSocial from "./components/ProfileSocial.jsx"
 import UpdateModal from "./components/UpdateModal.jsx"
 import SocialProfileModal from "./components/SocialProfileModal.jsx"
 import ConfirmRemoveModal from "./components/ConfirmRemoveModal.jsx"
+import api from "../../../api/api.js"
 
 const ProfileSettings = () => {
 
@@ -58,7 +58,7 @@ const ProfileSettings = () => {
     // fetches profile from backend
     const getProfileDetails = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/profile`,
+            const res = await api.get(`/profile`,
                 { withCredentials: true }
             )
 

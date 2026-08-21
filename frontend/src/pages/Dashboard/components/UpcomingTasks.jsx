@@ -1,15 +1,14 @@
-import axios from 'axios'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
+import api from '../../../api/api.js'
 
 const UpcomingTasks = ({ data, fetchDashboard }) => {
 
     const handleChange = async (task) => {
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${task._id}`,
+            await api.put(`/api/tasks/${task._id}`,
                 {
                     status: "Completed"
-                },
-                { withCredentials: true }
+                }
             )
         }
         catch (err) {

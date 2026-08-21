@@ -1,10 +1,9 @@
 import GoalStats from "./components/GoalStats.jsx"
 import GoalContainer from "./components/GoalContainer.jsx"
-import GoalCard from "./components/GoalCard.jsx"
 import GoalModal from "./components/GoalModal.jsx"
 import ConfirmModal from "./components/ConfirmModal.jsx"
 import { useEffect, useState } from "react"
-import axios from "axios"
+import api from "../../api/api.js"
 
 const Goals = () => {
 
@@ -20,12 +19,11 @@ const Goals = () => {
 
   // render goals without page reload
   const fetchGoals = async () => {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/goals`, {
-      withCredentials: true,
+    const res = await api.get("/api/goals", {
       params: params
     })
+
     setGoals(res.data)
-    console.log(res.data)
   }
 
   // re-render on search,sort,filter
@@ -57,7 +55,7 @@ const Goals = () => {
   const handleGoalCompletion = async (goal) => {
     try {
       const updated = !goal.isCompleted;
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/goals/${goal._id}`, {
+      await api.put(`/api/goals/${goal._id}`, {
         ...goal,
         isCompleted: updated
       }, { withCredentials: true });

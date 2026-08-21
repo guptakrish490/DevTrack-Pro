@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import api from "../../../api/api.js";
 
 const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
 
@@ -50,14 +50,14 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
     e.preventDefault()
     try {
       if (mode === "create") {
-        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/goals`,
+        const res = await api.post(`/api/goals`,
           {
             title,
             description,
             startDate,
             endDate
-          },
-          { withCredentials: true })
+          }
+        )
 
         toast.success("Goal created successfully!", {
           autoClose: 2000,
@@ -68,14 +68,13 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
 
       }
       else if (mode === "edit") {
-        const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/goals/${initialData._id}`,
+        const res = await api.put(`/api/goals/${initialData._id}`,
           {
             title,
             description,
             startDate,
             endDate
-          },
-          { withCredentials: true })
+          })
 
         toast.info("Goal updated!", {
           autoClose: 3000,

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import api from "../../../api/api.js";
 
 
 const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) => {
@@ -92,7 +93,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
 
     try {
       if (mode === "create") {
-        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/projects`,
+        await api.post(`/api/projects`,
           {
             title,
             description,
@@ -101,8 +102,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
             repoURL,
             techStack,
             liveURL,
-          },
-          { withCredentials: true }
+          }
         )
 
         toast.success("Project created successfully!", {
@@ -113,7 +113,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
       }
 
       else if (mode === "edit") {
-        const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/projects/${projectToEdit._id}`,
+        await api.put(`/api/projects/${projectToEdit._id}`,
           {
             title,
             description,
@@ -122,8 +122,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
             repoURL,
             techStack,
             liveURL
-          },
-          { withCredentials: true }
+          }
         )
 
         toast.info("Project updated!", {

@@ -1,10 +1,10 @@
-import axios from "axios";
 import { useState } from "react";
 import { NavLink } from "react-router-dom"
+import api from "../../../api/api.js";
 
 
 
-const ProjectCard = ({ project, setProjectToDelete, handleDelete, handleEdit, fetchProjects }) => {
+const ProjectCard = ({ project, handleDelete, handleEdit, fetchProjects }) => {
 
   // project-status state
   const [status, setStatus] = useState(project.status)
@@ -12,10 +12,8 @@ const ProjectCard = ({ project, setProjectToDelete, handleDelete, handleEdit, fe
   // change project-status functionality
   const changeStatus = async (project, status) => {
     try {
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/projects/${project._id}`,
+      await api.put(`/api/projects/${project._id}`,
         { status },
-        { withCredentials: true }
       );
       await fetchProjects();
     } catch (err) {

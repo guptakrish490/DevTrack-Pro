@@ -2,9 +2,9 @@ import ProjectStats from "./components/ProjectStats.jsx"
 import ProjectContainer from "./components/ProjectContainer.jsx"
 
 import { useState, useEffect } from "react"
-import axios from "axios"
 import ProjectModal from "./components/ProjectModal.jsx"
 import ConfirmModal from "./components/ConfirmModal.jsx"
+import api from "../../api/api.js"
 
 const Projects = () => {
 
@@ -14,18 +14,16 @@ const Projects = () => {
   const [mode, setMode] = useState("create")
   const [projectToDelete, setProjectToDelete] = useState(null)
   const [deleteModal, setDeleteModal] = useState(false)
-  const [projectToEdit,setProjectToEdit]=useState(null)
+  const [projectToEdit, setProjectToEdit] = useState(null)
 
   //render projects without page reload
   const fetchProjects = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/projects`, {
-        withCredentials: true,
+      const res = await api.get(`/api/projects`, {
         params: params
       })
 
       setProjects(res.data)
-      console.log(res.data)
     }
     catch (err) {
       console.log(err)
@@ -50,7 +48,7 @@ const Projects = () => {
   }
 
   // edit functionality handler
-  const handleEdit=(project)=>{
+  const handleEdit = (project) => {
     setProjectToEdit(project)
     setMode("edit")
     setModal(true)

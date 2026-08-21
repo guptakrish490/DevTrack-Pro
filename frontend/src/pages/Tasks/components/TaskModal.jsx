@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import api from "../../../api/api.js";
 
 const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
 
@@ -35,10 +35,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/projects`,
-          { withCredentials: true }
-        );
+        const res = await api.get(`/api/projects`);
         setProjects(res.data);
       } catch (err) {
         console.error(err.response?.data || err.message);
@@ -54,7 +51,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
 
     try {
       if (mode === "create") {
-        await axios.post(`${import.meta.env.VITE_API_URL}/api/tasks`,
+        await api.post(`/api/tasks`,
           {
             title,
             description,
@@ -63,8 +60,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
             completedAt,
             dueDate,
             relatedProject
-          },
-          { withCredentials: true }
+          }
         )
 
         toast.success("Task created successfully!", {
@@ -74,7 +70,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
         });
       }
       else if (mode === "edit") {
-        await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${taskToEdit._id}`,
+        await api.put(`/api/tasks/${taskToEdit._id}`,
           {
             title,
             description,
@@ -83,8 +79,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
             completedAt,
             dueDate,
             relatedProject
-          },
-          { withCredentials: true }
+          }
         )
 
         toast.info("Task updated!", {

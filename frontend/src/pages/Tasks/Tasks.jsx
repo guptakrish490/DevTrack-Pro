@@ -1,9 +1,9 @@
-import axios from "axios"
 import TaskStats from "./components/TaskStats"
 import TaskContainer from "./components/TaskContainer"
 import ConfirmModal from "./components/ConfirmModal"
 import TaskModal from "./components/TaskModal"
 import { useState, useEffect } from "react"
+import api from "../../api/api.js"
 
 const Tasks = () => {
 
@@ -18,9 +18,8 @@ const Tasks = () => {
   // fetch tasks on call without page reload
   const fetchTasks = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/tasks`,
+      const res = await api.get(`/api/tasks`,
         {
-          withCredentials: true,
           params: params
         }
       )

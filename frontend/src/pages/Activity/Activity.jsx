@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import ActivityContainer from "./components/ActivityContainer"
 import ActivityQueries from "./components/ActivityQueries"
-import axios from "axios"
 import ConfirmModal from "./components/ConfirmModal"
+import api from "../../api/api.js"
 
 const Activity = () => {
 
@@ -13,10 +13,9 @@ const Activity = () => {
   // fetch activities from backend to frontend without manual reload
   const fetchActivities = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/activity`,
+      const res = await api.get("/api/activity",
         {
-          params: params,
-          withCredentials: true
+          params: params
         }
       )
       setActivities(res.data)

@@ -1,4 +1,3 @@
-import { NavLink } from "react-router-dom"
 import { calculateTimeProgress } from "../../../utils/goals/progress.js"
 
 const ProgressOverview = ({ data }) => {

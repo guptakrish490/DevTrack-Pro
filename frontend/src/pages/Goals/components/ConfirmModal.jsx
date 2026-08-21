@@ -1,5 +1,5 @@
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../../../api/api.js";
 
 const ConfirmModal = ({ deleteModal, setDeleteModalOpen, goalToDelete, fetchGoals }) => {
 
@@ -9,10 +9,7 @@ const ConfirmModal = ({ deleteModal, setDeleteModalOpen, goalToDelete, fetchGoal
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.delete(`
-          ${import.meta.env.VITE_API_URL}/api/goals/${goalToDelete._id}`,
-        { withCredentials: true }
-      )
+      await api.delete(`/api/goals/${goalToDelete._id}`)
 
       toast.success("Goal deleted successfully!")
       await fetchGoals()
@@ -49,7 +46,7 @@ const ConfirmModal = ({ deleteModal, setDeleteModalOpen, goalToDelete, fetchGoal
         <div className='w-full h-auto my-1 sm:my-3 flex items-center justify-center px-5 py-3 text-xs sm:text-sm text-gray-500'>
           <p>This will permanently delete this goal and all its data. This action cannot be undone.</p>
         </div>
-        
+
         <div className='px-5 py-3 w-full flex justify-between gap-4'>
 
           <button

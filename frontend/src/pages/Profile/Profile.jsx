@@ -2,9 +2,9 @@ import { useEffect, useState } from "react"
 import UserDetails from "./components/UserDetails"
 import UserExtras from "./components/UserExtras"
 import UserStats from "./components/UserStats"
-import axios from "axios"
 import UserMoreDetails from "./components/UserMoreDetails"
 import ConfirmLogoutModal from "./components/ConfirmLogoutModal"
+import api from "../../api/api.js"
 
 const Profile = () => {
 
@@ -14,10 +14,7 @@ const Profile = () => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/profile`,
-        { withCredentials: true }
-      )
-
+      const res = await api.get(`/profile`);
       setUserData(res.data);
     }
     catch (err) {
