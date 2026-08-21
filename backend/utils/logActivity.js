@@ -21,10 +21,6 @@ export const logActivity = async ({
             relatedTask
         });
 
-        await User.findByIdAndUpdate(user._id, {
-            lastActivity: Date.now()
-        }, { returnDocument: "after" })
-
         await updateStreak(user._id);
 
     }
