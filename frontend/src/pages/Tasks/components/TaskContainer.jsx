@@ -41,6 +41,7 @@ const TaskContainer = ({ tasks, params, setParams, handleCreate, handleEdit, fet
             tasks.map(task => (
               <TaskCard
                 key={task._id}
+                params={params}
                 task={task}
                 handleEdit={handleEdit}
                 fetchTasks={fetchTasks}

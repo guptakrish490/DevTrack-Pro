@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import api from "../../../api/api.js";
+import { useTasks } from "../../../hooks/useTasks.jsx";
 
 const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
 
@@ -16,9 +17,11 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
   const [startDate, setStartDate] = useState("")
   const [completedAt, setCompletedAt] = useState("")
   const [dueDate, setDueDate] = useState("")
-  const [relatedProject, setRelatedProject] = useState(null)
+  const [relatedProject, setRelatedProject] = useState("")
 
   const [errorMessage, setErrorMessage] = useState("")
+
+  const { createTask, updateTask } = useTasks();
 
   // prefill modal on edit form
   useEffect(() => {
@@ -54,31 +57,19 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
     e.preventDefault();
 
     try {
+      if (startDate && completedAt && startDate > completedAt) {
+        setErrorMessage("Start date must be less than end Date!")
+        return;
+      }
+
+      if (startDate && dueDate && startDate > dueDate) {
+        setErrorMessage("Due date can not be less than the start date!")
+        return;
+      }
+
       if (mode === "create") {
 
-        if (startDate && completedAt && startDate > completedAt) {
-          setErrorMessage("Start date must be less than end Date!")
-          return;
-        }
-
-        if (startDate && dueDate && startDate > dueDate) {
-          setErrorMessage("Due date can not be less than the start date!")
-          return;
-        }
-
-        await api.post(`/api/tasks`,
-          {
-            title,
-            description,
-            priority,
-            status,
-            startDate,
-            completedAt,
-            dueDate,
-            relatedProject
-          }
-        )
-
+        await createTask(title, description, priority, status, startDate, completedAt, dueDate, relatedProject)
         toast.success("Task created successfully!", {
           autoClose: 2000,
           className: "bg-[#111118] text-green-400 border border-green-600 rounded-lg",
@@ -87,60 +78,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
       }
       else if (mode === "edit") {
 
-        if (startDate && completedAt && startDate > completedAt) {
-          setErrorMessage("Start date must be less than end Date!")
-          return;
-        }
-
-        if (startDate && dueDate && startDate > dueDate) {
-          setErrorMessage("Due date can not be less than the start date!")
-          return;
-        }
-
-        if (taskToEdit.status !== "Completed" && status === "Completed") {
-          await api.put(`/api/tasks/${taskToEdit._id}`,
-            {
-              title,
-              description,
-              priority,
-              status,
-              startDate,
-              completedAt: Date.now(),
-              dueDate,
-              relatedProject
-            }
-          )
-        }
-        else if (taskToEdit.status === "Completed" && status !== "Completed") {
-          await api.put(`/api/tasks/${taskToEdit._id}`,
-            {
-              title,
-              description,
-              priority,
-              status,
-              startDate,
-              completedAt: null,
-              dueDate,
-              relatedProject
-            }
-          )
-        }
-        else {
-          await api.put(`/api/tasks/${taskToEdit._id}`,
-            {
-              title,
-              description,
-              priority,
-              status,
-              startDate,
-              completedAt,
-              dueDate,
-              relatedProject
-            }
-          )
-        }
-
-
+        await updateTask(taskToEdit, title, description, priority, status, startDate, completedAt, dueDate, relatedProject)
         toast.info("Task updated!", {
           autoClose: 3000,
           className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",

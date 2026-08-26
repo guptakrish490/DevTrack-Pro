@@ -24,7 +24,7 @@ const TaskQueries = ({ params, setParams }) => {
         priority: priority
       }
     )
-  }, [search, status, priority, sort, setParams])
+  }, [search, status, priority, sort])
 
   return (
     <div className="w-full h-auto flex flex-col gap-2">

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import { NavLink } from 'react-router-dom'
-import api from "../../../api/api.js"
+import { useTasks } from "../../../hooks/useTasks.jsx"
 
-const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
+const TaskCard = ({ task, params, handleEdit, fetchTasks, handleDelete }) => {
 
     const [status, setStatus] = useState(task.status)
     const [priority, setPriority] = useState(task.priority)
     const [expand, setExpand] = useState(false);
+
+    const {updatePriorityStatus}=useTasks();
 
     // set local task and priority states
     useEffect(() => {
@@ -17,26 +19,9 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
     // update status/priority directly from select dropdown
     const handleChange = async (task, status, priority) => {
         try {
-            if (status === "Completed") {
-                await api.put(`/api/tasks/${task._id}`,
-                    {
-                        status: status || task.status,
-                        priority: priority || task.priority,
-                        completedAt:Date.now()
-                    }
-                );
-            }
-            if (status !== "Completed") {
-                await api.put(`/api/tasks/${task._id}`,
-                    {
-                        status: status || task.status,
-                        priority: priority || task.priority,
-                        completedAt:null
-                    }
-                );
-            }
-
-            await fetchTasks();
+            
+            await updatePriorityStatus(task, status, priority)
+            await fetchTasks(params);
         } catch (err) {
             console.error(err.response?.data || err.message);
         }

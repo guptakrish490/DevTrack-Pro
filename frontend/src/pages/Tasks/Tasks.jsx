@@ -3,11 +3,10 @@ import TaskContainer from "./components/TaskContainer"
 import ConfirmModal from "./components/ConfirmModal"
 import TaskModal from "./components/TaskModal"
 import { useState, useEffect } from "react"
-import api from "../../api/api.js"
+import { useTasks } from "../../hooks/useTasks.jsx"
 
 const Tasks = () => {
 
-  const [tasks, setTasks] = useState([])
   const [params, setParams] = useState({});
   const [modal, setModal] = useState(false)
   const [mode, setMode] = useState("create")
@@ -15,24 +14,12 @@ const Tasks = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [taskToDelete, setTaskToDelete] = useState(null)
 
-  // fetch tasks on call without page reload
-  const fetchTasks = async () => {
-    try {
-      const res = await api.get(`/api/tasks`,
-        {
-          params: params
-        }
-      )
-      setTasks(res.data)
-    }
-    catch (err) {
-      console.log(err.response?.data || err.message)
-    }
-  }
+  const { tasks, fetchTasks } = useTasks();
+
 
   // re-render tasks when search, sort or filter queries are used
   useEffect(() => {
-    fetchTasks()
+    fetchTasks(params)
   }, [params])
 
   // create functionality handler
