@@ -9,12 +9,14 @@ const goalSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        maxlength: 100
+        maxlength: 200,
+        minlength:5
     },
     description: {
         type: String,
         required: true,
-        maxlength: 300
+        maxlength: 1000,
+        defualt:"No description..."
     },
     startDate: {
         type: Date,

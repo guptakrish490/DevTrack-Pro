@@ -47,11 +47,12 @@ const Dashboard = () => {
       <StatsCards data={data} />
 
       {/* goals progress and tasks chart */}
-      <div className="w-full h-auto my-4 rounded-md p-1 grid lg:grid-rows-1 grid-rows-2 grid-cols-1 lg:grid-cols-10 gap-6">
-        <div className="lg:col-span-7 col-span-4">
+      <div className="w-full my-4 rounded-md p-1 grid grid-cols-1 lg:grid-cols-10 gap-6">
+        <div className="lg:col-span-7 min-w-0">
           <ProgressOverview data={data} />
         </div>
-        <div className="lg:col-span-3 col-span-4">
+
+        <div className="lg:col-span-3 min-w-0">
           <TaskStats taskCounts={taskCounts} />
         </div>
       </div>

@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
     },
     bio: {
         type: String,
-        maxlength: 500
+        maxlength: 3000
     },
     avatarURL: {
         type: String,

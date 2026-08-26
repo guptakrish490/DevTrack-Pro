@@ -12,10 +12,13 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [priority, setPriority] = useState("")
+  const [status, setStatus] = useState("")
   const [startDate, setStartDate] = useState("")
   const [completedAt, setCompletedAt] = useState("")
   const [dueDate, setDueDate] = useState("")
   const [relatedProject, setRelatedProject] = useState(null)
+
+  const [errorMessage, setErrorMessage] = useState("")
 
   // prefill modal on edit form
   useEffect(() => {
@@ -23,10 +26,11 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
       setTitle(taskToEdit.title || "");
       setDescription(taskToEdit.description || "");
       setPriority(taskToEdit.priority || "");
+      setStatus(taskToEdit.status || "");
       setStartDate(taskToEdit.startDate?.slice(0, 10) || "");
       setCompletedAt(taskToEdit.completedAt?.slice(0, 10) || "");
       setDueDate(taskToEdit.dueDate?.slice(0, 10) || "");
-      setRelatedProject(taskToEdit.relatedProject._id || "");
+      setRelatedProject(taskToEdit.relatedProject || "");
     }
 
   }, [taskToEdit, mode, modal])
@@ -51,11 +55,23 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
 
     try {
       if (mode === "create") {
+
+        if (startDate && completedAt && startDate > completedAt) {
+          setErrorMessage("Start date must be less than end Date!")
+          return;
+        }
+
+        if (startDate && dueDate && startDate > dueDate) {
+          setErrorMessage("Due date can not be less than the start date!")
+          return;
+        }
+
         await api.post(`/api/tasks`,
           {
             title,
             description,
             priority,
+            status,
             startDate,
             completedAt,
             dueDate,
@@ -70,17 +86,60 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
         });
       }
       else if (mode === "edit") {
-        await api.put(`/api/tasks/${taskToEdit._id}`,
-          {
-            title,
-            description,
-            priority,
-            startDate,
-            completedAt,
-            dueDate,
-            relatedProject
-          }
-        )
+
+        if (startDate && completedAt && startDate > completedAt) {
+          setErrorMessage("Start date must be less than end Date!")
+          return;
+        }
+
+        if (startDate && dueDate && startDate > dueDate) {
+          setErrorMessage("Due date can not be less than the start date!")
+          return;
+        }
+
+        if (taskToEdit.status !== "Completed" && status === "Completed") {
+          await api.put(`/api/tasks/${taskToEdit._id}`,
+            {
+              title,
+              description,
+              priority,
+              status,
+              startDate,
+              completedAt: Date.now(),
+              dueDate,
+              relatedProject
+            }
+          )
+        }
+        else if (taskToEdit.status === "Completed" && status !== "Completed") {
+          await api.put(`/api/tasks/${taskToEdit._id}`,
+            {
+              title,
+              description,
+              priority,
+              status,
+              startDate,
+              completedAt: null,
+              dueDate,
+              relatedProject
+            }
+          )
+        }
+        else {
+          await api.put(`/api/tasks/${taskToEdit._id}`,
+            {
+              title,
+              description,
+              priority,
+              status,
+              startDate,
+              completedAt,
+              dueDate,
+              relatedProject
+            }
+          )
+        }
+
 
         toast.info("Task updated!", {
           autoClose: 3000,
@@ -142,7 +201,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl"
+              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 px-2 py-4 rounded-xl"
               placeholder="My Awesome Project"
               type="text" />
           </div>
@@ -153,7 +212,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-20 resize-none border border-white/15 px-4 py-3 rounded-xl"
+              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-20 resize-none border border-white/15 px-2 py-3 rounded-xl"
               placeholder="What does this project do?"
               type="text" />
           </div>
@@ -206,6 +265,19 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
 
           </div>
 
+          <div className="flex py-1 flex-col justify-start px-3.5">
+            <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">STATUS:</span>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full h-9 p-2 border text-sm text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500">
+              <option value="">Select Status</option>
+              <option value="Planned">Planned</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+
           <div className="w-full flex-2 flex flex-col px-3 py-2 justify-end gap-1">
             <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">RELATED PROJECT (if any)</span>
             <select
@@ -222,6 +294,8 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
               ))}
             </select>
           </div>
+
+          {errorMessage ? (<p className="text-sm text-red-500 mx-5">{errorMessage}</p>) : ""}
 
 
           <div className="w-full flex-2 flex p-5 mb-2 gap-4 text-sm font-semibold">

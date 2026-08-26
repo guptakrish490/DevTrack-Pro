@@ -10,20 +10,19 @@ const UpcomingTasks = ({ data, fetchDashboard }) => {
                     status: "Completed"
                 }
             )
+
+            fetchDashboard();
         }
         catch (err) {
             console.log(err.response?.data || err.message)
         }
     }
 
-    useEffect(() => {
-        fetchDashboard();
-    }, [handleChange])
 
 
     return (
 
-        <div className="font-poppins w-full h-64 flex flex-col p-3 rounded-2xl my-4 bg-[#111118] border-2 border-white/15 ">
+        <div className="capitalize font-poppins w-full h-64 flex flex-col p-3 rounded-2xl my-4 bg-[#111118] border-2 border-white/15 ">
             <h3 className="mt-2 text-xl font-semibold font-poppins px-3 my-2">Upcoming Tasks</h3>
 
             {data.tasks.filter(task => task.status !== "Completed").length === 0 ?

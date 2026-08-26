@@ -9,6 +9,8 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   // escape character on modal
   useEffect(() => {
     const handleEsc = (e) => {
@@ -23,8 +25,8 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
     if (mode === "edit" && initialData) {
       setTitle(initialData.title);
       setDescription(initialData.description);
-      setStartDate(initialData.startDate?.split("T")[0]);
-      setEndDate(initialData.endDate?.split("T")[0]);
+      setStartDate(initialData.startDate?.slice(0, 10));
+      setEndDate(initialData.endDate?.slice(0, 10));
     }
 
     if (mode === "create") {
@@ -41,6 +43,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
     setDescription("");
     setStartDate("");
     setEndDate("");
+    setErrorMessage("")
 
     setModal(false)
   }
@@ -50,7 +53,13 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
     e.preventDefault()
     try {
       if (mode === "create") {
-        const res = await api.post(`/api/goals`,
+
+        if (startDate && endDate && startDate > endDate) {
+          setErrorMessage("Start date must be less than end Date!")
+          return;
+        }
+
+        await api.post(`/api/goals`,
           {
             title,
             description,
@@ -68,7 +77,12 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
 
       }
       else if (mode === "edit") {
-        const res = await api.put(`/api/goals/${initialData._id}`,
+        if (startDate && endDate && startDate > endDate) {
+          setErrorMessage("Start date must be less than end Date!")
+          return;
+        }
+
+        await api.put(`/api/goals/${initialData._id}`,
           {
             title,
             description,
@@ -165,6 +179,8 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
 
           </div>
 
+          {errorMessage? (<p className="text-sm text-red-500 mx-5">{errorMessage}</p>):""}
+
           <div className="w-full flex-2 flex p-5 gap-4 text-sm font-semibold">
             <button
               type="button"
@@ -178,7 +194,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
               Save Goal
             </button>
           </div>
-          
+
         </div>
 
       </form>

@@ -65,6 +65,7 @@ export const updateGoals = async (req, res) => {
         const user = req.user
         const { title, description, startDate, endDate, isCompleted } = req.body
 
+        const existingStatus = await Goal.findById(req.params.id).select({ _id: 0, isCompleted: 1 })
         const goal = await Goal.findByIdAndUpdate(req.params.id,
             {
                 title,
@@ -76,7 +77,7 @@ export const updateGoals = async (req, res) => {
             { new: true }
         )
 
-        if (goal.isCompleted) {
+        if (isCompleted && !existingStatus.isCompleted) {
             await logActivity({
                 user: user._id,
                 type: "goal_completed",

@@ -34,7 +34,7 @@ const GoalCard = ({ goal, fetchGoals, setDeleteModalOpen, setGoalToDelete, handl
 
           <div className='w-full h-auto flex items-center gap-2 self-start'>
             <input checked={goal.isCompleted} onChange={() => handleGoalCompletion(goal)} type='checkbox' className='sm:w-4 sm:h-4 w-3 h-3 rounded-full appearance-none checked:border-3 checked:bg-[#5461b1] checked:border-blue-500 border border-white/40' />
-            <h4 className={`text-sm sm:text-lg sm:font-medium ${goal.isCompleted ? "line-through text-gray-500" : "text-[#dbe8f0]"}`}>{goal.title}</h4>
+            <h4 title={goal.title} className={`text-sm sm:text-lg sm:font-medium ${goal.isCompleted ? "line-through text-gray-500" : "text-[#dbe8f0]"}`}>{goal.title}</h4>
           </div>
 
           <div className='flex gap-8 px-3 sm:px-5 sm:justify-between items-center'>
@@ -42,8 +42,8 @@ const GoalCard = ({ goal, fetchGoals, setDeleteModalOpen, setGoalToDelete, handl
               {!goal.isCompleted ? "Active" : "Completed"}
             </span>
             <div className='flex gap-2 sm:gap-4 ml-auto text-sm sm:text-lg sm:mr-0'>
-              <button onClick={() => handleEdit(goal)}><i className="cursor-pointer text-gray-500 ri-pencil-line"></i></button>
-              <button onClick={() => handleDelete(goal)}><i className="cursor-pointer text-gray-500 ri-delete-bin-6-line"></i></button>
+              <button onClick={() => handleEdit(goal)}><i title="Edit" className="cursor-pointer text-gray-500 ri-pencil-line"></i></button>
+              <button onClick={() => handleDelete(goal)}><i title="Delete" className="cursor-pointer text-gray-500 ri-delete-bin-6-line"></i></button>
             </div>
           </div>
 
@@ -51,8 +51,8 @@ const GoalCard = ({ goal, fetchGoals, setDeleteModalOpen, setGoalToDelete, handl
 
       </div>
 
-      <div className="px-2 sm:px-6 text-sm text-[#6b6b82] flex flex-wrap my-2 sm:my-0">
-        <span className="truncate whitespace-normal">{goal.description}</span>
+      <div className="px-2 sm:px-6 text-sm text-[#6b6b82] flex flex-wrap my-2 sm:my-0 max-h-10 overflow-hidden line-clamp-2">
+        <span title={goal.description} className="truncate whitespace-normal">{goal.description}</span>
       </div>
 
       <div className="flex justify-between w-full px-2 sm:px-6 py-4 text-xs text-[#6b6b82]">

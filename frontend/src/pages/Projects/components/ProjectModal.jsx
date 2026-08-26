@@ -11,10 +11,13 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
   const [description, setDescription] = useState("")
   const [techStack, setTechStack] = useState([])
   const [techInput, setTechInput] = useState("")
+  const [status, setStatus] = useState("")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
   const [repoURL, setRepoURL] = useState("")
   const [liveURL, setLiveURL] = useState("")
+
+  const [errorMessage, setErrorMessage] = useState("")
 
   // escape key to close modal
   useEffect(() => {
@@ -31,8 +34,9 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
       setTitle(projectToEdit.title || "")
       setDescription(projectToEdit.description || "")
       setTechStack(projectToEdit.techStack || [])
-      setStartDate(projectToEdit.startDate || "")
-      setEndDate(projectToEdit.endDate || "")
+      setStatus(projectToEdit.status || "")
+      setStartDate(projectToEdit.startDate?.slice(0, 10) || "")
+      setEndDate(projectToEdit.endDate?.slice(0, 10) || "")
       setRepoURL(projectToEdit.repoURL || "")
       setLiveURL(projectToEdit.liveURL || "")
     }
@@ -42,6 +46,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
       setDescription("")
       setTechStack([])
       setTechInput("")
+      setStatus("")
       setStartDate("")
       setEndDate("")
       setRepoURL("")
@@ -55,12 +60,14 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
     setDescription("")
     setTechInput("")
     setTechStack([])
+    setStatus("")
     setStartDate("")
     setEndDate("")
     setRepoURL("")
     setLiveURL("")
 
     setModal(false)
+    setErrorMessage("")
   }
 
   // add techstack and store as array
@@ -93,6 +100,11 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
 
     try {
       if (mode === "create") {
+        if (startDate && endDate && startDate > endDate) {
+          setErrorMessage("Start date must be less than end Date!")
+          return;
+        }
+
         await api.post(`/api/projects`,
           {
             title,
@@ -101,6 +113,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
             endDate,
             repoURL,
             techStack,
+            status,
             liveURL,
           }
         )
@@ -113,17 +126,54 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
       }
 
       else if (mode === "edit") {
-        await api.put(`/api/projects/${projectToEdit._id}`,
-          {
-            title,
-            description,
-            startDate,
-            endDate,
-            repoURL,
-            techStack,
-            liveURL
-          }
-        )
+        if (startDate && endDate && startDate > endDate) {
+          setErrorMessage("Start date must be less than end Date!")
+          return;
+        }
+
+        if (projectToEdit.status !== "Completed" && status === "Completed") {
+          await api.put(`/api/projects/${projectToEdit._id}`,
+            {
+              title,
+              description,
+              startDate,
+              endDate: Date.now(),
+              repoURL,
+              techStack,
+              status,
+              liveURL
+            }
+          )
+        }
+        else if (projectToEdit.status === "Completed" && status !== "Completed") {
+          await api.put(`/api/projects/${projectToEdit._id}`,
+            {
+              title,
+              description,
+              startDate,
+              endDate: null,
+              repoURL,
+              techStack,
+              status,
+              liveURL
+            }
+          )
+        }
+        else {
+          await api.put(`/api/projects/${projectToEdit._id}`,
+            {
+              title,
+              description,
+              startDate,
+              endDate,
+              repoURL,
+              techStack,
+              status,
+              liveURL
+            }
+          )
+        }
+
 
         toast.info("Project updated!", {
           autoClose: 3000,
@@ -168,7 +218,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
         <div className="flex flex-col flex-1 w-full">
 
           <div className="w-full flex-2 flex flex-col px-3 py-2 pt-7 justify-end gap-1">
-            <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">TITLE</span>
+            <span className="text-sm text-[#6b6b82] font-semibold">TITLE</span>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -179,7 +229,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
           </div>
 
           <div className="w-full flex-2 flex flex-col px-3 py-2 justify-center gap-1">
-            <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">DESCRIPTION</span>
+            <span className="text-sm text-[#6b6b82] font-semibold">DESCRIPTION</span>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -190,10 +240,10 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
           </div>
 
           <div className="w-full flex-2 flex flex-col p-3 justify-end gap-1">
-            <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">TECHNOLOGIES (press enter to add more)</span>
+            <span className="text-sm text-[#6b6b82] font-semibold">TECHNOLOGIES (press enter to add more)</span>
             <div className="flex flex-wrap gap-2 px-3">
               {techStack.map(tech => (
-                <span className="text-white/80 text-sm py-0.5 px-2 text-center flex items-center border rounded-full border-white/60" key={tech}>
+                <span className="text-white/80 text-[12px] py-0.5 px-2 text-center flex items-center border rounded-full border-white/60" key={tech}>
                   {tech}&nbsp;
                   <button
                     type="button"
@@ -216,27 +266,42 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
           <div className="w-full flex-2 flex gap-4 px-3 py-1 text-sm text-[#6b6b82] font-semibold">
 
             <div className="flex py-1 flex-col justify-start w-1/2">
-              <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">START DATE</span>
+              <span className="text-sm text-[#6b6b82] font-semibold">START DATE</span>
               <input
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="custom-date w-full p-2 border text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
+                className="custom-date w-full p-2 border text-[#9d9db1] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
                 type="date" />
             </div>
 
             <div className="flex py-1 flex-col justify-start w-1/2">
-              <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">END DATE</span>
+              <span className="text-sm text-[#6b6b82] font-semibold">END DATE</span>
               <input
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="custom-date w-full p-2 border text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
+                className="custom-date w-full p-2 border text-[#9d9db1] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
                 type="date" />
             </div>
 
           </div>
 
           <div className="w-full flex-2 flex flex-col px-3 py-2 justify-end gap-1">
-            <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">REPOSITORY URL</span>
+            <span className="text-sm text-[#6b6b82] font-semibold">STATUS</span>
+            <select
+              value={status}
+              className="h-9 text-sm w-full p-2 border text-[#9d9db1] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
+              onChange={(e) => setStatus(e.target.value)}
+              name="status"
+              id="status">
+              <option value="Planned">Planned</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+
+            </select>
+          </div>
+
+          <div className="w-full flex-2 flex flex-col px-3 py-2 justify-end gap-1">
+            <span className="text-sm text-[#6b6b82] font-semibold">REPOSITORY URL</span>
             <input
               value={repoURL}
               onChange={(e) => setRepoURL(e.target.value)}
@@ -246,7 +311,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
           </div>
 
           <div className="w-full flex-2 flex flex-col px-3 py-2 justify-end gap-1">
-            <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">LIVE URL</span>
+            <span className="text-sm text-[#6b6b82] font-semibold">LIVE URL</span>
             <input
               value={liveURL}
               onChange={(e) => setLiveURL(e.target.value)}
@@ -254,6 +319,8 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
               placeholder="https://..."
               type="text" />
           </div>
+
+          {errorMessage ? (<p className="text-sm text-red-500 mx-5 my-2">{errorMessage}</p>) : ""}
 
           <div className="w-full flex-2 flex p-5 gap-4 text-sm font-semibold">
             <button

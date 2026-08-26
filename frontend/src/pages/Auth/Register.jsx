@@ -26,13 +26,13 @@ const Register = ({ setIsRegistered }) => {
   const navigate = useNavigate();
 
 
-  const [registerErr, setRegisterErr]=useState("");
+  const [registerErr, setRegisterErr] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`,
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`,
         {
           name,
           username,
@@ -91,7 +91,7 @@ const Register = ({ setIsRegistered }) => {
 
       {step === 3 && (
         <div className="animate-fadeIn">
-          <Step3 registerErr={registerErr} handleSubmit={handleSubmit} formProps3={formProps3} step={step} setStep={setStep} registerErr={registerErr} setRegisterErr={setRegisterErr} />
+          <Step3 handleSubmit={handleSubmit} formProps3={formProps3} step={step} setStep={setStep} registerErr={registerErr} setRegisterErr={setRegisterErr} />
         </div>
       )}
 

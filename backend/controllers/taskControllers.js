@@ -78,8 +78,9 @@ export const updateTasks = async (req, res) => {
     try {
 
         const user = req.user
-
         const { title, description, relatedProject, priority, status, startDate, completedAt, dueDate } = req.body
+
+        const existingStatus = await Task.findById(req.params.id).select({ _id: 0, status: 1 });
         const task = await Task.findByIdAndUpdate(req.params.id, {
             title,
             description,
@@ -90,9 +91,9 @@ export const updateTasks = async (req, res) => {
             completedAt,
             dueDate
         },
-        { new: true })
+            { new: true })
 
-        if (task.status === "Completed") {
+        if (task.status === "Completed" && existingStatus.status !== "Completed") {
             await logActivity({
                 user: user._id,
                 type: "task_completed",

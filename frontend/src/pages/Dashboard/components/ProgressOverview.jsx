@@ -4,7 +4,7 @@ const ProgressOverview = ({ data }) => {
 
     return (
 
-        <div className="h-full p-3 px-0.5 sm:px-3 my-3 font-poppins rounded-2xl bg-[#111118] border-2 border-white/15">
+        <div className="capitalize h-full p-3 px-0.5 sm:px-3 my-3 font-poppins rounded-2xl bg-[#111118] border-2 border-white/15">
             <div className='flex items-center justify-between px-4'>
                 <h3 className="mt-2 text-xl font-semibold font-poppins">Progress Overview</h3>
             </div>

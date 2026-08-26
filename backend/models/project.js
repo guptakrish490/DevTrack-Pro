@@ -9,12 +9,12 @@ const projectSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        maxlength: 100
+        maxlength: 200
     },
     description: {
         type: String,
         required: true,
-        maxlength: 300
+        maxlength: 1500
     },
     techStack: {
         type: [String],

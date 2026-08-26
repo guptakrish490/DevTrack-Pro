@@ -71,6 +71,7 @@ export const updateProjects = async (req, res) => {
         const user = req.user
         const { title, description, techStack, repoURL, liveURL, startDate, endDate, status } = req.body
 
+        const existingStatus = await Project.findById(req.params.id).select({ _id: 0, status: 1 });
         const project = await Project.findByIdAndUpdate(req.params.id,
             {
                 title,
@@ -86,7 +87,7 @@ export const updateProjects = async (req, res) => {
             { new: true }
         )
 
-        if (project.status === "Completed") {
+        if (project.status === "Completed" && existingStatus.status !== "Completed") {
             await logActivity({
                 user: user._id,
                 type: "project_completed",

@@ -17,12 +17,25 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
     // update status/priority directly from select dropdown
     const handleChange = async (task, status, priority) => {
         try {
-            await api.put(`/api/tasks/${task._id}`,
-                {
-                    status: status || task.status,
-                    priority: priority || task.priority
-                }
-            );
+            if (status === "Completed") {
+                await api.put(`/api/tasks/${task._id}`,
+                    {
+                        status: status || task.status,
+                        priority: priority || task.priority,
+                        completedAt:Date.now()
+                    }
+                );
+            }
+            if (status !== "Completed") {
+                await api.put(`/api/tasks/${task._id}`,
+                    {
+                        status: status || task.status,
+                        priority: priority || task.priority,
+                        completedAt:null
+                    }
+                );
+            }
+
             await fetchTasks();
         } catch (err) {
             console.error(err.response?.data || err.message);
@@ -33,7 +46,7 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
     return (
         <div className="w-full font-poppins h-auto border rounded-md border-neutral-100/20 sm:p-5 p-4 transition-all duration-300 ease-in-out hover:border-violet-400">
 
-            <div className="flex flex-col">
+            <div className="flex flex-col capitalize">
                 <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1 cursor-pointer">
                         <h3 title={task.title} className="capitalize md:text-lg text-sm font-semibold truncate max-w-30 sm:max-w-60 md:max-w-75 overflow-hidden whitespace-nowrap">{task.title}&nbsp;</h3>
@@ -57,7 +70,7 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
                     </div>
 
                 </div>
-                <p className="text-sm text-neutral-300">{task.description}</p>
+                <p title={task.description} className="text-sm text-neutral-300 max-h-10 overflow-hidden line-clamp-2">{task.description}</p>
             </div>
 
             <div className="flex gap-2">
@@ -121,11 +134,12 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
                         </div>}
 
                     <div className="text-xs text-neutral-400">
-                        <p>started on {new Intl.DateTimeFormat("en-GB", {
+                        {task.startDate && <p>started on {new Intl.DateTimeFormat("en-GB", {
                             day: "2-digit",
                             month: "short",
                             year: "numeric",
-                        }).format(new Date(task.startDate))}</p>
+                        }).format(new Date(task.startDate))}</p>}
+                        {!task.startDate && <p>No start date included</p>}
 
                         {task.completedAt && <p>completed on {new Intl.DateTimeFormat("en-GB", {
                             day: "2-digit",
@@ -148,7 +162,7 @@ const TaskCard = ({ task, handleEdit, fetchTasks, handleDelete }) => {
                             <span>Due:</span>
                         </div>
                         {task.dueDate &&
-                            <p className={` ${(task.dueDate && new Date(task.dueDate).getTime() < Date.now()) ? "text-red-500" : ""}`}>{new Intl.DateTimeFormat("en-GB", {
+                            <p className={` ${(task.dueDate && task.status !== "Completed" && new Date(task.dueDate).getTime() < Date.now()) ? "text-red-500" : ""}`}>{new Intl.DateTimeFormat("en-GB", {
                                 day: "2-digit",
                                 month: "short",
                                 year: "numeric",
