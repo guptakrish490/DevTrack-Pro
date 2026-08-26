@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-const ActivityQueries = ({ params, setParams }) => {
+const ActivityQueries = ({ setParams }) => {
 
   // states for search, sort and filter queries
   const [search, setSearch] = useState("");

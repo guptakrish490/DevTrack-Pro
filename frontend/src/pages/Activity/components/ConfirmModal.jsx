@@ -1,17 +1,18 @@
 import { toast } from "react-toastify";
-import api from "../../../api/api.js";
+import { useActivities } from "../../../hooks/useActivity.jsx";
 
 
-const ConfirmModal = ({ deleteModal, setDeleteModal, fetchActivities }) => {
+const ConfirmModal = ({ deleteModal, params, setDeleteModal, fetchActivities }) => {
     if (!deleteModal) return null;
+
+    const { deleteActivities } = useActivities();
 
     // handle confirmation for activities deletion
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.delete("/api/activity")
-
-            await fetchActivities();
+            await deleteActivities();
+            await fetchActivities(params);
             toast.success("Past activities deleted successfully!")
         }
         catch (err) {

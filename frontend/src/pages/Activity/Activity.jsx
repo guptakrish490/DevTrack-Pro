@@ -2,33 +2,18 @@ import { useEffect, useState } from "react"
 import ActivityContainer from "./components/ActivityContainer"
 import ActivityQueries from "./components/ActivityQueries"
 import ConfirmModal from "./components/ConfirmModal"
-import api from "../../api/api.js"
+import { useActivities } from "../../hooks/useActivity"
 
 const Activity = () => {
 
-  const [activities, setActivities] = useState([]);
   const [params, setParams] = useState({})
   const [deleteModal, setDeleteModal] = useState(false)
 
-  // fetch activities from backend to frontend without manual reload
-  const fetchActivities = async () => {
-    try {
-      const res = await api.get("/api/activity",
-        {
-          params: params
-        }
-      )
-      setActivities(res.data)
-
-    }
-    catch (err) {
-      console.log(err.response?.data || err.message);
-    }
-  }
+  const { activities, fetchActivities } = useActivities();
 
   // fetch activities whenever query params are changed or defined
   useEffect(() => {
-    fetchActivities();
+    fetchActivities(params);
   }, [params])
 
   return (
@@ -36,6 +21,7 @@ const Activity = () => {
       {/* delete confirmation modal */}
       <ConfirmModal
         deleteModal={deleteModal}
+        params={params}
         setDeleteModal={setDeleteModal}
         fetchActivities={fetchActivities} />
 

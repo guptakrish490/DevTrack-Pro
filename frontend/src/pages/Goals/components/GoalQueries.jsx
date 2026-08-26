@@ -20,7 +20,7 @@ const GoalQueries = ({ setParams }) => {
       sortBy: sortOrder,
       q: search
     });
-  }, [selectedFilter, sortOrder, search, setParams]);
+  }, [selectedFilter, sortOrder, search]);
 
   return (
     <div className="flex flex-col gap-1">
@@ -56,7 +56,7 @@ const GoalQueries = ({ setParams }) => {
             ▼
           </span>
         </div>
-        
+
       </div>
 
       <div className="flex w-full">
