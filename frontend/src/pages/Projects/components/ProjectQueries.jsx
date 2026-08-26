@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CreateButton from "../../../components/ui/CreateButton.jsx"
 
-const ProjectQueries = ({ setParams, mode, modal, setModal, handleCreate }) => {
+const ProjectQueries = ({ setParams, handleCreate }) => {
 
   // query states for projects
   const [selectedFilter, setSelectedFilter] = useState("");

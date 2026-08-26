@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import api from "../../../api/api.js";
+import { useProjects } from "../../../hooks/useProjects.jsx";
 
 
-const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) => {
+const ProjectModal = ({ fetchProjects, params, mode, modal, setModal, projectToEdit }) => {
+
+  if (!modal) return null;
 
   // input states for modal
   const [title, setTitle] = useState("")
@@ -18,6 +20,8 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
   const [liveURL, setLiveURL] = useState("")
 
   const [errorMessage, setErrorMessage] = useState("")
+
+  const { createProject, updateProject } = useProjects();
 
   // escape key to close modal
   useEffect(() => {
@@ -99,25 +103,14 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
     e.preventDefault();
 
     try {
+      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+        setErrorMessage("Start date must be less than end Date!")
+        return;
+      }
+
       if (mode === "create") {
-        if (startDate && endDate && startDate > endDate) {
-          setErrorMessage("Start date must be less than end Date!")
-          return;
-        }
 
-        await api.post(`/api/projects`,
-          {
-            title,
-            description,
-            startDate,
-            endDate,
-            repoURL,
-            techStack,
-            status,
-            liveURL,
-          }
-        )
-
+        await createProject(title, description, startDate, endDate, repoURL, techStack, status, liveURL);
         toast.success("Project created successfully!", {
           autoClose: 2000,
           className: "bg-[#111118] text-green-400 border border-green-600 rounded-lg",
@@ -126,55 +119,8 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
       }
 
       else if (mode === "edit") {
-        if (startDate && endDate && startDate > endDate) {
-          setErrorMessage("Start date must be less than end Date!")
-          return;
-        }
 
-        if (projectToEdit.status !== "Completed" && status === "Completed") {
-          await api.put(`/api/projects/${projectToEdit._id}`,
-            {
-              title,
-              description,
-              startDate,
-              endDate: Date.now(),
-              repoURL,
-              techStack,
-              status,
-              liveURL
-            }
-          )
-        }
-        else if (projectToEdit.status === "Completed" && status !== "Completed") {
-          await api.put(`/api/projects/${projectToEdit._id}`,
-            {
-              title,
-              description,
-              startDate,
-              endDate: null,
-              repoURL,
-              techStack,
-              status,
-              liveURL
-            }
-          )
-        }
-        else {
-          await api.put(`/api/projects/${projectToEdit._id}`,
-            {
-              title,
-              description,
-              startDate,
-              endDate,
-              repoURL,
-              techStack,
-              status,
-              liveURL
-            }
-          )
-        }
-
-
+        await updateProject(projectToEdit, title, description, startDate, endDate, repoURL, techStack, status, liveURL);
         toast.info("Project updated!", {
           autoClose: 3000,
           className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",
@@ -182,7 +128,7 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
         });
       }
 
-      if (fetchProjects) await fetchProjects();
+      await fetchProjects(params);
       cancelModal();
 
     }
@@ -197,7 +143,6 @@ const ProjectModal = ({ fetchProjects, mode, modal, setModal, projectToEdit }) =
 
   }
 
-  if (!modal) return null;
 
   return (
     <div>

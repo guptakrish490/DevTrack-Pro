@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom"
-import api from "../../../api/api.js";
 import { useEffect } from "react";
+import { useProjects } from "../../../hooks/useProjects";
 
 
 
-const ProjectCard = ({ project, handleDelete, handleEdit, fetchProjects }) => {
+const ProjectCard = ({ project, params, handleDelete, handleEdit, fetchProjects }) => {
+
+  const { updateStatus } = useProjects();
 
   // project-status state
   const [status, setStatus] = useState(project.status)
@@ -17,25 +19,8 @@ const ProjectCard = ({ project, handleDelete, handleEdit, fetchProjects }) => {
   // change project-status functionality
   const changeStatus = async (project, status) => {
     try {
-      if (status === "Completed") {
-        await api.put(`/api/projects/${project._id}`,
-          {
-            status,
-            endDate: Date.now()
-          },
-        );
-      }
-
-      if (status !== "Completed") {
-        await api.put(`/api/projects/${project._id}`,
-          {
-            status,
-            endDate: null
-          },
-        );
-      }
-
-      await fetchProjects();
+      await updateStatus(project, status)
+      await fetchProjects(params);
     } catch (err) {
       console.error(err.response?.data || err.message);
     }
