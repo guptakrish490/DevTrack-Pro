@@ -72,6 +72,7 @@ const Step1 = ({ step, setStep, formProps1, registerErr, setRegisterErr }) => {
                     </label>
                     <input
                         value={formProps1.name}
+                        autoComplete="name"
                         onChange={(e) => {
                             formProps1.setName(e.target.value);
                             setNameError(validateName(e.target.value));
@@ -93,6 +94,7 @@ const Step1 = ({ step, setStep, formProps1, registerErr, setRegisterErr }) => {
                     </label>
                     <input
                         value={formProps1.email}
+                        autoComplete="email"
                         onChange={(e) => {
                             formProps1.setEmail(e.target.value);
                             setEmailError(validateEmail(e.target.value));
@@ -115,6 +117,7 @@ const Step1 = ({ step, setStep, formProps1, registerErr, setRegisterErr }) => {
                     </label>
                     <input
                         value={formProps1.username}
+                        autoComplete="username"
                         onChange={(e) => {
                             formProps1.setUsername(e.target.value);
                             setUsernameError(validateUsername(e.target.value));
@@ -138,6 +141,7 @@ const Step1 = ({ step, setStep, formProps1, registerErr, setRegisterErr }) => {
                     <div className="relative w-full flex items-center">
                         <input
                             value={formProps1.password}
+                            autoComplete="password"
                             onChange={(e) => {
                                 formProps1.setPassword(e.target.value);
                                 setPasswordError(validatePassword(e.target.value));

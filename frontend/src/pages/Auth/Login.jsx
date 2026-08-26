@@ -76,6 +76,7 @@ const Login = ({ setIsRegistered }) => {
             }}
             placeholder="alex@example.com"
             type="text"
+            autoComplete="email"
             aria-invalid={!!emailError}
             className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border ${emailError || loginErr
               ? "border-red-500 focus:ring-red-500"
@@ -95,6 +96,7 @@ const Login = ({ setIsRegistered }) => {
           <div className="relative w-full flex items-center">
             <input
               value={password}
+              autoComplete="current-password"
               onChange={(e) => {
                 setPassword(e.target.value);
                 setPasswordError(validatePassword(e.target.value.trim()));

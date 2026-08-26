@@ -42,6 +42,7 @@ const Step3 = ({ step, setStep, formProps3, handleSubmit, registerErr, setRegist
                     </label>
                     <select
                         value={formProps3.gender}
+                        autoComplete='gender'
                         onChange={(e) => formProps3.setGender(e.target.value)}
                         name="gender"
                         className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border border-neutral-100/15 focus:ring-violet-500 focus:outline-none focus:ring-2`}>
@@ -50,9 +51,6 @@ const Step3 = ({ step, setStep, formProps3, handleSubmit, registerErr, setRegist
                         <option value="Female">Female</option>
                         <option value="Others">Others</option>
                     </select>
-                    {/* {emailError && (
-                        <span className="text-red-500 text-xs">{emailError}</span>
-                    )} */}
                 </div>
 
                 {/* Location */}
@@ -64,16 +62,11 @@ const Step3 = ({ step, setStep, formProps3, handleSubmit, registerErr, setRegist
                         value={formProps3.location}
                         onChange={(e) => {
                             formProps3.setLocation(e.target.value);
-                            // setEmailError(validateEmail(e.target.value));
                         }}
                         placeholder="City, Country"
                         type="text"
-                        // aria-invalid={!!emailError}
                         className={`px-4 w-full h-9 rounded-xl text-xs bg-[#131318] border border-neutral-100/15 focus:ring-violet-500 focus:outline-none focus:ring-2`}
                     />
-                    {/* {emailError && (
-                        <span className="text-red-500 text-xs">{emailError}</span>
-                    )} */}
                 </div>
 
                 {/* Bio */}
@@ -84,6 +77,7 @@ const Step3 = ({ step, setStep, formProps3, handleSubmit, registerErr, setRegist
                     </label>
                     <textarea
                         value={formProps3.bio}
+                        autoComplete='bio'
                         onChange={(e) => {
                             formProps3.setBio(e.target.value);
                             setBioError(validateBio(e.target.value));
