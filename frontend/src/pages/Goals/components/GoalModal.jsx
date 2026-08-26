@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import api from "../../../api/api.js";
+import { useGoals } from "../../../hooks/useGoals.jsx";
 
-const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
+const GoalModal = ({ modal, setModal, fetchGoals, mode, initialData }) => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -10,6 +10,8 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
   const [endDate, setEndDate] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
+
+  const { createGoal, updateGoal } = useGoals();
 
   // escape character on modal
   useEffect(() => {
@@ -54,20 +56,12 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
     try {
       if (mode === "create") {
 
-        if (startDate && endDate && startDate > endDate) {
+        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
           setErrorMessage("Start date must be less than end Date!")
           return;
         }
 
-        await api.post(`/api/goals`,
-          {
-            title,
-            description,
-            startDate,
-            endDate
-          }
-        )
-
+        await createGoal(title, description, startDate, endDate);
         toast.success("Goal created successfully!", {
           autoClose: 2000,
           icon: "🎯",
@@ -77,19 +71,12 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
 
       }
       else if (mode === "edit") {
-        if (startDate && endDate && startDate > endDate) {
+        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
           setErrorMessage("Start date must be less than end Date!")
           return;
         }
 
-        await api.put(`/api/goals/${initialData._id}`,
-          {
-            title,
-            description,
-            startDate,
-            endDate
-          })
-
+        await updateGoal(initialData, title, description, startDate, endDate);
         toast.info("Goal updated!", {
           autoClose: 3000,
           className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",
@@ -98,7 +85,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
 
       }
 
-      if (onSaved) onSaved();
+      fetchGoals();
       cancelModal();
 
     }
@@ -179,7 +166,7 @@ const GoalModal = ({ modal, setModal, onSaved, mode, initialData }) => {
 
           </div>
 
-          {errorMessage? (<p className="text-sm text-red-500 mx-5">{errorMessage}</p>):""}
+          {errorMessage ? (<p className="text-sm text-red-500 mx-5">{errorMessage}</p>) : ""}
 
           <div className="w-full flex-2 flex p-5 gap-4 text-sm font-semibold">
             <button

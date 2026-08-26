@@ -2,34 +2,22 @@ import GoalStats from "./components/GoalStats.jsx"
 import GoalContainer from "./components/GoalContainer.jsx"
 import GoalModal from "./components/GoalModal.jsx"
 import ConfirmModal from "./components/ConfirmModal.jsx"
+import { useGoals } from "../../hooks/useGoals.jsx"
 import { useEffect, useState } from "react"
-import api from "../../api/api.js"
 
 const Goals = () => {
 
   // states to manage goals page
-  const [goals, setGoals] = useState([])
-  const [params, setParams] = useState({});
+  const [params, setParams]=useState({})
   const [modal, setModal] = useState(false)
   const [mode, setMode] = useState("create")
   const [goalToEdit, setGoalToEdit] = useState(null)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [goalToDelete, setGoalToDelete] = useState(null)
-  const [goalCompleted, setGoalCompleted] = useState(false)
-
-  // render goals without page reload
-  const fetchGoals = async () => {
-    const res = await api.get("/api/goals", {
-      params: params
-    })
-
-    setGoals(res.data)
-  }
-
-  // re-render on search,sort,filter
+  
   useEffect(() => {
-    fetchGoals()
-  }, [params])
+    fetchGoals(params);
+  }, [params]);
 
   // create functionality handler
   const handleCreate = () => {
@@ -51,19 +39,7 @@ const Goals = () => {
     setDeleteModalOpen(true)
   }
 
-  // for marking goals as completed/uncompleted
-  const handleGoalCompletion = async (goal) => {
-    try {
-      const updated = !goal.isCompleted;
-      await api.put(`/api/goals/${goal._id}`, {
-        ...goal,
-        isCompleted: updated
-      }, { withCredentials: true });
-      fetchGoals();
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  const { goals, goalCompleted, setGoalCompleted, fetchGoals, handleGoalCompletion } = useGoals();
 
 
   return (
@@ -73,7 +49,7 @@ const Goals = () => {
         initialData={goalToEdit}
         modal={modal}
         setModal={setModal}
-        onSaved={fetchGoals} />
+        fetchGoals={fetchGoals} />
 
       <ConfirmModal
         fetchGoals={fetchGoals}

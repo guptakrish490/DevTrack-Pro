@@ -1,6 +1,5 @@
 const GoalStats = ({ goals }) => {
 
-  // goal stats for top cards
   const completedGoalsCount = goals.filter(goal => goal.isCompleted).length
   const activeGoalsCount = goals.filter(goal => !goal.isCompleted).length
 

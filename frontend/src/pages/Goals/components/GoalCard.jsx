@@ -2,7 +2,7 @@ import { calculateTimeProgress } from "../../../utils/goals/progress.js"
 import { useEffect } from "react";
 import api from "../../../api/api.js";
 
-const GoalCard = ({ goal, fetchGoals, setDeleteModalOpen, setGoalToDelete, handleDelete, setMode, setGoalToEdit, setModal, handleEdit, goalCompleted, setGoalCompleted, handleGoalCompletion }) => {
+const GoalCard = ({ goal, fetchGoals, handleDelete, handleEdit, handleGoalCompletion }) => {
 
   const progress = calculateTimeProgress(goal.startDate, goal.endDate, goal.isCompleted)
 
