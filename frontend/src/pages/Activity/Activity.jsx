@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import ActivityContainer from "./components/ActivityContainer"
 import ActivityQueries from "./components/ActivityQueries"
 import ConfirmModal from "./components/ConfirmModal"
@@ -9,12 +9,16 @@ const Activity = () => {
   const [params, setParams] = useState({})
   const [deleteModal, setDeleteModal] = useState(false)
 
-  const { activities, fetchActivities } = useActivities();
-
-  // fetch activities whenever query params are changed or defined
+  const { activities, fetchActivities, setPage, page, hasMore, setActivities } = useActivities();
+  const firstRun = useRef(true);
+  // append activities when page changes
   useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
     fetchActivities(params);
-  }, [params])
+  }, [page, params]);
 
   return (
     <>
@@ -44,6 +48,20 @@ const Activity = () => {
       {/* contains all activity cards */}
       <ActivityContainer
         activities={activities} />
+
+      {hasMore && (
+        <div className="flex items-center justify-center my-8">
+          <div className="grow h-px bg-neutral-500/30 backdrop-blur-sm" />
+          <button
+            onClick={() => setPage(page + 1)}
+            className="mx-4 px-6 py-2 text-sm font-medium text-neutral-200  bg-white/10 backdrop-blur-md border border-white/20  rounded-lg shadow-sm hover:bg-white/20 hover:text-white  transition">
+            Read more...
+          </button>
+          <div className="grow h-px bg-neutral-500/30 backdrop-blur-sm" />
+        </div>
+      )}
+
+
     </>
   )
 }
