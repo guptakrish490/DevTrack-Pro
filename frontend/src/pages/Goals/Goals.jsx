@@ -3,21 +3,18 @@ import GoalContainer from "./components/GoalContainer.jsx"
 import GoalModal from "./components/GoalModal.jsx"
 import ConfirmModal from "./components/ConfirmModal.jsx"
 import { useGoals } from "../../hooks/useGoals.jsx"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 const Goals = () => {
 
   // states to manage goals page
-  const [params, setParams]=useState({})
+  const [params, setParams] = useState({})
   const [modal, setModal] = useState(false)
   const [mode, setMode] = useState("create")
   const [goalToEdit, setGoalToEdit] = useState(null)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [goalToDelete, setGoalToDelete] = useState(null)
-  
-  useEffect(() => {
-    fetchGoals(params);
-  }, [params]);
+
 
   // create functionality handler
   const handleCreate = () => {
@@ -39,20 +36,33 @@ const Goals = () => {
     setDeleteModalOpen(true)
   }
 
-  const { goals, goalCompleted, setGoalCompleted, fetchGoals, handleGoalCompletion } = useGoals();
+  const { goals, createGoal, updateGoal, fetchGoals, handleGoalCompletion, deleteGoal, page, setPage, hasMore, loading } = useGoals();
 
+  useEffect(() => {
+    setPage(1);
+    fetchGoals(params, 1, true);
+  }, [params]);
+
+  // 2. Fetch & Append when page > 1 (pagination click)
+  useEffect(() => {
+    if (page > 1) {
+      fetchGoals(params, page, false);
+    }
+  }, [page]);
 
   return (
     <>
       <GoalModal
         mode={mode}
         initialData={goalToEdit}
+        createGoal={createGoal}
+        updateGoal={updateGoal}
+        params={params}
         modal={modal}
-        setModal={setModal}
-        fetchGoals={fetchGoals} />
+        setModal={setModal} />
 
       <ConfirmModal
-        fetchGoals={fetchGoals}
+        deleteGoal={deleteGoal}
         goalToDelete={goalToDelete}
         deleteModal={deleteModalOpen}
         setDeleteModalOpen={setDeleteModalOpen} />
@@ -73,11 +83,24 @@ const Goals = () => {
         setParams={setParams}
         goals={goals}
         modal={modal}
-        goalCompleted={goalCompleted}
-        setGoalCompleted={setGoalCompleted}
         handleGoalCompletion={handleGoalCompletion}
         setModal={setModal} />
+
+      {hasMore && (
+        <div className="flex items-center justify-center my-8">
+          <div className="grow h-px bg-neutral-500/30 backdrop-blur-sm" />
+          <button
+            disabled={loading}
+            onClick={() => setPage(prev => prev + 1)}
+            className="mx-4 px-6 py-2 text-sm font-medium text-neutral-200 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-sm hover:bg-white/20 hover:text-white transition disabled:opacity-50">
+            {loading ? "Loading..." : "Read more..."}
+          </button>
+          <div className="grow h-px bg-neutral-500/30 backdrop-blur-sm" />
+        </div>
+      )}
     </>
+
+
   )
 }
 

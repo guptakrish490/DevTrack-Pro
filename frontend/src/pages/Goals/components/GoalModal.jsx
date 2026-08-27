@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useGoals } from "../../../hooks/useGoals.jsx";
 
-const GoalModal = ({ modal, setModal, fetchGoals, mode, initialData }) => {
+const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal }) => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { createGoal, updateGoal } = useGoals();
 
   // escape character on modal
   useEffect(() => {
@@ -52,15 +49,16 @@ const GoalModal = ({ modal, setModal, fetchGoals, mode, initialData }) => {
 
   // handle modal submit according to mode
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setErrorMessage("");
+
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      setErrorMessage("Start date must be less than end Date!");
+      return;
+    }
+
     try {
       if (mode === "create") {
-
-        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-          setErrorMessage("Start date must be less than end Date!")
-          return;
-        }
-
         await createGoal(title, description, startDate, endDate);
         toast.success("Goal created successfully!", {
           autoClose: 2000,
@@ -68,37 +66,25 @@ const GoalModal = ({ modal, setModal, fetchGoals, mode, initialData }) => {
           className: "bg-[#111118] text-green-400 border border-green-600 rounded-lg",
           progressClassName: "bg-green-500"
         });
-
-      }
-      else if (mode === "edit") {
-        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-          setErrorMessage("Start date must be less than end Date!")
-          return;
-        }
-
+      } else if (mode === "edit") {
         await updateGoal(initialData, title, description, startDate, endDate);
         toast.info("Goal updated!", {
           autoClose: 3000,
           className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",
           progressClassName: "bg-blue-500"
         });
-
       }
 
-      fetchGoals();
       cancelModal();
-
-    }
-    catch (err) {
+    } catch (err) {
       toast.error("Failed to save goal", {
         autoClose: 6000,
         className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
         progressClassName: "bg-red-400"
       });
-      console.log(err)
+      console.error(err);
     }
-
-  }
+  };
 
   if (!modal) return null;
 

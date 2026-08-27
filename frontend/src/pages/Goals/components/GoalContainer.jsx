@@ -3,7 +3,7 @@ import CreateButton from "../../../components/ui/CreateButton.jsx"
 import GoalCard from "./GoalCard.jsx"
 
 
-const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDeleteModalOpen, setGoalToDelete, handleDelete, setMode, setGoalToEdit, handleCreate, handleEdit, goalCompleted, setGoalCompleted, handleGoalCompletion }) => {
+const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDeleteModalOpen, setGoalToDelete, handleDelete, setMode, setGoalToEdit, handleCreate, handleEdit, handleGoalCompletion }) => {
   return (
     <div className='font-open-sans w-full h-auto bg-[#111118] rounded-2xl border border-white/15 mt-6 sm:p-5 p-3'>
 
@@ -36,6 +36,7 @@ const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDele
               {goals.map(goal => (
                 <GoalCard
                   key={goal._id}
+                  params={params}
                   fetchGoals={fetchGoals}
                   handleDelete={handleDelete}
                   setMode={setMode}
@@ -44,8 +45,6 @@ const GoalContainer = ({ goals, params, setParams, setModal, fetchGoals, setDele
                   setGoalToEdit={setGoalToEdit}
                   setGoalToDelete={setGoalToDelete}
                   handleEdit={handleEdit}
-                  goalCompleted={goalCompleted}
-                  setGoalCompleted={setGoalCompleted}
                   handleGoalCompletion={handleGoalCompletion}
                   goal={goal} />
               ))}

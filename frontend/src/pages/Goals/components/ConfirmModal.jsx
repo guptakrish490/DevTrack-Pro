@@ -1,7 +1,6 @@
 import { toast } from "react-toastify";
-import api from "../../../api/api.js";
 
-const ConfirmModal = ({ deleteModal, setDeleteModalOpen, goalToDelete, fetchGoals }) => {
+const ConfirmModal = ({ deleteModal, setDeleteModalOpen, goalToDelete, deleteGoal }) => {
 
   if (!deleteModal || !goalToDelete) return null;
 
@@ -9,31 +8,27 @@ const ConfirmModal = ({ deleteModal, setDeleteModalOpen, goalToDelete, fetchGoal
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.delete(`/api/goals/${goalToDelete._id}`)
-
-      toast.success("Goal deleted successfully!")
-      await fetchGoals()
-
-    }
-    catch (err) {
+      await deleteGoal(goalToDelete._id);
+      toast.success("Goal deleted successfully!");
+    } catch (err) {
       toast.error("Failed to delete goal", {
         autoClose: 3000,
         className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
         progressClassName: "bg-red-400"
       });
-      console.log(err)
+      console.error(err);
+    } finally {
+      setDeleteModalOpen(false);
     }
-    finally {
-      setDeleteModalOpen(false)
-    }
-  }
+  };
+
 
   return (
     <div>
       <div onClick={() => setDeleteModalOpen(false)} className="fixed z-30 inset-0 bg-black/30 backdrop-blur-sm animate-fadeIn"></div>
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => handleSubmit(e)}
         role="dialog"
         aria-modal="true"
         className="font-roboto fixed flex flex-col z-40 max-w-120 sm:w-[90%] w-[85%] h-auto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#111118] rounded-2xl border border-white/10 shadow-lg animate-scaleIn"

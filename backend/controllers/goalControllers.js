@@ -21,7 +21,7 @@ export const createGoal = async (req, res) => {
 
         await updateStreak(user._id)
 
-        res.status(201).json({ message: "New Goal created successfully" })
+        res.status(201).json(newGoal)
 
     }
     catch (err) {
@@ -32,9 +32,12 @@ export const createGoal = async (req, res) => {
 // controller for goal retrieval
 export const getGoals = async (req, res) => {
     try {
-        const user = req.user
 
-        const { q, completed, sortBy } = req.query
+        let { q, completed, sortBy } = req.query
+
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.max(1, parseInt(req.query.limit) || 10);
+
         const query = {
             user: req.user._id
         }
@@ -48,9 +51,13 @@ export const getGoals = async (req, res) => {
             query.isCompleted = completed === "true"
         }
         const sortOrder = sortBy === "oldest" ? 1 : -1;
+        const skip = (page - 1) * limit;
 
+        const goals = await Goal.find(query)
+            .sort({ createdAt: sortOrder })
+            .skip(skip)
+            .limit(limit + 1)
 
-        const goals = await Goal.find(query).sort({ createdAt: sortOrder })
         res.status(200).json(goals)
     }
     catch (err) {
@@ -66,7 +73,7 @@ export const updateGoals = async (req, res) => {
         const { title, description, startDate, endDate, isCompleted } = req.body
 
         const existingStatus = await Goal.findById(req.params.id).select({ _id: 0, isCompleted: 1 })
-        const goal = await Goal.findByIdAndUpdate(req.params.id,
+        const updatedGoal = await Goal.findByIdAndUpdate(req.params.id,
             {
                 title,
                 description,
@@ -81,14 +88,14 @@ export const updateGoals = async (req, res) => {
             await logActivity({
                 user: user._id,
                 type: "goal_completed",
-                title: `Completed Goal: ${goal.title}`,
-                relatedGoal: goal._id
+                title: `Completed Goal: ${updatedGoal.title}`,
+                relatedGoal: updatedGoal._id
             })
 
             await updateStreak(user._id)
         }
 
-        res.status(200).json(goal)
+        res.status(200).json(updatedGoal)
 
     }
     catch (err) {
