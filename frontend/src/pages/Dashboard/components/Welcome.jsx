@@ -1,4 +1,4 @@
-const Welcome = ({data}) => {
+const Welcome = ({ data }) => {
     return (
         <div className="flex justify-between items-center my-3 pl-3 font-poppins">
             <div className="flex flex-col gap-1">

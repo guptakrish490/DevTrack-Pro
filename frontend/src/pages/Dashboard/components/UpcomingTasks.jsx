@@ -1,24 +1,8 @@
-import { useEffect } from 'react'
-import api from '../../../api/api.js'
+import { useDashboard } from "../../../hooks/useDashboard"
 
-const UpcomingTasks = ({ data, fetchDashboard }) => {
+const UpcomingTasks = ({ data }) => {
 
-    const handleChange = async (task) => {
-        try {
-            await api.put(`/api/tasks/${task._id}`,
-                {
-                    status: "Completed"
-                }
-            )
-
-            fetchDashboard();
-        }
-        catch (err) {
-            console.log(err.response?.data || err.message)
-        }
-    }
-
-
+    const { handleChange } = useDashboard();
 
     return (
 
@@ -40,7 +24,7 @@ const UpcomingTasks = ({ data, fetchDashboard }) => {
                             <div className='w-full h-auto px-4 py-2 flex items-center justify-between gap-3 border-b border-white/10' key={task._id}>
                                 <div className='flex items-center gap-2'>
                                     <input
-                                        onChange={() => handleChange(task)}
+                                        onChange={async () => await handleChange(task)}
                                         className='w-4 h-4 border-2 border-gray-400 rounded-full appearance-none checked:border-3 checked:bg-[#3f4da3] checked:border-blue-500' type="checkbox" />
                                     <div className='flex flex-col'>
                                         <p className='text-sm'>{task.title}</p>

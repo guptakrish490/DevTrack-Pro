@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react"
-
+import { useEffect } from "react"
 import Welcome from "./components/Welcome"
 import StatsCards from "./components/StatsCards"
 import ProgressOverview from "./components/ProgressOverview"
@@ -7,26 +6,19 @@ import UpcomingTasks from "./components/UpcomingTasks"
 import RecentActivity from "./components/RecentActivity"
 import ProjectsCards from "./components/ProjectsCards"
 import TaskStats from "./components/TaskStats"
-import api from "../../api/api.js"
+import { useDashboard } from "../../hooks/useDashboard"
 
 
 
 const Dashboard = () => {
 
-  const [data, setData] = useState(null)
-
-  const fetchDashboard = async () => {
-    const res = await api.get("/dashboard");
-    setData(res.data)
-  }
+  const { data, fetchDashboard } = useDashboard();
 
   useEffect(() => {
     fetchDashboard()
-  }, [])
+  }, [data])
 
-  if (!data || data.length === 0) return <p>Loading...</p>
-
-  const taskCounts = data.tasks.reduce(
+  const taskCounts = data?.tasks?.reduce(
     (acc, task) => {
       if (task.status === "Completed") acc.completed++;
       else if (task.status === "In Progress") acc.inProgress++;
@@ -36,6 +28,7 @@ const Dashboard = () => {
     { completed: 0, inProgress: 0, planned: 0 }
   );
 
+  if (!data || data.length === 0) return <p>Loading...</p>
 
 
   return (
