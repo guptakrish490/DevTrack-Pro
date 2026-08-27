@@ -5,7 +5,7 @@ export const getAllActivities = async (req, res) => {
     try {
         const user = req.user
 
-        const { q, type, sortBy } = req.query
+        const { q, type, sortBy, page, limit } = req.query
         const query = { user: user._id };
         if (q) {
             query.title = { $regex: q, $options: "i" };
@@ -15,11 +15,15 @@ export const getAllActivities = async (req, res) => {
         }
         const sortOrder = sortBy === "oldest" ? 1 : -1;
 
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+
         const activities = await Activity.find(query)
             .sort({ createdAt: sortOrder })
             .populate("relatedGoal")
             .populate("relatedProject")
             .populate("relatedTask")
+            .skip(parseInt(skip))
+            .limit(parseInt(limit) + 1)
 
         res.status(200).json(activities);
     }
