@@ -3,9 +3,12 @@ import Activity from "../models/activity.js"
 // controller for activities retrieval
 export const getAllActivities = async (req, res) => {
     try {
-        const user = req.user
+        const user = req.user;
+        const { q, type, sortBy } = req.query;
 
-        const { q, type, sortBy, page, limit } = req.query
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.max(1, parseInt(req.query.limit) || 10);
+
         const query = { user: user._id };
         if (q) {
             query.title = { $regex: q, $options: "i" };
@@ -13,24 +16,24 @@ export const getAllActivities = async (req, res) => {
         if (type) {
             query.type = { $regex: type, $options: "i" };
         }
-        const sortOrder = sortBy === "oldest" ? 1 : -1;
 
-        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const sortOrder = sortBy === "oldest" ? 1 : -1;
+        const skip = (page - 1) * limit;
 
         const activities = await Activity.find(query)
             .sort({ createdAt: sortOrder })
             .populate("relatedGoal")
             .populate("relatedProject")
             .populate("relatedTask")
-            .skip(parseInt(skip))
-            .limit(parseInt(limit) + 1)
+            .skip(skip)
+            .limit(limit + 1);
 
         res.status(200).json(activities);
     }
     catch (err) {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({ error: err.message });
     }
-}
+};
 
 // controller for activities deletion
 export const deleteAllActivities = async (req, res) => {

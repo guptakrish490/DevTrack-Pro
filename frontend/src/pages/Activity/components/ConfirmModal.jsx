@@ -12,7 +12,7 @@ const ConfirmModal = ({ deleteModal, params, setDeleteModal, fetchActivities }) 
         e.preventDefault();
         try {
             await deleteActivities();
-            await fetchActivities(params);
+            await fetchActivities(params, true);
             toast.success("Past activities deleted successfully!")
         }
         catch (err) {
