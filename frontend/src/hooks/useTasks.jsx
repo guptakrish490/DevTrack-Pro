@@ -12,6 +12,18 @@ export const useTasks = () => {
     const [completedTasks, setCompletedTasks] = useState(0)
     const [pendingTasks, setPendingTasks] = useState(0)
     const [overdueTasks, setOverdueTasks] = useState(0)
+    const [errors, setErrors] = useState({})
+
+
+    const handleValidationError = (err) => {
+        if (err?.response?.status === 400 && Array.isArray(err.response?.data?.error)) {
+            const fieldErrors = {};
+            err.response.data.error.forEach((e) => {
+                fieldErrors[e.field] = e.message;
+            });
+            setErrors(fieldErrors);
+        }
+    };
 
     // fetch tasks with counts
     const fetchTasks = useCallback(async (params = {}, pageNum = 1, reset = false) => {
@@ -42,49 +54,59 @@ export const useTasks = () => {
 
     // create task
     const createTask = async (title, description, priority, status, startDate, completedAt, dueDate, relatedProject) => {
-        const res = await api.post(`/api/tasks`, {
-            title, description, priority, status, startDate, completedAt, dueDate, relatedProject
-        })
-        const newTask = res.data
+        try {
+            const res = await api.post(`/api/tasks`, {
+                title, description, priority, status, startDate, completedAt, dueDate, relatedProject
+            })
+            const newTask = res.data
 
-        setTasks(prev => [newTask, ...prev])
-        setTotalTasks(prev => prev + 1)
+            setTasks(prev => [newTask, ...prev])
+            setTotalTasks(prev => prev + 1)
 
-        if (status === "Completed") {
-            setCompletedTasks(prev => prev + 1)
-        } else {
-            setPendingTasks(prev => prev + 1)
-            if (new Date(dueDate) < new Date()) setOverdueTasks(prev => prev + 1)
+            if (status === "Completed") {
+                setCompletedTasks(prev => prev + 1)
+            } else {
+                setPendingTasks(prev => prev + 1)
+                if (new Date(dueDate) < new Date()) setOverdueTasks(prev => prev + 1)
+            }
+
+            return newTask
+        } catch (err) {
+            handleValidationError(err);
+            throw err;
         }
-
-        return newTask
     }
 
     // update task
     const updateTask = async (taskToEdit, title, description, priority, status, startDate, completedAt, dueDate, relatedProject) => {
-        const res = await api.put(`/api/tasks/${taskToEdit._id}`, {
-            title, description, priority, status, startDate, completedAt, dueDate, relatedProject
-        })
-        const updatedTask = res.data
+        try {
+            const res = await api.put(`/api/tasks/${taskToEdit._id}`, {
+                title, description, priority, status, startDate, completedAt, dueDate, relatedProject
+            })
+            const updatedTask = res.data
 
-        setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t))
+            setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t))
 
-        if (taskToEdit.status !== status) {
-            if (taskToEdit.status === "Completed") {
-                setCompletedTasks(prev => prev - 1)
-                setPendingTasks(prev => prev + 1)
-            } else if (status === "Completed") {
-                setCompletedTasks(prev => prev + 1)
-                setPendingTasks(prev => prev - 1)
+            if (taskToEdit.status !== status) {
+                if (taskToEdit.status === "Completed") {
+                    setCompletedTasks(prev => prev - 1)
+                    setPendingTasks(prev => prev + 1)
+                } else if (status === "Completed") {
+                    setCompletedTasks(prev => prev + 1)
+                    setPendingTasks(prev => prev - 1)
+                }
             }
+
+            const wasOverdue = taskToEdit.dueDate && new Date(taskToEdit.dueDate) < new Date() && taskToEdit.status !== "Completed"
+            const isOverdue = updatedTask.dueDate && new Date(updatedTask.dueDate) < new Date() && updatedTask.status !== "Completed"
+            if (wasOverdue && !isOverdue) setOverdueTasks(prev => prev - 1)
+            if (!wasOverdue && isOverdue) setOverdueTasks(prev => prev + 1)
+
+            return updatedTask
+        } catch (err) {
+            handleValidationError(err);
+            throw err;
         }
-
-        const wasOverdue = taskToEdit.dueDate && new Date(taskToEdit.dueDate) < new Date() && taskToEdit.status !== "Completed"
-        const isOverdue = updatedTask.dueDate && new Date(updatedTask.dueDate) < new Date() && updatedTask.status !== "Completed"
-        if (wasOverdue && !isOverdue) setOverdueTasks(prev => prev - 1)
-        if (!wasOverdue && isOverdue) setOverdueTasks(prev => prev + 1)
-
-        return updatedTask
     }
 
     // delete task
@@ -104,32 +126,37 @@ export const useTasks = () => {
 
     // update status/priority
     const updatePriorityStatus = async (task, status, priority) => {
-        const res = await api.put(`/api/tasks/${task._id}`, {
-            status: status || task.status,
-            priority: priority || task.priority,
-            completedAt: status === "Completed" ? Date.now() : null
-        })
-        const updatedTask = res.data
+        try {
+            const res = await api.put(`/api/tasks/${task._id}`, {
+                status: status || task.status,
+                priority: priority || task.priority,
+                completedAt: status === "Completed" ? Date.now() : null
+            })
+            const updatedTask = res.data
 
-        setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t))
+            setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t))
 
-        if (task.status !== updatedTask.status) {
-            if (task.status === "Completed") {
-                setCompletedTasks(prev => prev - 1)
-                setPendingTasks(prev => prev + 1)
-            } else if (updatedTask.status === "Completed") {
-                setCompletedTasks(prev => prev + 1)
-                setPendingTasks(prev => prev - 1)
+            if (task.status !== updatedTask.status) {
+                if (task.status === "Completed") {
+                    setCompletedTasks(prev => prev - 1)
+                    setPendingTasks(prev => prev + 1)
+                } else if (updatedTask.status === "Completed") {
+                    setCompletedTasks(prev => prev + 1)
+                    setPendingTasks(prev => prev - 1)
+                }
             }
+
+            // overdue adjustment
+            const wasOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== "Completed"
+            const isOverdue = updatedTask.dueDate && new Date(updatedTask.dueDate) < new Date() && updatedTask.status !== "Completed"
+            if (wasOverdue && !isOverdue) setOverdueTasks(prev => prev - 1)
+            if (!wasOverdue && isOverdue) setOverdueTasks(prev => prev + 1)
+
+            return updatedTask
+        } catch (err) {
+            handleValidationError(err);
+            throw err;
         }
-
-        // overdue adjustment
-        const wasOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== "Completed"
-        const isOverdue = updatedTask.dueDate && new Date(updatedTask.dueDate) < new Date() && updatedTask.status !== "Completed"
-        if (wasOverdue && !isOverdue) setOverdueTasks(prev => prev - 1)
-        if (!wasOverdue && isOverdue) setOverdueTasks(prev => prev + 1)
-
-        return updatedTask
     }
 
     return {
@@ -137,6 +164,7 @@ export const useTasks = () => {
         fetchTasks,
         createTask, updateTask, deleteTask, updatePriorityStatus,
         hasMore, page, setPage, setLimit,
-        totalTasks, completedTasks, pendingTasks, overdueTasks
+        totalTasks, completedTasks, pendingTasks, overdueTasks,
+        errors, setErrors
     }
 }

@@ -14,7 +14,7 @@ const Tasks = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [taskToDelete, setTaskToDelete] = useState(null)
 
-  const { tasks, fetchTasks, createTask, updateTask, updatePriorityStatus, deleteTask, page, setPage, setLimit, hasMore, loading, totalTasks, completedTasks, pendingTasks, overdueTasks } = useTasks();
+  const { tasks, fetchTasks, createTask, updateTask, updatePriorityStatus, deleteTask, page, setPage, setLimit, hasMore, loading, totalTasks, completedTasks, pendingTasks, overdueTasks, errors, setErrors } = useTasks();
 
 
   // re-render tasks when search, sort or filter queries are used
@@ -64,7 +64,9 @@ const Tasks = () => {
         setModal={setModal}
         createTask={createTask}
         updateTask={updateTask}
-        taskToEdit={taskToEdit} />
+        taskToEdit={taskToEdit}
+        errors={errors}
+        setErrors={setErrors} />
 
       {/* tasks stats cards */}
       <TaskStats

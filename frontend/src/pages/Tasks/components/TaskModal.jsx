@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import api from "../../../api/api.js";
 
-const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }) => {
+const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit, errors, setErrors }) => {
 
   if (!modal) return null;
 
@@ -17,8 +17,6 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
   const [completedAt, setCompletedAt] = useState("")
   const [dueDate, setDueDate] = useState("")
   let [relatedProject, setRelatedProject] = useState("")
-
-  const [errorMessage, setErrorMessage] = useState("")
 
   // prefill modal on edit form
   useEffect(() => {
@@ -55,19 +53,13 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
     if (!relatedProject) relatedProject = null;
 
     try {
-      if (startDate && completedAt && startDate > completedAt) {
-        setErrorMessage("Start date must be less than end Date!")
-        return;
-      }
-
-      if (startDate && dueDate && startDate > dueDate) {
-        setErrorMessage("Due date can not be less than the start date!")
-        return;
-      }
+      let result;
 
       if (mode === "create") {
 
-        await createTask(title, description, priority, status, startDate, completedAt, dueDate, relatedProject)
+        result = await createTask(title, description, priority, status, startDate, completedAt, dueDate, relatedProject)
+        if (!result) throw new Error("Task creation failed!");
+
         toast.success("Task created successfully!", {
           autoClose: 2000,
           className: "bg-[#111118] text-green-400 border border-green-600 rounded-lg",
@@ -75,8 +67,9 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
         });
       }
       else if (mode === "edit") {
+        result = await updateTask(taskToEdit, title, description, priority, status, startDate, completedAt, dueDate, relatedProject)
+        if (!result) throw new Error("Task updation failed!");
 
-        await updateTask(taskToEdit, title, description, priority, status, startDate, completedAt, dueDate, relatedProject)
         toast.info("Task updated!", {
           autoClose: 3000,
           className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",
@@ -84,12 +77,11 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
         });
       }
 
-      cancelModal();
+      if (result) cancelModal();
 
     }
 
     catch (err) {
-      console.log(err.response?.data || err.message);
       toast.error("Failed to save Task", {
         autoClose: 4000,
         className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
@@ -107,6 +99,8 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
     setCompletedAt("")
     setDueDate("")
     setRelatedProject("")
+
+    setErrors({})
 
     setModal(false)
   }
@@ -134,22 +128,34 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
             <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">TITLE</span>
             <input
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value)
+                setErrors((prev) => ({ ...prev, title: "" }))
+              }}
               required
               className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 px-2 py-4 rounded-xl"
               placeholder="Submit assignment by 6pm today"
               type="text" />
+            {errors.title && (
+              <p className="text-red-500 text-xs px-2">{errors.title}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex flex-col px-3 py-2 justify-center gap-1">
             <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">DESCRIPTION</span>
             <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value)
+                setErrors((prev) => ({ ...prev, description: "" }))
+              }}
               required
               className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-20 resize-none border border-white/15 px-2 py-3 rounded-xl"
               placeholder="Describe your task in few words."
               type="text" />
+            {errors.description && (
+              <p className="text-red-500 text-xs px-2">{errors.description}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex gap-4 px-3 py-1 text-sm text-[#6b6b82] font-semibold">
@@ -158,18 +164,30 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
               <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">START DATE</span>
               <input
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => {
+                  setStartDate(e.target.value)
+                  setErrors((prev) => ({ ...prev, startDate: "" }))
+                }}
                 className="custom-date w-full p-2 border text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
                 type="date" />
+              {errors.startDate && (
+                <p className="text-red-500 text-xs px-2">{errors.startDate}</p>
+              )}
             </div>
 
             <div className="flex py-1 flex-col justify-start w-1/2">
               <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">END DATE</span>
               <input
                 value={completedAt}
-                onChange={(e) => setCompletedAt(e.target.value)}
+                onChange={(e) => {
+                  setCompletedAt(e.target.value)
+                  setErrors((prev) => ({ ...prev, completedAt: "" }))
+                }}
                 className="custom-date w-full p-2 border text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
                 type="date" />
+              {errors.completedAt && (
+                <p className="text-red-500 text-xs px-2">{errors.completedAt}</p>
+              )}
             </div>
 
           </div>
@@ -180,22 +198,34 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
               <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">PRIORITY</span>
               <select
                 value={priority}
-                onChange={(e) => setPriority(e.target.value)}
+                onChange={(e) => {
+                  setPriority(e.target.value)
+                  setErrors((prev) => ({ ...prev, priority: "" }))
+                }}
                 className="w-full p-2 border text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500">
                 <option value="">Select Priority</option>
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
               </select>
+              {errors.priority && (
+                <p className="text-red-500 text-xs px-2">{errors.priority}</p>
+              )}
             </div>
 
             <div className="flex py-1 flex-col justify-start w-1/2">
               <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">DUE DATE</span>
               <input
                 value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
+                onChange={(e) => {
+                  setDueDate(e.target.value)
+                  setErrors((prev) => ({ ...prev, dueDate: "" }))
+                }}
                 className="custom-date w-full p-2 border text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
                 type="date" />
+              {errors.dueDate && (
+                <p className="text-red-500 text-xs px-2">{errors.dueDate}</p>
+              )}
             </div>
 
           </div>
@@ -204,33 +234,43 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
             <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">STATUS:</span>
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => {
+                setStatus(e.target.value)
+                setErrors((prev) => ({ ...prev, status: "" }))
+              }}
               className="w-full h-9 p-2 border text-sm text-white bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500">
               <option value="">Select Status</option>
               <option value="Planned">Planned</option>
               <option value="In Progress">In Progress</option>
               <option value="Completed">Completed</option>
             </select>
+            {errors.dueDate && (
+              <p className="text-red-500 text-xs px-2">{errors.dueDate}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex flex-col px-3 py-2 justify-end gap-1">
             <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">RELATED PROJECT (if any)</span>
             <select
               value={relatedProject}
-              onChange={(e) => setRelatedProject(e.target.value)}
-              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 text-white text-sm mx-1 h-9 border border-white/15 px-3 rounded-xl">
+              onChange={(e) => {
+                setRelatedProject(e.target.value);
+                setErrors((prev) => ({ ...prev, relatedProject: "" }));
+              }}
+              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 text-white text-sm mx-1 h-9 border border-white/15 px-3 rounded-xl"
+            >
               <option value="" className="bg-white/20">Related to...</option>
               {projects.map(p => (
-                <option
-                  value={p._id}
-                  key={p._id}>
+                <option value={p._id} key={p._id}>
                   {p.title}
                 </option>
               ))}
             </select>
-          </div>
 
-          {errorMessage ? (<p className="text-sm text-red-500 mx-5">{errorMessage}</p>) : ""}
+            {errors.relatedProject && (
+              <p className="text-red-500 text-xs px-2">{errors.relatedProject}</p>
+            )}
+          </div>
 
 
           <div className="w-full flex-2 flex p-5 mb-2 gap-4 text-sm font-semibold">
