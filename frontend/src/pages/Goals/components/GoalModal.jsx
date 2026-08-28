@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useGoals } from "../../../hooks/useGoals";
 
-const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal }) => {
+const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal, errors, setErrors }) => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
 
 
   // escape character on modal
@@ -42,7 +42,6 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal 
     setDescription("");
     setStartDate("");
     setEndDate("");
-    setErrorMessage("")
 
     setModal(false)
   }
@@ -50,16 +49,14 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal 
   // handle modal submit according to mode
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage("");
-
-    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-      setErrorMessage("Start date must be less than end Date!");
-      return;
-    }
 
     try {
+      let result;
+
       if (mode === "create") {
-        await createGoal(title, description, startDate, endDate);
+        result = await createGoal(title, description, startDate, endDate);
+        if (!result) throw new Error("Goal creation failed");
+
         toast.success("Goal created successfully!", {
           autoClose: 2000,
           icon: "🎯",
@@ -67,7 +64,9 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal 
           progressClassName: "bg-green-500"
         });
       } else if (mode === "edit") {
-        await updateGoal(initialData, title, description, startDate, endDate);
+        result = await updateGoal(initialData, title, description, startDate, endDate);
+        if (!result) throw new Error("Goal update failed");
+
         toast.info("Goal updated!", {
           autoClose: 3000,
           className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",
@@ -75,7 +74,9 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal 
         });
       }
 
-      cancelModal();
+      if (result) {
+        cancelModal();
+      }
     } catch (err) {
       toast.error("Failed to save goal", {
         autoClose: 6000,
@@ -85,6 +86,7 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal 
       console.error(err);
     }
   };
+
 
   if (!modal) return null;
 
@@ -110,22 +112,35 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal 
             <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">TITLE</span>
             <input
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value)
+                setErrors((prev) => ({ ...prev, title: "" }))
+              }}
               required
               className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl"
               placeholder="Enter short-term or long-term goal"
               type="text" />
+
+            {errors.title && (
+              <p className="text-red-500 text-xs px-2">{errors.title}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex flex-col p-3 justify-center gap-1">
             <span className="text-sm text-[#6b6b82] font-Manrope font-semibold">DESCRIPTION</span>
             <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value)
+                setErrors((prev) => ({ ...prev, description: "" }))
+              }}
               required
               className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-20 resize-none border border-white/15 px-4 py-3 rounded-xl"
               placeholder="Describe what you want to achieve..."
               type="text" />
+            {errors.description && (
+              <p className="text-red-500 text-xs px-2">{errors.description}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex gap-3 text-sm text-[#6b6b82] font-semibold p-5">
@@ -134,25 +149,36 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal 
               <span>START DATE</span>
               <input
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => {
+                  setStartDate(e.target.value)
+                  setErrors((prev) => ({ ...prev, startDate: "" }))
+                }}
                 required
                 className="custom-date w-full p-2 border bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
                 type="date" />
+              {errors.startDate && (
+                <p className="text-red-500 text-xs px-2">{errors.startDate}</p>
+              )}
             </div>
 
             <div className="flex py-1 flex-col justify-start w-1/2">
               <span>END DATE</span>
               <input
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={(e) => {
+                  setEndDate(e.target.value)
+                  setErrors((prev) => ({ ...prev, endDate: "" }))
+                }}
                 required
                 className="custom-date w-full p-2 border bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
                 type="date" />
+              {errors.endDate && (
+                <p className="text-red-500 text-xs px-2">{errors.endDate}</p>
+              )}
             </div>
 
           </div>
 
-          {errorMessage ? (<p className="text-sm text-red-500 mx-5">{errorMessage}</p>) : ""}
 
           <div className="w-full flex-2 flex p-5 gap-4 text-sm font-semibold">
             <button

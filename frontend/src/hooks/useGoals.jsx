@@ -7,17 +7,29 @@ export const useGoals = () => {
     const [limit, setLimit] = useState(10);
     const [hasMore, setHasMore] = useState(false);
     const [loading, setLoading] = useState(false);
+
     const [totalGoalCount, setTotalGoalCount] = useState(0);
     const [completedGoalCount, setCompletedGoalCount] = useState(0);
     const [pendingGoalCount, setPendingGoalCount] = useState(0);
 
+    const [errors, setErrors] = useState({});
+
+    const handleValidationError = (err) => {
+        if (err?.response?.status === 400 && Array.isArray(err.response?.data?.error)) {
+            const fieldErrors = {};
+            err.response.data.error.forEach((e) => {
+                fieldErrors[e.field] = e.message;
+            });
+            setErrors(fieldErrors);
+        }
+    };
+
     const fetchGoals = useCallback(async (params = {}, pageNum = 1, reset = false) => {
         try {
             setLoading(true);
-            const res = await api.get('/api/goals', {
+            const res = await api.get("/api/goals", {
                 params: { ...params, page: pageNum, limit }
             });
-
 
             setTotalGoalCount(res.data.totalGoalCount);
             setCompletedGoalCount(res.data.completedGoalCount);
@@ -27,10 +39,10 @@ export const useGoals = () => {
             setHasMore(hasMoreFlag);
 
             const goalsPage = hasMoreFlag ? res.data.goals.slice(0, limit) : res.data.goals;
-
             setGoals(prev => reset ? goalsPage : [...prev, ...goalsPage]);
+            setErrors({});
         } catch (err) {
-            console.error(err);
+            handleValidationError(err);
         } finally {
             setLoading(false);
         }
@@ -50,29 +62,42 @@ export const useGoals = () => {
                 setCompletedGoalCount(prev => prev - 1);
                 setPendingGoalCount(prev => prev + 1);
             }
-
+            setErrors({});
             return updatedGoal;
         } catch (err) {
-            console.error(err);
+            handleValidationError(err);
+            throw err;
         }
     };
 
     const createGoal = async (title, description, startDate, endDate) => {
-        const res = await api.post('/api/goals', { title, description, startDate, endDate });
-        const newGoal = res.data;
+        try {
+            const res = await api.post("/api/goals", { title, description, startDate, endDate });
+            const newGoal = res.data;
 
-        setGoals(prev => [newGoal, ...prev]);
-        setTotalGoalCount(prev => prev + 1);
-        setPendingGoalCount(prev => prev + 1);
-        return newGoal;
+            setGoals(prev => [newGoal, ...prev]);
+            setTotalGoalCount(prev => prev + 1);
+            setPendingGoalCount(prev => prev + 1);
+            setErrors({});
+            return newGoal;
+        } catch (err) {
+            handleValidationError(err);
+            throw err;
+        }
     };
 
     const updateGoal = async (initialData, title, description, startDate, endDate) => {
-        const res = await api.put(`/api/goals/${initialData._id}`, { title, description, startDate, endDate });
-        const updatedGoal = res.data;
+        try {
+            const res = await api.put(`/api/goals/${initialData._id}`, { title, description, startDate, endDate });
+            const updatedGoal = res.data;
 
-        setGoals(prev => prev.map(g => g._id === updatedGoal._id ? updatedGoal : g));
-        return updatedGoal;
+            setGoals(prev => prev.map(g => g._id === updatedGoal._id ? updatedGoal : g));
+            setErrors({});
+            return updatedGoal;
+        } catch (err) {
+            handleValidationError(err);
+            throw err;
+        }
     };
 
     const deleteGoal = async (goalId) => {
@@ -88,12 +113,12 @@ export const useGoals = () => {
         }
     };
 
-
     return {
         goals, loading,
         fetchGoals, handleGoalCompletion,
         createGoal, updateGoal, deleteGoal,
         hasMore, page, setPage, setLimit,
-        totalGoalCount, completedGoalCount, pendingGoalCount
+        totalGoalCount, completedGoalCount, pendingGoalCount,
+        errors, setErrors
     };
 };

@@ -36,7 +36,7 @@ const Goals = () => {
     setDeleteModalOpen(true)
   }
 
-  const { goals, createGoal, updateGoal, fetchGoals, handleGoalCompletion, deleteGoal, page, setPage, hasMore, loading, totalGoalCount, completedGoalCount, pendingGoalCount } = useGoals();
+  const { goals, createGoal, updateGoal, fetchGoals, handleGoalCompletion, deleteGoal, page, setPage, hasMore, loading, totalGoalCount, completedGoalCount, pendingGoalCount, errors, setErrors } = useGoals();
 
   useEffect(() => {
     setPage(1);
@@ -59,7 +59,9 @@ const Goals = () => {
         updateGoal={updateGoal}
         params={params}
         modal={modal}
-        setModal={setModal} />
+        setModal={setModal}
+        errors={errors}
+        setErrors={setErrors} />
 
       <ConfirmModal
         deleteGoal={deleteGoal}
