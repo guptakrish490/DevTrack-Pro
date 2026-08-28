@@ -1,7 +1,4 @@
-const GoalStats = ({ goals }) => {
-
-  const completedGoalsCount = goals.filter(goal => goal.isCompleted).length
-  const activeGoalsCount = goals.filter(goal => !goal.isCompleted).length
+const GoalStats = ({ totalGoalCount, completedGoalCount, pendingGoalCount }) => {
 
   return (
     <div className='grid grid-cols-1 sm:grid-cols-3 w-full h-auto gap-2'>
@@ -12,7 +9,7 @@ const GoalStats = ({ goals }) => {
           <i className="ri-focus-2-line text-xl font-normal px-1.5 py-0.5 rounded-xl bg-green-500/20 text-green-500"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{activeGoalsCount}</h1>
+        <h1 className="text-4xl font-bold">{pendingGoalCount}</h1>
 
       </div>
 
@@ -22,7 +19,7 @@ const GoalStats = ({ goals }) => {
           <i className="ri-trophy-line text-xl font-normal px-1.5 py-0.5 rounded-xl bg-violet-500/20 text-violet-500"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{completedGoalsCount}</h1>
+        <h1 className="text-4xl font-bold">{completedGoalCount}</h1>
 
       </div>
 
@@ -32,7 +29,7 @@ const GoalStats = ({ goals }) => {
           <i className="ri-crosshair-2-fill text-xl font-normal px-1.5 py-0.5 rounded-xl bg-amber-500/20 text-amber-500"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{goals.length}</h1>
+        <h1 className="text-4xl font-bold">{totalGoalCount}</h1>
 
       </div>
 

@@ -36,7 +36,7 @@ const Goals = () => {
     setDeleteModalOpen(true)
   }
 
-  const { goals, createGoal, updateGoal, fetchGoals, handleGoalCompletion, deleteGoal, page, setPage, hasMore, loading } = useGoals();
+  const { goals, createGoal, updateGoal, fetchGoals, handleGoalCompletion, deleteGoal, page, setPage, hasMore, loading, totalGoalCount, completedGoalCount, pendingGoalCount } = useGoals();
 
   useEffect(() => {
     setPage(1);
@@ -68,7 +68,11 @@ const Goals = () => {
         setDeleteModalOpen={setDeleteModalOpen} />
 
       <h1 className="text-2xl sm:text-4xl font-bold font-display my-3 mx-2">Goals Overview🎯</h1>
-      <GoalStats goals={goals} />
+      <GoalStats
+        goals={goals}
+        totalGoalCount={totalGoalCount}
+        completedGoalCount={completedGoalCount}
+        pendingGoalCount={pendingGoalCount} />
 
       <GoalContainer
         handleCreate={handleCreate}

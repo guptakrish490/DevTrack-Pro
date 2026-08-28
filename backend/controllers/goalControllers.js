@@ -58,7 +58,13 @@ export const getGoals = async (req, res) => {
             .skip(skip)
             .limit(limit + 1)
 
-        res.status(200).json(goals)
+        const [totalGoalCount, completedGoalCount, pendingGoalCount] = await Promise.all([
+            Goal.countDocuments({ user: req.user._id }),
+            Goal.countDocuments({ user: req.user._id, isCompleted: true }),
+            Goal.countDocuments({ user: req.user._id, isCompleted: false }),
+        ]);
+
+        res.status(200).json({ goals, totalGoalCount, completedGoalCount, pendingGoalCount })
     }
     catch (err) {
         res.status(500).json({ error: err.message })

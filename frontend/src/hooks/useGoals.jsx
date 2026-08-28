@@ -7,6 +7,9 @@ export const useGoals = () => {
     const [limit, setLimit] = useState(10);
     const [hasMore, setHasMore] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [totalGoalCount, setTotalGoalCount] = useState(0);
+    const [completedGoalCount, setCompletedGoalCount] = useState(0);
+    const [pendingGoalCount, setPendingGoalCount] = useState(0);
 
     const fetchGoals = useCallback(async (params = {}, pageNum = 1, reset = false) => {
         try {
@@ -15,10 +18,15 @@ export const useGoals = () => {
                 params: { ...params, page: pageNum, limit }
             });
 
-            const hasMoreFlag = res.data.length === limit + 1;
+
+            setTotalGoalCount(res.data.totalGoalCount);
+            setCompletedGoalCount(res.data.completedGoalCount);
+            setPendingGoalCount(res.data.pendingGoalCount);
+
+            const hasMoreFlag = res.data.goals.length === limit + 1;
             setHasMore(hasMoreFlag);
 
-            const goalsPage = hasMoreFlag ? res.data.slice(0, limit) : res.data;
+            const goalsPage = hasMoreFlag ? res.data.goals.slice(0, limit) : res.data.goals;
 
             setGoals(prev => reset ? goalsPage : [...prev, ...goalsPage]);
         } catch (err) {
@@ -35,6 +43,14 @@ export const useGoals = () => {
             const updatedGoal = res.data;
 
             setGoals(prev => prev.map(g => g._id === updatedGoal._id ? updatedGoal : g));
+            if (updated) {
+                setCompletedGoalCount(prev => prev + 1);
+                setPendingGoalCount(prev => prev - 1);
+            } else {
+                setCompletedGoalCount(prev => prev - 1);
+                setPendingGoalCount(prev => prev + 1);
+            }
+
             return updatedGoal;
         } catch (err) {
             console.error(err);
@@ -46,6 +62,8 @@ export const useGoals = () => {
         const newGoal = res.data;
 
         setGoals(prev => [newGoal, ...prev]);
+        setTotalGoalCount(prev => prev + 1);
+        setPendingGoalCount(prev => prev + 1);
         return newGoal;
     };
 
@@ -58,9 +76,16 @@ export const useGoals = () => {
     };
 
     const deleteGoal = async (goalId) => {
+        const goal = goals.find(g => g._id === goalId);
         await api.delete(`/api/goals/${goalId}`);
 
         setGoals(prev => prev.filter(g => g._id !== goalId));
+        setTotalGoalCount(prev => prev - 1);
+        if (goal.isCompleted) {
+            setCompletedGoalCount(prev => prev - 1);
+        } else {
+            setPendingGoalCount(prev => prev - 1);
+        }
     };
 
 
@@ -68,6 +93,7 @@ export const useGoals = () => {
         goals, loading,
         fetchGoals, handleGoalCompletion,
         createGoal, updateGoal, deleteGoal,
-        hasMore, page, setPage, setLimit
+        hasMore, page, setPage, setLimit,
+        totalGoalCount, completedGoalCount, pendingGoalCount
     };
 };
