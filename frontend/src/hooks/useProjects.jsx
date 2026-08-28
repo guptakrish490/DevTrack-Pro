@@ -11,6 +11,17 @@ export const useProjects = () => {
     const [totalProjects, setTotalProjects] = useState(0)
     const [completedProjects, setCompletedProjects] = useState(0)
     const [activeProjects, setActiveProjects] = useState(0)
+    const [errors, setErrors] = useState({});
+
+    const handleValidationError = (err) => {
+        if (err?.response?.status === 400 && Array.isArray(err.response?.data?.error)) {
+            const fieldErrors = {};
+            err.response.data.error.forEach((e) => {
+                fieldErrors[e.field] = e.message;
+            });
+            setErrors(fieldErrors);
+        }
+    };
 
     // fetch projects with counts
     const fetchProjects = useCallback(async (params = {}, pageNum = 1, reset = false) => {
@@ -38,66 +49,81 @@ export const useProjects = () => {
 
     // create project
     const createProject = async (title, description, startDate, endDate, repoURL, techStack, status, liveURL) => {
-        const res = await api.post(`/api/projects`, {
-            title, description, startDate, endDate, repoURL, techStack, status, liveURL
-        })
-        const newProject = res.data
+        try {
+            const res = await api.post(`/api/projects`, {
+                title, description, startDate, endDate, repoURL, techStack, status, liveURL
+            })
+            const newProject = res.data
 
-        setProjects(prev => [newProject, ...prev])
-        setTotalProjects(prev => prev + 1)
+            setProjects(prev => [newProject, ...prev])
+            setTotalProjects(prev => prev + 1)
 
-        if (status === "Completed") {
-            setCompletedProjects(prev => prev + 1)
-        } else {
-            setActiveProjects(prev => prev + 1)
+            if (status === "Completed") {
+                setCompletedProjects(prev => prev + 1)
+            } else {
+                setActiveProjects(prev => prev + 1)
+            }
+
+            return newProject
+        } catch (err) {
+            handleValidationError(err);
+            throw err;
         }
-
-        return newProject
     }
 
     // update project
     const updateProject = async (projectToEdit, title, description, startDate, endDate, repoURL, techStack, status, liveURL) => {
-        const res = await api.put(`/api/projects/${projectToEdit._id}`, {
-            title, description, startDate, endDate, repoURL, techStack, status, liveURL
-        })
-        const updatedProject = res.data
+        try {
+            const res = await api.put(`/api/projects/${projectToEdit._id}`, {
+                title, description, startDate, endDate, repoURL, techStack, status, liveURL
+            })
+            const updatedProject = res.data
 
-        setProjects(prev => prev.map(p => p._id === updatedProject._id ? updatedProject : p))
+            setProjects(prev => prev.map(p => p._id === updatedProject._id ? updatedProject : p))
 
-        if (projectToEdit.status !== status) {
-            if (projectToEdit.status === "Completed") {
-                setCompletedProjects(prev => prev - 1)
-                setActiveProjects(prev => prev + 1)
-            } else if (status === "Completed") {
-                setCompletedProjects(prev => prev + 1)
-                setActiveProjects(prev => prev - 1)
+            if (projectToEdit.status !== status) {
+                if (projectToEdit.status === "Completed") {
+                    setCompletedProjects(prev => prev - 1)
+                    setActiveProjects(prev => prev + 1)
+                } else if (status === "Completed") {
+                    setCompletedProjects(prev => prev + 1)
+                    setActiveProjects(prev => prev - 1)
+                }
             }
-        }
 
-        return updatedProject
+            return updatedProject
+        } catch (err) {
+            handleValidationError(err);
+            throw err;
+        }
     }
 
     // update status only
     const updateStatus = async (project, status) => {
-        const res = await api.put(`/api/projects/${project._id}`, {
-            status,
-            endDate: status === "Completed" ? Date.now() : null
-        })
+        try {
+            const res = await api.put(`/api/projects/${project._id}`, {
+                status,
+                endDate: status === "Completed" ? Date.now() : null
+            })
 
-        const updatedProject = res.data
-        setProjects(prev => prev.map(p => p._id === updatedProject._id ? updatedProject : p))
+            const updatedProject = res.data
+            setProjects(prev => prev.map(p => p._id === updatedProject._id ? updatedProject : p))
 
-        if (project.status !== status) {
-            if (project.status === "Completed" && status !== "Completed") {
-                setCompletedProjects(prev => prev - 1)
-                setActiveProjects(prev => prev + 1)
-            } else if (project.status !== "Completed" && status === "Completed") {
-                setCompletedProjects(prev => prev + 1)
-                setActiveProjects(prev => prev - 1)
+            if (project.status !== status) {
+                if (project.status === "Completed" && status !== "Completed") {
+                    setCompletedProjects(prev => prev - 1)
+                    setActiveProjects(prev => prev + 1)
+                } else if (project.status !== "Completed" && status === "Completed") {
+                    setCompletedProjects(prev => prev + 1)
+                    setActiveProjects(prev => prev - 1)
+                }
             }
-        }
 
-        return updatedProject
+            return updatedProject
+        } catch (err) {
+            handleValidationError(err);
+            throw err;
+        }
     }
 
     // delete project
@@ -119,6 +145,7 @@ export const useProjects = () => {
         fetchProjects,
         createProject, updateProject, deleteProject, updateStatus,
         page, setPage, setLimit, hasMore,
-        totalProjects, completedProjects, activeProjects
+        totalProjects, completedProjects, activeProjects,
+        errors, setErrors
     }
 }

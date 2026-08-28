@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, projectToEdit }) => {
+const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, projectToEdit, errors, setErrors }) => {
 
   if (!modal) return null;
 
@@ -15,8 +15,6 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
   const [endDate, setEndDate] = useState("")
   const [repoURL, setRepoURL] = useState("")
   const [liveURL, setLiveURL] = useState("")
-
-  const [errorMessage, setErrorMessage] = useState("")
 
   // escape key to close modal
   useEffect(() => {
@@ -65,8 +63,9 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
     setRepoURL("")
     setLiveURL("")
 
+    setErrors({})
+
     setModal(false)
-    setErrorMessage("")
   }
 
   // add techstack and store as array
@@ -96,26 +95,22 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
   // submit functionality handler for create/edit modal
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let result;
 
     try {
-      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-        setErrorMessage("Start date must be less than end Date!")
-        return;
-      }
-      if (!status) {
-        setErrorMessage("Status is required!");
-        return;
-      }
-
       if (mode === "create") {
-        await createProject(title, description, startDate, endDate, repoURL, techStack, status, liveURL);
+        result = await createProject(title, description, startDate, endDate, repoURL, techStack, status, liveURL);
+        if (!result) throw new Error("Project creation failed!")
+
         toast.success("Project created successfully!", {
           autoClose: 2000,
           className: "bg-[#111118] text-green-400 border border-green-600 rounded-lg",
           progressClassName: "bg-green-500"
         });
       } else if (mode === "edit") {
-        await updateProject(projectToEdit, title, description, startDate, endDate, repoURL, techStack, status, liveURL);
+        result = await updateProject(projectToEdit, title, description, startDate, endDate, repoURL, techStack, status, liveURL);
+        if (!result) throw new Error("Project updation failed!")
+
         toast.info("Project updated!", {
           autoClose: 3000,
           className: "bg-[#18181f] text-blue-400 border border-blue-600 rounded-lg",
@@ -123,7 +118,7 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
         });
       }
 
-      cancelModal();
+      if (result) cancelModal();
 
     }
     catch (err) {
@@ -132,7 +127,6 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
         className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
         progressClassName: "bg-red-400"
       });
-      console.error(err.response?.data || err.message);
     }
 
   }
@@ -160,22 +154,34 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
             <span className="text-sm text-[#6b6b82] font-semibold">TITLE</span>
             <input
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value)
+                setErrors((prev) => ({ ...prev, title: "" }))
+              }}
               required
-              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl"
+              className={`bg-[#1d1d24] focus:outline-none focus:ring-2 ${!errors.title ? "focus:ring-violet-500" : "focus:ring-red-500"} placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl`}
               placeholder="My Awesome Project"
               type="text" />
+            {errors.title && (
+              <p className="text-red-500 text-xs px-2">{errors.title}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex flex-col px-3 py-2 justify-center gap-1">
             <span className="text-sm text-[#6b6b82] font-semibold">DESCRIPTION</span>
             <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value)
+                setErrors((prev) => ({ ...prev, description: "" }))
+              }}
               required
-              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-20 resize-none border border-white/15 px-4 py-3 rounded-xl"
+              className={`bg-[#1d1d24] focus:outline-none focus:ring-2 ${!errors.description ? "focus:ring-violet-500" : "focus:ring-red-500"} placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-20 resize-none border border-white/15 px-4 py-3 rounded-xl`}
               placeholder="What does this project do?"
               type="text" />
+            {errors.description && (
+              <p className="text-red-500 text-xs px-2">{errors.description}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex flex-col p-3 justify-end gap-1">
@@ -197,9 +203,12 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
               value={techInput}
               onKeyDown={handleKeyDown}
               onChange={(e) => setTechInput(e.target.value)}
-              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl"
+              className={`bg-[#1d1d24] focus:outline-none focus:ring-2 ${!errors.techStack ? "focus:ring-violet-500" : "focus:ring-red-500"} placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl`}
               placeholder="React, TypeScript, Node.js"
               type="text" />
+            {errors.techStack && (
+              <p className="text-red-500 text-xs px-2">{errors.techStack}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex gap-4 px-3 py-1 text-sm text-[#6b6b82] font-semibold">
@@ -208,18 +217,30 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
               <span className="text-sm text-[#6b6b82] font-semibold">START DATE</span>
               <input
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="custom-date w-full p-2 border text-[#9d9db1] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
+                onChange={(e) => {
+                  setStartDate(e.target.value)
+                  setErrors((prev) => ({ ...prev, startDate: "" }))
+                }}
+                className={`custom-date w-full p-2 border text-[#9d9db1] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring ${!errors.startDate ? "focus:ring-violet-500" : "focus:ring-red-500"}`}
                 type="date" />
+              {errors.startDate && (
+                <p className="text-red-500 text-xs px-2">{errors.startDate}</p>
+              )}
             </div>
 
             <div className="flex py-1 flex-col justify-start w-1/2">
               <span className="text-sm text-[#6b6b82] font-semibold">END DATE</span>
               <input
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="custom-date w-full p-2 border text-[#9d9db1] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
+                onChange={(e) => {
+                  setEndDate(e.target.value)
+                  setErrors((prev) => ({ ...prev, endDate: "" }))
+                }}
+                className={`custom-date w-full p-2 border text-[#9d9db1] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring ${!errors.endDate ? "focus:ring-violet-500" : "focus:ring-red-500"}`}
                 type="date" />
+              {errors.endDate && (
+                <p className="text-red-500 text-xs px-2 font-normal">{errors.endDate}</p>
+              )}
             </div>
 
           </div>
@@ -228,8 +249,11 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
             <span className="text-sm text-[#6b6b82] font-semibold">STATUS</span>
             <select
               value={status}
-              className="h-9 text-sm w-full p-2 border text-[#9d9db1] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring focus:ring-violet-500"
-              onChange={(e) => setStatus(e.target.value)}
+              className={`h-9 text-sm w-full p-2 border text-[#9d9db1] bg-[#1d1d24] border-white/15 rounded-xl focus:outline-none focus:ring ${!errors.status ? "focus:ring-violet-500" : "focus:ring-red-500"}`}
+              onChange={(e) => {
+                setStatus(e.target.value)
+                setErrors((prev) => ({ ...prev, status: "" }))
+              }}
               name="status"
               id="status">
               <option value="">Status</option>
@@ -238,29 +262,43 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
               <option value="Completed">Completed</option>
 
             </select>
+            {errors.status && (
+              <p className="text-red-500 text-xs px-2">{errors.status}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex flex-col px-3 py-2 justify-end gap-1">
             <span className="text-sm text-[#6b6b82] font-semibold">REPOSITORY URL</span>
             <input
               value={repoURL}
-              onChange={(e) => setRepoURL(e.target.value)}
-              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl"
+              onChange={(e) => {
+                setRepoURL(e.target.value)
+                setErrors((prev) => ({ ...prev, repoURL: "" }))
+              }}
+              className={`bg-[#1d1d24] focus:outline-none focus:ring-2 ${!errors.repoURL ? "focus:ring-violet-500" : "focus:ring-red-500"} placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl`}
               placeholder="https://github.com/..."
               type="text" />
+            {errors.repoURL && (
+              <p className="text-red-500 text-xs px-2">{errors.repoURL}</p>
+            )}
           </div>
 
           <div className="w-full flex-2 flex flex-col px-3 py-2 justify-end gap-1">
             <span className="text-sm text-[#6b6b82] font-semibold">LIVE URL</span>
             <input
               value={liveURL}
-              onChange={(e) => setLiveURL(e.target.value)}
-              className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl"
+              onChange={(e) => {
+                setLiveURL(e.target.value)
+                setErrors((prev) => ({ ...prev, liveURL: "" }))
+              }}
+              className={`bg-[#1d1d24] focus:outline-none focus:ring-2 ${!errors.liveURL ? "focus:ring-violet-500" : "focus:ring-red-500"} placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 p-4 rounded-xl`}
               placeholder="https://..."
               type="text" />
+            {errors.liveURL && (
+              <p className="text-red-500 text-xs px-2">{errors.liveURL}</p>
+            )}
           </div>
 
-          {errorMessage ? (<p className="text-sm text-red-500 mx-5 my-2">{errorMessage}</p>) : ""}
 
           <div className="w-full flex-2 flex p-5 gap-4 text-sm font-semibold">
             <button

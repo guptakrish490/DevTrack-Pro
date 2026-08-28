@@ -7,7 +7,7 @@ import { useProjects } from "../../hooks/useProjects.jsx"
 
 const Projects = () => {
 
-  const { projects, fetchProjects, createProject, updateProject, deleteProject, updateStatus, page, setLimit, setPage, hasMore, loading, totalProjects, completedProjects, activeProjects } = useProjects();
+  const { projects, fetchProjects, createProject, updateProject, deleteProject, updateStatus, page, setLimit, setPage, hasMore, loading, totalProjects, completedProjects, activeProjects, errors, setErrors } = useProjects();
 
   const [params, setParams] = useState({})
   const [modal, setModal] = useState(false)
@@ -57,7 +57,9 @@ const Projects = () => {
         mode={mode}
         modal={modal}
         setModal={setModal}
-        projectToEdit={projectToEdit} />
+        projectToEdit={projectToEdit}
+        errors={errors}
+        setErrors={setErrors} />
 
       <ConfirmModal
         deleteProject={deleteProject}
