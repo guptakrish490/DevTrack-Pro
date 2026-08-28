@@ -2,7 +2,7 @@ import express from 'express'
 import { verifyUser } from '../middlewares/authMiddlewares.js'
 import { createTasks, deleteTasks, readTasks, updateTasks } from '../controllers/taskControllers.js'
 import validate from '../middlewares/validate.js'
-import { taskSchema } from '../validators/taks.validator.js'
+import { taskSchema } from '../validators/tasks.validator.js'
 
 const router = express.Router()
 
