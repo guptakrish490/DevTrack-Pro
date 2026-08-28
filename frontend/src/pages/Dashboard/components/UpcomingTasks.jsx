@@ -1,8 +1,4 @@
-import { useDashboard } from "../../../hooks/useDashboard"
-
-const UpcomingTasks = ({ data }) => {
-
-    const { handleChange } = useDashboard();
+const UpcomingTasks = ({ data, handleChange }) => {
 
     return (
 

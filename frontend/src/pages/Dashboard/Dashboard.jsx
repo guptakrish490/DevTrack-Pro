@@ -9,14 +9,13 @@ import TaskStats from "./components/TaskStats"
 import { useDashboard } from "../../hooks/useDashboard"
 
 
-
 const Dashboard = () => {
 
-  const { data, fetchDashboard } = useDashboard();
+  const { data, fetchDashboard, handleChange } = useDashboard();
 
   useEffect(() => {
     fetchDashboard()
-  }, [data])
+  }, [])
 
   const taskCounts = data?.tasks?.reduce(
     (acc, task) => {
@@ -54,7 +53,7 @@ const Dashboard = () => {
       {/* upcoming tasks and recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full my-4 mt-6">
         <div className="lg:col-span-1">
-          <UpcomingTasks data={data} fetchDashboard={fetchDashboard} />
+          <UpcomingTasks data={data} handleChange={handleChange} />
         </div>
         <div className="lg:col-span-1">
           <RecentActivity data={data} />
