@@ -26,36 +26,51 @@ const Register = ({ setIsRegistered }) => {
   const navigate = useNavigate();
 
 
-  const [registerErr, setRegisterErr] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const handleValidationError = (err) => {
+    if (err?.response?.status === 400 && Array.isArray(err.response?.data?.error)) {
+      const fieldErrors = {};
+      err.response.data.error.forEach((e) => {
+        fieldErrors[e.field] = e.message;
+      });
+      setErrors(fieldErrors);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    let result;
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`,
+      const links = [];
+      if (githubURL) links.push({ platform: "Github", url: githubURL });
+      if (linkedinURL) links.push({ platform: "LinkedIn", url: linkedinURL });
+
+      result = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`,
         {
           name,
           username,
           email,
           password,
-          githubURL,
-          linkedinURL,
+          links,
           gender,
           location,
           bio
         },
         { withCredentials: true }
       )
+      if (!result) throw new Error("Unable to create new account!");
       navigate("/dashboard")
 
     } catch (err) {
-      setRegisterErr(err?.response?.data?.message || err.message)
+      console.log(err.response)
+      handleValidationError(err);
     }
   }
 
 
   return (
-    <div className="w-full h-full min-h-scren rounded-xl pt-14 text-white font-poppins flex flex-col p-7 justify-start gap-4 transition-all">
+    <div className="w-full h-full min-h-screen rounded-xl pt-14 text-white font-poppins flex flex-col p-7 justify-start gap-4 transition-all">
 
       <div className="flex w-full gap-1 h-1">
         <div className={`w-full h-full rounded-sm transition-colors duration-500 ${step >= 1 ? "bg-purple-500/70" : "bg-white/20"}`}></div>
@@ -79,19 +94,19 @@ const Register = ({ setIsRegistered }) => {
 
       {step === 1 && (
         <div className="animate-scaleIn">
-          <Step1 formProps1={formProps1} step={step} setStep={setStep} registerErr={registerErr} setRegisterErr={setRegisterErr} />
+          <Step1 formProps1={formProps1} setStep={setStep} errors={errors} setErrors={setErrors} />
         </div>
       )}
 
       {step === 2 && (
         <div className="animate-fadeIn">
-          <Step2 formProps2={formProps2} step={step} setStep={setStep} />
+          <Step2 formProps2={formProps2} setStep={setStep} errors={errors} setErrors={setErrors} />
         </div>
       )}
 
       {step === 3 && (
         <div className="animate-fadeIn">
-          <Step3 handleSubmit={handleSubmit} formProps3={formProps3} step={step} setStep={setStep} registerErr={registerErr} setRegisterErr={setRegisterErr} />
+          <Step3 handleSubmit={handleSubmit} formProps3={formProps3} setStep={setStep} errors={errors} setErrors={setErrors} />
         </div>
       )}
 

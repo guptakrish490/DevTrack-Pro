@@ -1,9 +1,10 @@
-const Step2 = ({ step, setStep, formProps2 }) => {
+const Step2 = ({ setStep, formProps2 }) => {
 
 
     return (
         <form
             role="dialog"
+            name="step2"
             aria-modal="true"
             onSubmit={() => setStep(3)}
             className="w-full h-auto rounded-xl text-white font-poppins flex flex-col  justify-center gap-5"

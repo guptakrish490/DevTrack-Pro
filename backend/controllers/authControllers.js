@@ -6,7 +6,7 @@ import RefreshToken from '../models/RefreshToken.js'
 
 // controller for new user registration
 export const registerUser = async (req, res) => {
-    const { name, username, email, password, linkedinURL, githubURL, gender, location, bio, avatarURL } = req.body
+    const { name, username, email, password, links, gender, location, bio, avatarURL } = req.body
 
     try {
         const existingUser = await User.findOne({ $or: [{ email }, { username }] })
@@ -26,10 +26,7 @@ export const registerUser = async (req, res) => {
             username,
             email,
             password: hash,
-            links: [
-                { platform: "Github", url: githubURL },
-                { platform: "Linked In", url: linkedinURL }
-            ],
+            links,
             gender,
             location,
             bio,
@@ -74,7 +71,7 @@ export const registerUser = async (req, res) => {
     }
     catch (err) {
         if (err.code === 11000) {
-            return res.status(400).json({ message: "Duplicate field value entered", accessToken, refreshToken });
+            return res.status(400).json({ message: "Duplicate field value entered" });
         }
         res.status(500).json({ error: err.message })
     }

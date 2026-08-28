@@ -1,33 +1,12 @@
-import axios from 'axios'
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'
-
-const Step3 = ({ step, setStep, formProps3, handleSubmit, registerErr, setRegisterErr }) => {
-
-    const [bioError, setBioError] = useState("");
-
-    const validateBio = (value) => {
-        if (!value) return "Bio is required";
-        if (value.length < 30) return "Bio must be at least 30 characters";
-        if (value.length > 500) return "Bio must be at most 500 characters";
-        return "";
-    };
-
-
-    const onSubmit = (e) => {
-        e.preventDefault();
-
-        const bErr = validateBio(formProps3.bio);
-        setBioError(bErr);
-
-        if (!bErr) {
-            handleSubmit(e);
-        }
-    };
+const Step3 = ({ setStep, formProps3, handleSubmit, errors, setErrors }) => {
 
     return (
         <form
-            onSubmit={(e) => onSubmit(e)}
+            onSubmit={(e) => {
+                e.preventDefault()
+                handleSubmit(e)
+            }}
+            name="step3"
             role="dialog"
             aria-modal="true"
             className="w-full h-auto rounded-xl text-white font-poppins flex flex-col  justify-center gap-5"
@@ -79,22 +58,19 @@ const Step3 = ({ step, setStep, formProps3, handleSubmit, registerErr, setRegist
                         value={formProps3.bio}
                         autoComplete='bio'
                         onChange={(e) => {
+                            setErrors(prev => ({ ...prev, bio: "" }))
                             formProps3.setBio(e.target.value);
-                            setBioError(validateBio(e.target.value));
                         }}
                         placeholder="Tell us about yourself, your interests, and what you're building..."
                         type="text"
-                        aria-invalid={!!bioError}
-                        className={`p-3 w-full h-20 rounded-xl text-xs bg-[#131318] border ${bioError ? "border-red-500 focus:ring-red-500" : "border-neutral-100/15 focus:ring-violet-500"} focus:outline-none focus:ring-2`} />
-                    {bioError && (
-                        <span className="text-red-500 text-xs">{bioError}</span>
+                        aria-invalid={!!errors.bio}
+                        className={`p-3 w-full h-20 rounded-xl text-xs bg-[#131318] border ${errors.bio ? "border-red-500 focus:ring-red-500" : "border-neutral-100/15 focus:ring-violet-500"} focus:outline-none focus:ring-2`} />
+                    {errors.bio && (
+                        <span className="text-red-500 text-xs">{errors.bio}</span>
                     )}
                 </div>
             </div>
 
-            {registerErr && (
-                <span className="text-red-500 text-xs capitalize">{registerErr}</span>
-            )}
 
             <div className="flex items-center gap-4 justify-between">
                 <button
