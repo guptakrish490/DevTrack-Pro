@@ -20,7 +20,7 @@ export const createProject = async (req, res) => {
 
         await updateStreak(user._id)
 
-        res.status(201).json({ message: "New Project created successfully" })
+        res.status(201).json(newProject)
     }
     catch (err) {
         res.status(500).json({ error: err.message })
@@ -30,9 +30,10 @@ export const createProject = async (req, res) => {
 // controller for project retrieval
 export const getProjects = async (req, res) => {
     try {
-        const user = req.user
-
         const { q, status, techStack, sortBy } = req.query
+
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.max(1, parseInt(req.query.limit) || 10);
 
         const query = {
             user: req.user._id
@@ -54,9 +55,15 @@ export const getProjects = async (req, res) => {
         }
 
         const sortOrder = sortBy === "oldest" ? 1 : -1;
+        const skip = (page - 1) * limit;
 
 
-        const projects = await Project.find(query).sort({ createdAt: sortOrder }).populate("relatedGoal")
+        const projects = await Project.find(query)
+            .sort({ createdAt: sortOrder })
+            .populate("relatedGoal")
+            .skip(skip)
+            .limit(limit + 1)
+
         res.status(200).json(projects)
     }
     catch (err) {
@@ -72,7 +79,7 @@ export const updateProjects = async (req, res) => {
         const { title, description, techStack, repoURL, liveURL, startDate, endDate, status } = req.body
 
         const existingStatus = await Project.findById(req.params.id).select({ _id: 0, status: 1 });
-        const project = await Project.findByIdAndUpdate(req.params.id,
+        const updatedProject = await Project.findByIdAndUpdate(req.params.id,
             {
                 title,
                 description,
@@ -87,19 +94,19 @@ export const updateProjects = async (req, res) => {
             { new: true }
         )
 
-        if (project.status === "Completed" && existingStatus.status !== "Completed") {
+        if (updatedProject.status === "Completed" && existingStatus.status !== "Completed") {
             await logActivity({
                 user: user._id,
                 type: "project_completed",
-                title: `Completed Project: ${project.title}`,
-                relatedProject: project._id
+                title: `Completed Project: ${updatedProject.title}`,
+                relatedProject: updatedProject._id
             })
 
             await updateStreak(user._id)
         }
 
 
-        res.status(200).json(project);
+        res.status(200).json(updatedProject);
     }
     catch (err) {
         res.status(500).json({ error: err.message })

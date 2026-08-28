@@ -1,15 +1,13 @@
 import ProjectStats from "./components/ProjectStats.jsx"
 import ProjectContainer from "./components/ProjectContainer.jsx"
-
 import { useState, useEffect } from "react"
 import ProjectModal from "./components/ProjectModal.jsx"
 import ConfirmModal from "./components/ConfirmModal.jsx"
-import api from "../../api/api.js"
 import { useProjects } from "../../hooks/useProjects.jsx"
 
 const Projects = () => {
 
-  const { projects, fetchProjects } = useProjects();
+  const { projects, fetchProjects, createProject, updateProject, deleteProject, updateStatus, page, setLimit, setPage, hasMore, loading } = useProjects();
 
   const [params, setParams] = useState({})
   const [modal, setModal] = useState(false)
@@ -21,8 +19,15 @@ const Projects = () => {
 
   //re-render projects on sort, search or filter
   useEffect(() => {
-    fetchProjects(params)
-  }, [params,])
+    setPage(1);
+    fetchProjects(params, 1, true)
+  }, [params])
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchProjects(params, page, false);
+    }
+  }, [page]);
 
   // create functionality handler
   const handleCreate = () => {
@@ -47,19 +52,18 @@ const Projects = () => {
   return (
     <>
       <ProjectModal
-        fetchProjects={fetchProjects}
+        createProject={createProject}
+        updateProject={updateProject}
         mode={mode}
-        params={params}
         modal={modal}
         setModal={setModal}
         projectToEdit={projectToEdit} />
 
       <ConfirmModal
-        params={params}
+        deleteProject={deleteProject}
         deleteModal={deleteModal}
         setDeleteModal={setDeleteModal}
-        projectToDelete={projectToDelete}
-        fetchProjects={fetchProjects} />
+        projectToDelete={projectToDelete} />
 
       <h1 className="text-2xl sm:text-4xl font-bold font-display my-3 mx-2">Your Projects 📂</h1>
       <ProjectStats
@@ -72,11 +76,25 @@ const Projects = () => {
         setParams={setParams}
         setModal={setModal}
         mode={mode}
+        updateStatus={updateStatus}
         setMode={setMode}
         handleCreate={handleCreate}
         handleDelete={handleDelete}
         setProjectToDelete={setProjectToDelete}
         handleEdit={handleEdit} />
+
+      {hasMore && (
+        <div className="flex items-center justify-center my-8">
+          <div className="grow h-px bg-neutral-500/30 backdrop-blur-sm" />
+          <button
+            disabled={loading}
+            onClick={() => setPage(prev => prev + 1)}
+            className="mx-4 px-6 py-2 text-sm font-medium text-neutral-200 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-sm hover:bg-white/20 hover:text-white transition disabled:opacity-50">
+            {loading ? "Loading..." : "Read more..."}
+          </button>
+          <div className="grow h-px bg-neutral-500/30 backdrop-blur-sm" />
+        </div>
+      )}
     </>
   )
 }

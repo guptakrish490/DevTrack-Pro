@@ -1,10 +1,7 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useProjects } from "../../../hooks/useProjects.jsx";
 
-
-const ProjectModal = ({ fetchProjects, params, mode, modal, setModal, projectToEdit }) => {
+const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, projectToEdit }) => {
 
   if (!modal) return null;
 
@@ -20,8 +17,6 @@ const ProjectModal = ({ fetchProjects, params, mode, modal, setModal, projectToE
   const [liveURL, setLiveURL] = useState("")
 
   const [errorMessage, setErrorMessage] = useState("")
-
-  const { createProject, updateProject } = useProjects();
 
   // escape key to close modal
   useEffect(() => {
@@ -107,19 +102,19 @@ const ProjectModal = ({ fetchProjects, params, mode, modal, setModal, projectToE
         setErrorMessage("Start date must be less than end Date!")
         return;
       }
+      if (!status) {
+        setErrorMessage("Status is required!");
+        return;
+      }
 
       if (mode === "create") {
-
         await createProject(title, description, startDate, endDate, repoURL, techStack, status, liveURL);
         toast.success("Project created successfully!", {
           autoClose: 2000,
           className: "bg-[#111118] text-green-400 border border-green-600 rounded-lg",
           progressClassName: "bg-green-500"
         });
-      }
-
-      else if (mode === "edit") {
-
+      } else if (mode === "edit") {
         await updateProject(projectToEdit, title, description, startDate, endDate, repoURL, techStack, status, liveURL);
         toast.info("Project updated!", {
           autoClose: 3000,
@@ -128,7 +123,6 @@ const ProjectModal = ({ fetchProjects, params, mode, modal, setModal, projectToE
         });
       }
 
-      await fetchProjects(params);
       cancelModal();
 
     }
@@ -238,6 +232,7 @@ const ProjectModal = ({ fetchProjects, params, mode, modal, setModal, projectToE
               onChange={(e) => setStatus(e.target.value)}
               name="status"
               id="status">
+              <option value="">Status</option>
               <option value="Planned">Planned</option>
               <option value="In Progress">In Progress</option>
               <option value="Completed">Completed</option>

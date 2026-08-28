@@ -1,21 +1,16 @@
 import { toast } from "react-toastify";
-import { useProjects } from "../../../hooks/useProjects.jsx";
 
-
-const ConfirmModal = ({ params, deleteModal, setDeleteModal, projectToDelete, fetchProjects }) => {
+const ConfirmModal = ({ deleteModal, setDeleteModal, projectToDelete, deleteProject }) => {
 
   // hide delete modal on default
   if (!deleteModal || !projectToDelete) return null;
-
-  const { deleteProject } = useProjects();
 
   // handle delete confirmation
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await deleteProject(projectToDelete);
+      await deleteProject(projectToDelete._id);
       toast.success("Project deleted successfully!")
-      await fetchProjects(params)
     }
     catch (err) {
       toast.error("Failed to delete Project", {

@@ -3,7 +3,7 @@ import ProjectCard from "./ProjectCard.jsx"
 import CreateButton from "../../../components/ui/CreateButton.jsx"
 
 
-const ProjectContainer = ({ projects, fetchProjects, setParams, mode, modal, setModal, handleCreate, handleDelete, setProjectToDelete, handleEdit }) => {
+const ProjectContainer = ({ projects, updateStatus, setParams, mode, modal, setModal, handleCreate, handleDelete, handleEdit }) => {
   return (
     <div className='font-open-sans w-full h-auto border border-white/15 bg-[#111118] sm:p-5 p-3 rounded-2xl mt-6 '>
 
@@ -38,9 +38,8 @@ const ProjectContainer = ({ projects, fetchProjects, setParams, mode, modal, set
               {projects.map(project => (
                 <ProjectCard
                   key={project._id}
-                  fetchProjects={fetchProjects}
+                  updateStatus={updateStatus}
                   handleDelete={handleDelete}
-                  setProjectToDelete={setProjectToDelete}
                   project={project}
                   handleEdit={handleEdit} />
               ))}

@@ -23,7 +23,7 @@ const ProjectQueries = ({ setParams, handleCreate }) => {
       q: search,
       status: selectedFilter
     })
-  }, [sortOrder, search, selectedFilter, setParams])
+  }, [sortOrder, search, selectedFilter])
 
 
   return (

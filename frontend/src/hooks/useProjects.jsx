@@ -1,26 +1,37 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import api from "../api/api.js"
 
 export const useProjects = () => {
 
     const [projects, setProjects] = useState([])
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(4);
+    const [hasMore, setHasMore] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     //render projects without page reload
-    const fetchProjects = async (params) => {
+    const fetchProjects = useCallback(async (params = {}, pageNum = 1, reset = false) => {
         try {
+            setLoading(true)
             const res = await api.get(`/api/projects`, {
-                params: params
+                params: { ...params, page: pageNum, limit: limit }
             })
 
-            setProjects(res.data)
+            const hasMoreFlag = res.data.length === limit + 1;
+            setHasMore(hasMoreFlag);
+
+            const projectsPage = hasMoreFlag ? res.data.slice(0, limit) : res.data;
+            setProjects(prev => reset ? projectsPage : [...prev, ...projectsPage]);
         }
         catch (err) {
             console.log(err)
+        } finally {
+            setLoading(false);
         }
-    }
+    }, [limit])
 
     const createProject = async (title, description, startDate, endDate, repoURL, techStack, status, liveURL) => {
-        await api.post(`/api/projects`,
+        const res = await api.post(`/api/projects`,
             {
                 title,
                 description,
@@ -32,11 +43,19 @@ export const useProjects = () => {
                 liveURL,
             }
         )
+        const newProject = res.data;
+
+        setProjects(prev => [newProject, ...prev]);
+        return newProject;
+
     }
 
     const updateProject = async (projectToEdit, title, description, startDate, endDate, repoURL, techStack, status, liveURL) => {
+
+        let res;
+
         if (projectToEdit.status !== "Completed" && status === "Completed") {
-            await api.put(`/api/projects/${projectToEdit._id}`,
+            res = await api.put(`/api/projects/${projectToEdit._id}`,
                 {
                     title,
                     description,
@@ -50,7 +69,7 @@ export const useProjects = () => {
             )
         }
         else if (projectToEdit.status === "Completed" && status !== "Completed") {
-            await api.put(`/api/projects/${projectToEdit._id}`,
+            res = await api.put(`/api/projects/${projectToEdit._id}`,
                 {
                     title,
                     description,
@@ -64,7 +83,7 @@ export const useProjects = () => {
             )
         }
         else {
-            await api.put(`/api/projects/${projectToEdit._id}`,
+            res = await api.put(`/api/projects/${projectToEdit._id}`,
                 {
                     title,
                     description,
@@ -78,11 +97,17 @@ export const useProjects = () => {
             )
 
         }
+        const updatedProject = res.data;
+
+        setProjects(prev => prev.map(p => p._id === updatedProject._id ? updatedProject : p));
+        return updatedProject;
     }
 
     const updateStatus = async (project, status) => {
+        let res;
+
         if (status === "Completed") {
-            await api.put(`/api/projects/${project._id}`,
+            res = await api.put(`/api/projects/${project._id}`,
                 {
                     status,
                     endDate: Date.now()
@@ -90,25 +115,30 @@ export const useProjects = () => {
             );
         }
 
-        if (status !== "Completed") {
-            await api.put(`/api/projects/${project._id}`,
+        else if (status !== "Completed") {
+            res = await api.put(`/api/projects/${project._id}`,
                 {
                     status,
                     endDate: null
                 },
             );
         }
+
+        const updatedProject = res.data;
+
+        setProjects(prev => prev.map(p => p._id === updatedProject._id ? updatedProject : p));
+        return updatedProject;
     }
 
-    const deleteProject = async (projectToDelete) => {
-        await api.delete(`/api/projects/${projectToDelete._id}`)
+    const deleteProject = async (projectId) => {
+        await api.delete(`/api/projects/${projectId}`);
+        setProjects(prev => prev.filter(p => p._id !== projectId));
     }
 
     return {
-        projects, setProjects,
+        projects, loading,
         fetchProjects,
-        createProject, updateProject,
-        updateStatus,
-        deleteProject
+        createProject, updateProject, deleteProject, updateStatus,
+        page, setPage, setLimit, hasMore
     }
 }
