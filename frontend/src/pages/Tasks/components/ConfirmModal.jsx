@@ -1,21 +1,17 @@
 import { toast } from "react-toastify";
-import { useTasks } from "../../../hooks/useTasks.jsx";
 
 
-const ConfirmModal = ({ deleteModal, setDeleteModal, taskToDelete, fetchTasks }) => {
+const ConfirmModal = ({ deleteModal, setDeleteModal, taskToDelete, deleteTask }) => {
 
   // hide delete modal on default
   if (!deleteModal || !taskToDelete) return null;
-
-  const { deleteTask } = useTasks();
 
   // handle delete confirmation
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await deleteTask(taskToDelete)
-      await fetchTasks()
+      await deleteTask(taskToDelete._id);
       toast.success("Task deleted successfully!")
 
     }

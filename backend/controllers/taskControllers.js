@@ -47,6 +47,9 @@ export const readTasks = async (req, res) => {
         // query processing for search, sort, filter
         const { q, status, sortBy, priority } = req.query
 
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.max(1, parseInt(req.query.limit) || 10);
+
         const query = { user: user._id };
 
         if (q) {
@@ -62,10 +65,16 @@ export const readTasks = async (req, res) => {
         }
 
         const sortOrder = sortBy === "oldest" ? 1 : -1;
+        const skip = (page - 1) * limit;
 
 
         //fetching tasks
-        const tasks = await Task.find(query).sort({ createdAt: sortOrder }).populate("relatedProject")
+        const tasks = await Task.find(query)
+            .sort({ createdAt: sortOrder })
+            .populate("relatedProject")
+            .skip(skip)
+            .limit(limit + 1)
+
         res.status(200).json(tasks)
     }
     catch (err) {
@@ -81,7 +90,7 @@ export const updateTasks = async (req, res) => {
         const { title, description, relatedProject, priority, status, startDate, completedAt, dueDate } = req.body
 
         const existingStatus = await Task.findById(req.params.id).select({ _id: 0, status: 1 });
-        const task = await Task.findByIdAndUpdate(req.params.id, {
+        const updatedTask = await Task.findByIdAndUpdate(req.params.id, {
             title,
             description,
             relatedProject,
@@ -93,18 +102,18 @@ export const updateTasks = async (req, res) => {
         },
             { new: true })
 
-        if (task.status === "Completed" && existingStatus.status !== "Completed") {
+        if (updatedTask.status === "Completed" && existingStatus.status !== "Completed") {
             await logActivity({
                 user: user._id,
                 type: "task_completed",
-                title: `Completed Task: ${task.title}`,
-                relatedTask: task._id
+                title: `Completed Task: ${updatedTask.title}`,
+                relatedTask: updatedTask._id
             })
 
             await updateStreak(user._id)
         }
 
-        res.status(200).json(task)
+        res.status(200).json(updatedTask)
     }
     catch (err) {
         res.status(500).json({ error: err.message })

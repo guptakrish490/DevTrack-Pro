@@ -1,27 +1,16 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { NavLink } from 'react-router-dom'
-import { useTasks } from "../../../hooks/useTasks.jsx"
 
-const TaskCard = ({ task, params, handleEdit, fetchTasks, handleDelete }) => {
+const TaskCard = ({ task, handleEdit, handleDelete, updatePriorityStatus }) => {
 
     const [status, setStatus] = useState(task.status)
     const [priority, setPriority] = useState(task.priority)
     const [expand, setExpand] = useState(false);
 
-    const {updatePriorityStatus}=useTasks();
-
-    // set local task and priority states
-    useEffect(() => {
-        setStatus(task.status);
-        setPriority(task.priority);
-    }, [task])
-
     // update status/priority directly from select dropdown
     const handleChange = async (task, status, priority) => {
         try {
-            
             await updatePriorityStatus(task, status, priority)
-            await fetchTasks(params);
         } catch (err) {
             console.error(err.response?.data || err.message);
         }
@@ -29,7 +18,7 @@ const TaskCard = ({ task, params, handleEdit, fetchTasks, handleDelete }) => {
 
 
     return (
-        <div className="w-full font-poppins h-auto border rounded-md border-neutral-100/20 sm:p-5 p-4 transition-all duration-300 ease-in-out hover:border-violet-400">
+        <div className="w-full font-poppins h-auto border rounded-md border-neutral-100/20 sm:p-5 p-4 transition-all duration-300 ease-in-out hover:border-violet-800">
 
             <div className="flex flex-col capitalize">
                 <div className="flex items-center justify-between gap-2">

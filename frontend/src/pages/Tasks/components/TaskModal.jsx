@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import api from "../../../api/api.js";
-import { useTasks } from "../../../hooks/useTasks.jsx";
 
-const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
+const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }) => {
 
   if (!modal) return null;
 
@@ -20,8 +19,6 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
   const [relatedProject, setRelatedProject] = useState("")
 
   const [errorMessage, setErrorMessage] = useState("")
-
-  const { createTask, updateTask } = useTasks();
 
   // prefill modal on edit form
   useEffect(() => {
@@ -50,7 +47,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
     };
 
     fetchProjects();
-  }, []);
+  }, [mode, modal]);
 
   // handle create/edit modal form submission
   const handleSubmit = async (e) => {
@@ -86,7 +83,6 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
         });
       }
 
-      fetchTasks();
       cancelModal();
 
     }
@@ -140,7 +136,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
               onChange={(e) => setTitle(e.target.value)}
               required
               className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-9 border border-white/15 px-2 py-4 rounded-xl"
-              placeholder="My Awesome Project"
+              placeholder="Submit assignment by 6pm today"
               type="text" />
           </div>
 
@@ -151,7 +147,7 @@ const TaskModal = ({ mode, modal, setModal, fetchTasks, taskToEdit }) => {
               onChange={(e) => setDescription(e.target.value)}
               required
               className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[#6f6f8a] placeholder:text-sm mx-1 h-20 resize-none border border-white/15 px-2 py-3 rounded-xl"
-              placeholder="What does this project do?"
+              placeholder="Describe your task in few words."
               type="text" />
           </div>
 
