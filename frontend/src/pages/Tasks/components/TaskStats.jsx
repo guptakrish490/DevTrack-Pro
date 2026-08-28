@@ -1,19 +1,4 @@
-const TaskStats = ({ tasks }) => {
-
-  // active tasks count
-  const activeTaskCount = tasks.filter(
-    t => (t.status === "In Progress") || (t.status === "Planned")
-  ).length
-
-  // completed tasks count
-  const completedTaskCount = tasks.filter(
-    t => (t.status === "Completed")
-  ).length
-
-  // overdue tasks count
-  const overdueTaskCount = tasks.filter(
-    t => t.dueDate && new Date(t.dueDate).getTime() < Date.now()
-  ).length;
+const TaskStats = ({ totalTasks, completedTasks, pendingTasks, overdueTasks }) => {
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 w-full h-auto gap-2'>
@@ -25,7 +10,7 @@ const TaskStats = ({ tasks }) => {
           <i className="ri-calendar-todo-line text-xl font-normal px-1.5 py-0.5 rounded-xl bg-violet-600/25 text-violet-600"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{tasks.length}</h1>
+        <h1 className="text-4xl font-bold">{totalTasks}</h1>
 
       </div>
 
@@ -37,7 +22,7 @@ const TaskStats = ({ tasks }) => {
           <i className="ri-time-line text-xl font-normal px-1.5 py-0.5 rounded-xl bg-amber-500/20 text-amber-500"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{activeTaskCount}</h1>
+        <h1 className="text-4xl font-bold">{pendingTasks}</h1>
 
       </div>
 
@@ -48,7 +33,7 @@ const TaskStats = ({ tasks }) => {
           <i className="ri-file-check-line text-xl font-normal px-1.5 py-0.5 rounded-xl bg-green-500/20 text-green-500"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{completedTaskCount}</h1>
+        <h1 className="text-4xl font-bold">{completedTasks}</h1>
 
       </div>
 
@@ -59,7 +44,7 @@ const TaskStats = ({ tasks }) => {
           <i className="ri-error-warning-line text-xl font-normal px-1.5 py-0.5 rounded-xl bg-sky-500/20 text-sky-500"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{overdueTaskCount}</h1>
+        <h1 className="text-4xl font-bold">{overdueTasks}</h1>
 
       </div>
 

@@ -16,7 +16,7 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
   const [startDate, setStartDate] = useState("")
   const [completedAt, setCompletedAt] = useState("")
   const [dueDate, setDueDate] = useState("")
-  const [relatedProject, setRelatedProject] = useState("")
+  let [relatedProject, setRelatedProject] = useState("")
 
   const [errorMessage, setErrorMessage] = useState("")
 
@@ -40,7 +40,7 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
     const fetchProjects = async () => {
       try {
         const res = await api.get(`/api/projects`);
-        setProjects(res.data);
+        setProjects(res.data.projects);
       } catch (err) {
         console.error(err.response?.data || err.message);
       }
@@ -52,6 +52,7 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
   // handle create/edit modal form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!relatedProject) relatedProject = null;
 
     try {
       if (startDate && completedAt && startDate > completedAt) {
@@ -218,7 +219,7 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit }
               value={relatedProject}
               onChange={(e) => setRelatedProject(e.target.value)}
               className="bg-[#1d1d24] focus:outline-none focus:ring-2 focus:ring-violet-500 text-white text-sm mx-1 h-9 border border-white/15 px-3 rounded-xl">
-              <option value={null} className="bg-white/20">Related to...</option>
+              <option value="" className="bg-white/20">Related to...</option>
               {projects.map(p => (
                 <option
                   value={p._id}

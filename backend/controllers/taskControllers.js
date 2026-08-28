@@ -75,7 +75,15 @@ export const readTasks = async (req, res) => {
             .skip(skip)
             .limit(limit + 1)
 
-        res.status(200).json(tasks)
+        const [totalTasks, completedTasks, pendingTasks, overdueTasks] = await Promise.all([
+            Task.countDocuments({ user: req.user._id }),
+            Task.countDocuments({ user: req.user._id, status: "Completed" }),
+            Task.countDocuments({ user: req.user._id, status: { $in: ["Planned", "In Progress"] } }),
+            Task.countDocuments({ user: req.user._id, dueDate: { $lt: new Date() }, status: { $ne: "Completed" } })
+        ]);
+
+
+        res.status(200).json({ tasks, totalTasks, completedTasks, pendingTasks, overdueTasks });
     }
     catch (err) {
         res.status(500).json({ error: err.message })

@@ -2,139 +2,141 @@ import { useCallback, useState } from "react"
 import api from "../api/api.js"
 
 export const useTasks = () => {
+    const [tasks, setTasks] = useState([])
+    const [page, setPage] = useState(1)
+    const [limit, setLimit] = useState(8)
+    const [hasMore, setHasMore] = useState(false)
+    const [loading, setLoading] = useState(false)
 
-    const [tasks, setTasks] = useState([]);
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(4);
-    const [hasMore, setHasMore] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [totalTasks, setTotalTasks] = useState(0)
+    const [completedTasks, setCompletedTasks] = useState(0)
+    const [pendingTasks, setPendingTasks] = useState(0)
+    const [overdueTasks, setOverdueTasks] = useState(0)
 
-    // fetch tasks on call without page reload
+    // fetch tasks with counts
     const fetchTasks = useCallback(async (params = {}, pageNum = 1, reset = false) => {
         try {
-            setLoading(true);
-            const res = await api.get(`/api/tasks`,
-                { params: { ...params, page: pageNum, limit: limit } }
-            )
+            setLoading(true)
+            const res = await api.get(`/api/tasks`, {
+                params: { ...params, page: pageNum, limit }
+            })
 
-            const hasMoreFlag = res.data.length === limit + 1;
-            setHasMore(hasMoreFlag);
+            setTotalTasks(res.data.totalTasks)
+            setCompletedTasks(res.data.completedTasks)
+            setPendingTasks(res.data.pendingTasks)
+            setOverdueTasks(res.data.overdueTasks)
 
-            const tasksPage = hasMoreFlag ? res.data.slice(0, limit) : res.data;
-            setTasks(prev => reset ? tasksPage : [...prev, ...tasksPage]);
-        }
-        catch (err) {
-            console.log(err.response?.data || err.message)
+            const hasMoreFlag = res.data.tasks.length === limit + 1
+            setHasMore(hasMoreFlag)
+
+            const tasksPage = hasMoreFlag ? res.data.tasks.slice(0, limit) : res.data.tasks
+            setTasks(prev => reset ? tasksPage : [...prev, ...tasksPage])
+        } catch (err) {
+            console.error(err.response?.data || err.message)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    }, [limit]);
+    }, [limit])
 
+
+
+    // create task
     const createTask = async (title, description, priority, status, startDate, completedAt, dueDate, relatedProject) => {
-        const res = await api.post(`/api/tasks`,
-            {
-                title,
-                description,
-                priority,
-                status,
-                startDate,
-                completedAt,
-                dueDate,
-                relatedProject
-            }
-        )
-        const newTask = res.data;
+        const res = await api.post(`/api/tasks`, {
+            title, description, priority, status, startDate, completedAt, dueDate, relatedProject
+        })
+        const newTask = res.data
 
-        setTasks(prev => [newTask, ...prev]);
-        return newTask;
-    }
+        setTasks(prev => [newTask, ...prev])
+        setTotalTasks(prev => prev + 1)
 
-    const updateTask = async (taskToEdit, title, description, priority, status, startDate, completedAt, dueDate, relatedProject) => {
-
-        let res;
-        if (taskToEdit.status !== "Completed" && status === "Completed") {
-            res = await api.put(`/api/tasks/${taskToEdit._id}`,
-                {
-                    title,
-                    description,
-                    priority,
-                    status,
-                    startDate,
-                    completedAt: Date.now(),
-                    dueDate,
-                    relatedProject: relatedProject._id
-                }
-            )
-        }
-        else if (taskToEdit.status === "Completed" && status !== "Completed") {
-            res = await api.put(`/api/tasks/${taskToEdit._id}`,
-                {
-                    title,
-                    description,
-                    priority,
-                    status,
-                    startDate,
-                    completedAt: null,
-                    dueDate,
-                    relatedProject
-                }
-            )
-        }
-        else {
-            res = await api.put(`/api/tasks/${taskToEdit._id}`,
-                {
-                    title,
-                    description,
-                    priority,
-                    status,
-                    startDate,
-                    completedAt,
-                    dueDate,
-                    relatedProject
-                }
-            )
-        }
-        const updatedTask = res.data;
-
-        setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t));
-        return updatedTask;
-    }
-
-    const deleteTask = async (taskId) => {
-        await api.delete(`/api/tasks/${taskId}`)
-        setTasks(prev => prev.filter(t => t._id !== taskId));
-    }
-
-    const updatePriorityStatus = async (task, status, priority) => {
-        let res;
         if (status === "Completed") {
-            res = await api.put(`/api/tasks/${task._id}`,
-                {
-                    status: status || task.status,
-                    priority: priority || task.priority,
-                    completedAt: Date.now()
-                }
-            );
+            setCompletedTasks(prev => prev + 1)
+        } else {
+            setPendingTasks(prev => prev + 1)
+            if (new Date(dueDate) < new Date()) setOverdueTasks(prev => prev + 1)
         }
-        if (status !== "Completed") {
-            res = await api.put(`/api/tasks/${task._id}`,
-                {
-                    status: status || task.status,
-                    priority: priority || task.priority,
-                    completedAt: null
-                }
-            );
-        }
-        const updatedTask = res.data;
 
-        setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t));
-        return updatedTask;
+        return newTask
+    }
+
+    // update task
+    const updateTask = async (taskToEdit, title, description, priority, status, startDate, completedAt, dueDate, relatedProject) => {
+        const res = await api.put(`/api/tasks/${taskToEdit._id}`, {
+            title, description, priority, status, startDate, completedAt, dueDate, relatedProject
+        })
+        const updatedTask = res.data
+
+        setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t))
+
+        if (taskToEdit.status !== status) {
+            if (taskToEdit.status === "Completed") {
+                setCompletedTasks(prev => prev - 1)
+                setPendingTasks(prev => prev + 1)
+            } else if (status === "Completed") {
+                setCompletedTasks(prev => prev + 1)
+                setPendingTasks(prev => prev - 1)
+            }
+        }
+
+        const wasOverdue = taskToEdit.dueDate && new Date(taskToEdit.dueDate) < new Date() && taskToEdit.status !== "Completed"
+        const isOverdue = updatedTask.dueDate && new Date(updatedTask.dueDate) < new Date() && updatedTask.status !== "Completed"
+        if (wasOverdue && !isOverdue) setOverdueTasks(prev => prev - 1)
+        if (!wasOverdue && isOverdue) setOverdueTasks(prev => prev + 1)
+
+        return updatedTask
+    }
+
+    // delete task
+    const deleteTask = async (taskId) => {
+        const task = tasks.find(t => t._id === taskId)
+        await api.delete(`/api/tasks/${taskId}`)
+        setTasks(prev => prev.filter(t => t._id !== taskId))
+
+        setTotalTasks(prev => prev - 1)
+        if (task.status === "Completed") {
+            setCompletedTasks(prev => prev - 1)
+        } else {
+            setPendingTasks(prev => prev - 1)
+            if (task.dueDate && new Date(task.dueDate) < new Date()) setOverdueTasks(prev => prev - 1)
+        }
+    }
+
+    // update status/priority
+    const updatePriorityStatus = async (task, status, priority) => {
+        const res = await api.put(`/api/tasks/${task._id}`, {
+            status: status || task.status,
+            priority: priority || task.priority,
+            completedAt: status === "Completed" ? Date.now() : null
+        })
+        const updatedTask = res.data
+
+        setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t))
+
+        if (task.status !== updatedTask.status) {
+            if (task.status === "Completed") {
+                setCompletedTasks(prev => prev - 1)
+                setPendingTasks(prev => prev + 1)
+            } else if (updatedTask.status === "Completed") {
+                setCompletedTasks(prev => prev + 1)
+                setPendingTasks(prev => prev - 1)
+            }
+        }
+
+        // overdue adjustment
+        const wasOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== "Completed"
+        const isOverdue = updatedTask.dueDate && new Date(updatedTask.dueDate) < new Date() && updatedTask.status !== "Completed"
+        if (wasOverdue && !isOverdue) setOverdueTasks(prev => prev - 1)
+        if (!wasOverdue && isOverdue) setOverdueTasks(prev => prev + 1)
+
+        return updatedTask
     }
 
     return {
-        tasks,
+        tasks, loading,
         fetchTasks,
         createTask, updateTask, deleteTask, updatePriorityStatus,
-        hasMore, page, setPage, setLimit, loading
+        hasMore, page, setPage, setLimit,
+        totalTasks, completedTasks, pendingTasks, overdueTasks
     }
 }
