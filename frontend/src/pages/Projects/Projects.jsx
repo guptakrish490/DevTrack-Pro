@@ -7,7 +7,7 @@ import { useProjects } from "../../hooks/useProjects.jsx"
 
 const Projects = () => {
 
-  const { projects, fetchProjects, createProject, updateProject, deleteProject, updateStatus, page, setLimit, setPage, hasMore, loading } = useProjects();
+  const { projects, fetchProjects, createProject, updateProject, deleteProject, updateStatus, page, setLimit, setPage, hasMore, loading, totalProjects, completedProjects, activeProjects } = useProjects();
 
   const [params, setParams] = useState({})
   const [modal, setModal] = useState(false)
@@ -67,7 +67,9 @@ const Projects = () => {
 
       <h1 className="text-2xl sm:text-4xl font-bold font-display my-3 mx-2">Your Projects 📂</h1>
       <ProjectStats
-        projects={projects} />
+        totalProjects={totalProjects}
+        completedProjects={completedProjects}
+        activeProjects={activeProjects} />
 
       <ProjectContainer
         fetchProjects={fetchProjects}

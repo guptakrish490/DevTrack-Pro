@@ -64,7 +64,14 @@ export const getProjects = async (req, res) => {
             .skip(skip)
             .limit(limit + 1)
 
-        res.status(200).json(projects)
+        const [totalProjects, completedProjects, activeProjects] = await Promise.all([
+            Project.countDocuments({ user: req.user._id }),
+            Project.countDocuments({ user: req.user._id, status: "Completed" }),
+            Project.countDocuments({ user: req.user._id, status: { $in: ["Planned", "In Progress"] } }),
+        ]);
+
+
+        res.status(200).json({ projects, totalProjects, completedProjects, activeProjects })
     }
     catch (err) {
         res.status(500).json({ error: err.message })

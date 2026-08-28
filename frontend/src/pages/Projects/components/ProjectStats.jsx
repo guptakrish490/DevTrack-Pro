@@ -1,7 +1,4 @@
-const ProjectStats = ({ projects }) => {
-
-  const activeProjectsCount = projects.filter(project => (project.status === "Planned") || (project.status === "In Progress")).length
-  const completedProjectsCount = projects.filter(project => project.status === "Completed").length
+const ProjectStats = ({ totalProjects, completedProjects, activeProjects }) => {
 
   return (
     <div className='grid grid-cols-1 sm:grid-cols-3 w-full h-auto gap-2'>
@@ -13,7 +10,7 @@ const ProjectStats = ({ projects }) => {
           <i className="ri-folder-open-line text-xl font-normal px-1.5 py-0.5 rounded-xl bg-amber-500/20 text-amber-500"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{activeProjectsCount}</h1>
+        <h1 className="text-4xl font-bold">{activeProjects}</h1>
 
       </div>
 
@@ -24,7 +21,7 @@ const ProjectStats = ({ projects }) => {
           <i className="ri-folder-check-line text-xl font-normal px-1.5 py-0.5 rounded-xl bg-green-500/20 text-green-500"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{completedProjectsCount}</h1>
+        <h1 className="text-4xl font-bold">{completedProjects}</h1>
 
       </div>
 
@@ -35,7 +32,7 @@ const ProjectStats = ({ projects }) => {
           <i className="ri-folder-chart-line text-xl font-normal px-1.5 py-0.5 rounded-xl bg-violet-600/25 text-violet-600"></i>
         </div>
 
-        <h1 className="text-4xl font-bold">{projects.length}</h1>
+        <h1 className="text-4xl font-bold">{totalProjects}</h1>
 
       </div>
 
