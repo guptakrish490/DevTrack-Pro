@@ -42,6 +42,7 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal,
     setDescription("");
     setStartDate("");
     setEndDate("");
+    setErrors({});
 
     setModal(false)
   }
