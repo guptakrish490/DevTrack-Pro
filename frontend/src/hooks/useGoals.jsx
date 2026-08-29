@@ -51,7 +51,7 @@ export const useGoals = () => {
     const handleGoalCompletion = async (goal) => {
         try {
             const updated = !goal.isCompleted;
-            const res = await api.put(`/api/goals/${goal._id}`, { ...goal, isCompleted: updated });
+            const res = await api.patch(`/api/goals/${goal._id}`, { ...goal, isCompleted: updated });
             const updatedGoal = res.data;
 
             setGoals(prev => prev.map(g => g._id === updatedGoal._id ? updatedGoal : g));
