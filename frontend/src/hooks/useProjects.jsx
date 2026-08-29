@@ -101,9 +101,9 @@ export const useProjects = () => {
     // update status only
     const updateStatus = async (project, status) => {
         try {
-            const res = await api.put(`/api/projects/${project._id}`, {
+            const res = await api.patch(`/api/projects/${project._id}`, {
                 status,
-                endDate: status === "Completed" ? Date.now() : null
+                endDate: status === "Completed" ? new Date() : null
             })
 
             const updatedProject = res.data

@@ -1,6 +1,7 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const projectSchema = z.object({
+
+const baseFields = {
     title: z
         .string()
         .trim()
@@ -12,28 +13,19 @@ export const projectSchema = z.object({
         .min(20, "Description must be atleast 20 characters.")
         .max(1500, "Description must be less than 1500 characters."),
 
-    repoURL: z.
-        string()
-        .transform((val) => val === "" ? null : val)
+    repoURL: z
+        .string()
+        .transform((val) => (val === "" ? null : val))
         .nullable()
-        .default(null)
-        .refine((val) => val === null || /^https?:\/\/.+/.test(val), {
-            message: "Must be a valid URL"
-        }),
+        .default(null),
 
-    liveURL: z.
-        string()
-        .transform((val) => val === "" ? null : val)
+    liveURL: z
+        .string()
+        .transform((val) => (val === "" ? null : val))
         .nullable()
-        .default(null)
-        .refine((val) => val === null || /^https?:\/\/.+/.test(val), {
-            message: "Must be a valid URL"
-        }),
+        .default(null),
 
-    startDate: z
-        .coerce.date()
-        .optional()
-        .default(() => new Date()),
+    startDate: z.coerce.date().optional().default(() => new Date()),
 
     endDate: z
         .union([
@@ -43,21 +35,40 @@ export const projectSchema = z.object({
         ])
         .default(null),
 
-    status: z
-        .enum(["Planned", "In Progress", "Completed"])
-        .default("Planned"),
+    status: z.enum(["Planned", "In Progress", "Completed"]).default("Planned"),
 
-    techStack: z
-        .array(z.string().trim())
-        .default([])
-        .refine(arr => arr.length === new Set(arr).size, {
-            message: "Duplicate values in TechStack."
-        })
+    techStack: z.array(z.string().trim()).default([]),
+};
 
-}).refine(
-    (data) => !data.endDate || data.startDate <= data.endDate,
-    {
-        message: "End date must be on or after start date",
-        path: ["endDate"],
-    }
-);
+const baseSchema = z.object(baseFields);
+
+export const projectSchema = baseSchema
+    .refine(
+        (data) => !data.endDate || data.startDate <= data.endDate,
+        {
+            message: "End date must be on or after start date",
+            path: ["endDate"],
+        }
+    )
+    .refine(
+        (data) => data.status !== "Completed" || data.endDate !== null,
+        {
+            message: "End date is required when project is marked Completed",
+            path: ["endDate"],
+        }
+    )
+    .refine(
+        (data) => data.repoURL === null || /^https?:\/\/.+/.test(data.repoURL),
+        { message: "Must be a valid URL", path: ["repoURL"] }
+    )
+    .refine(
+        (data) => data.liveURL === null || /^https?:\/\/.+/.test(data.liveURL),
+        { message: "Must be a valid URL", path: ["liveURL"] }
+    )
+    .refine(
+        (data) => data.techStack.length === new Set(data.techStack).size,
+        { message: "Duplicate values in TechStack.", path: ["techStack"] }
+    );
+
+// Step 4: derive PATCH schema (no refinements)
+export const projectPatchSchema = baseSchema.partial();

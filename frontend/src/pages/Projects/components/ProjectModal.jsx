@@ -27,6 +27,7 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
 
   // prefill form for edit mode
   useEffect(() => {
+    setErrors({});
     if (mode === "edit" && projectToEdit) {
       setTitle(projectToEdit.title || "")
       setDescription(projectToEdit.description || "")
