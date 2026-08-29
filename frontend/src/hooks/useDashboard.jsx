@@ -22,10 +22,11 @@ export const useDashboard = () => {
 
     const handleChange = async (task) => {
         try {
-            const res = await api.put(`/api/tasks/${task._id}`, {
+            const res = await api.patch(`/api/tasks/${task._id}`, {
                 status: "Completed",
-                completedAt: Date.now()
+                completedAt: new Date()
             });
+            if (res.status === 200) await fetchDashboard();
 
             const updatedTask = res.data;
 
