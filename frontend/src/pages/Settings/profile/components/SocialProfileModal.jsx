@@ -1,13 +1,14 @@
-import axios from "axios";
 import { useState } from "react";
+import api from "../../../../api/api";
 
-const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks }) => {
+const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks, name, username, email, bio }) => {
     if (!socialModal) return null;
 
     // hides and resets modal when it is closed
     const cancelModal = () => {
         setPlatform("");
         setUrl("");
+        setErrors("");
 
         setSocialModal(false);
     }
@@ -15,13 +16,14 @@ const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks }) =>
     // states for modal input values
     const [platform, setPlatform] = useState("");
     const [url, setUrl] = useState("");
+    const [errors, setErrors] = useState("");
 
     // handle submission of form with checking of duplicate profiles for same platformF
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!platform || !url) {
-            alert("Please fill both the fields...");
+            setErrors("Please fill both the fields.");
             return;
         }
         try {
@@ -31,23 +33,22 @@ const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks }) =>
                 link => link.platform === platform ? { ...link, url } : link
             ) : [...links, { platform, url }];
 
-            await axios.put(`${import.meta.env.VITE_API_URL}/profile`,
-                { links: updatedLinks },
-                { withCredentials: true }
+            await api.put(`/profile`,
+                { links: updatedLinks, name, username, email, bio }
             );
 
             setLinks(updatedLinks);
             setSocialModal(false)
         }
         catch (err) {
-            console.log(err?.response?.data || err.message);
+            setErrors(err.response?.data?.error[0]?.message || err.message)
         }
     }
 
     return (
         <div>
             {/* overlay */}
-            <div onClick={cancelModal} className="fixed z-30 inset-0 bg-black/30 backdrop-blur-sm animate-fadeIn"></div>
+            < div onClick={cancelModal} className="fixed z-30 inset-0 bg-black/30 backdrop-blur-sm animate-fadeIn" ></div >
 
             <form
                 onSubmit={handleSubmit}
@@ -69,7 +70,10 @@ const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks }) =>
                         <span className="text-sm font-poppins">Platform</span>
                         <input
                             value={platform}
-                            onChange={(e) => setPlatform(e.target.value)}
+                            onChange={(e) => {
+                                setPlatform(e.target.value)
+                                setErrors("");
+                            }}
                             placeholder="Codeforces, Gitlab, etc..."
                             type="text"
                             className="text-white w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
@@ -80,13 +84,17 @@ const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks }) =>
                         <span className="text-sm font-poppins">Profile URL</span>
                         <input
                             value={url}
-                            onChange={(e) => setUrl(e.target.value)}
+                            onChange={(e) => {
+                                setUrl(e.target.value)
+                                setErrors("");
+                            }}
                             placeholder={`Enter profile URL`}
                             type="text"
                             className="text-white w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
 
                     </div>
                 </div>
+                {errors && (<p className="text-xs text-red-500 px-6">{errors}</p>)}
 
                 <div className='px-5 py-3 w-full flex justify-between gap-4'>
 
@@ -107,7 +115,7 @@ const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks }) =>
 
             </form>
 
-        </div>
+        </div >
     )
 }
 

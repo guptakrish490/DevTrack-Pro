@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const ProfileSocial = ({ profileData, setModal, setMode, setSocialModal, setDeleteModal, setLinkToDelete, setLinks, links, getProfileDetails }) => {
+const ProfileSocial = ({ profileData, setModal, setMode, setSocialModal, setDeleteModal, setLinkToDelete, setPlatformName }) => {
 
     // github and linkedin url states
     const githubURL = profileData?.links?.find(link => link.platform === "Github")?.url;
@@ -36,7 +34,7 @@ const ProfileSocial = ({ profileData, setModal, setMode, setSocialModal, setDele
 
                 {/* for Github */}
                 <li
-                    onClick={() => { setModal(true); setMode("Github"); }}
+                    onClick={() => { setModal(true); setMode(0); setPlatformName("Github") }}
                     className="w-full px-7 py-3 flex justify-between hover:bg-[#1d1d24] overflow-hidden transition-colors rounded-t-2xl border-b border-neutral-100/20">
                     <div className="flex gap-2 items-center">
                         <i className="ri-github-fill text-neutral-100/60 text-lg"></i>
@@ -49,7 +47,7 @@ const ProfileSocial = ({ profileData, setModal, setMode, setSocialModal, setDele
                 </li>
 
                 {/* for other than linkedin or github */}
-                {profileData?.links?.filter(link => link.platform !== "Github" && link.platform !== "LinkedIn").map(link => {
+                {profileData?.links?.filter(link => link.platform !== "Github" && link.platform !== "LinkedIn").map((link, idx) => {
 
                     const normalizedPlatform = link?.platform?.toLowerCase().replace(/\s+/g, "");
                     const iconClass = platformIcons[normalizedPlatform] || "ri-link";
@@ -57,7 +55,7 @@ const ProfileSocial = ({ profileData, setModal, setMode, setSocialModal, setDele
                     return (
                         <li
                             key={link.url}
-                            onClick={() => { setModal(true); setMode(link?.platform); }}
+                            onClick={() => { setModal(true); setMode(idx + 2); setPlatformName(link?.platform) }}
                             className="w-full px-7 py-3 flex justify-between hover:bg-[#1d1d24] overflow-hidden transition-colors border-b border-neutral-100/20">
                             <div className="flex gap-2 items-center">
                                 <i className={`${iconClass} text-neutral-100/60 text-lg`}></i>
@@ -76,7 +74,7 @@ const ProfileSocial = ({ profileData, setModal, setMode, setSocialModal, setDele
 
                 {/* for LinkedIn */}
                 <li
-                    onClick={() => { setModal(true); setMode("LinkedIn"); }}
+                    onClick={() => { setModal(true); setMode(1); setPlatformName("LinkedIn") }}
                     className="w-full px-7 py-3 flex justify-between hover:bg-[#1d1d24] overflow-hidden rounded-b-2xl transition-colors">
                     <div className="flex gap-2 items-center">
                         <i className="ri-linkedin-box-fill text-neutral-100/60 text-lg"></i>

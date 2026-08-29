@@ -28,6 +28,8 @@ const ProfileSettings = () => {
     const [role, setRole] = useState("")
     const [links, setLinks] = useState([]) // array of links object {platform,url} 
 
+    const [platformName, setPlatformName] = useState("");
+
     // states for formData to pass as props
     const formData =
     {
@@ -63,7 +65,7 @@ const ProfileSettings = () => {
             )
 
             setProfileData(res.data);
-            
+
 
         }
         catch (err) {
@@ -159,21 +161,30 @@ const ProfileSettings = () => {
                 setModal={setModal}
                 profileData={profileData}
                 modalConfig={modalConfig}
-                formData={formData} />
+                formData={formData}
+                platformName={platformName} />
 
             {/* add more social profiles */}
             <SocialProfileModal
                 socialModal={socialModal}
                 setSocialModal={setSocialModal}
                 links={links}
-                setLinks={setLinks} />
+                setLinks={setLinks}
+                name={name}
+                username={username}
+                email={email}
+                bio={bio} />
 
             <ConfirmRemoveModal
                 deleteModal={deleteModal}
                 setDeleteModal={setDeleteModal}
                 mode={mode}
                 linkToDelete={linkToDelete}
-                links={links} />
+                links={links}
+                name={name}
+                username={username}
+                email={email}
+                bio={bio} />
 
             {/* navigate back to profile page */}
             <div className="flex items-center font-poppins">
@@ -209,7 +220,8 @@ const ProfileSettings = () => {
                 setSocialModal={setSocialModal}
                 setLinks={setLinks}
                 links={links}
-                getProfileDetails={getProfileDetails} />
+                getProfileDetails={getProfileDetails}
+                setPlatformName={setPlatformName} />
 
         </>
     )

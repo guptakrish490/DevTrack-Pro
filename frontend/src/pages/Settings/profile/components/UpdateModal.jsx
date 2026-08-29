@@ -1,6 +1,7 @@
-import axios from "axios";
+import { useState } from "react";
+import api from "../../../../api/api.js";
 
-const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData }) => {
+const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData, platformName }) => {
 
 
     // add skills into skillset array
@@ -41,6 +42,8 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
         formData?.setRole(profileData?.others?.role);
         formData?.setLinks(profileData?.links || []);
 
+        setErrors({})
+
         setModal(false);
     }
 
@@ -53,12 +56,25 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
         );
     }
 
+    const [errors, setErrors] = useState({});
+    const handleValidationError = (err) => {
+        if (err?.response?.status === 400 && Array.isArray(err.response?.data?.error)) {
+            const fieldErrors = {};
+            err.response.data.error.forEach((e) => {
+                fieldErrors[e.field] = e.message;
+            });
+            setErrors(fieldErrors);
+            console.log(fieldErrors);
+
+        }
+    };
+
     // handle submission for each edit modal
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        let result;
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL}/profile`,
+            result = await api.put(`/profile`,
                 {
                     name: formData?.name,
                     bio: formData?.bio,
@@ -73,14 +89,15 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                         role: formData?.role
                     },
                     links: formData?.links
-                },
-                { withCredentials: true }
+                }
             )
 
-            cancelModal();
+            if (!result) throw new Error("Profile updation failed!");
+            else cancelModal();
         }
         catch (err) {
-            console.log(err.response?.data || err.message)
+            handleValidationError(err);
+            throw err;
         }
 
     }
@@ -101,13 +118,13 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                 <div className='flex justify-between items-center px-5 py-1.5 sm:py-3 font-bold border-b border-white/10'>
                     <div className="flex gap-1 items-center">
                         <i className="ri-information-line text-blue-500 text-xl"></i>
-                        <h1 className='w-full text-sm sm:text-lg '>Update {modalConfig[mode]?.title || `${mode} URL`}</h1>
+                        <h1 className='w-full text-sm sm:text-lg '>Update {modalConfig[mode]?.title || `${platformName} URL`}</h1>
                     </div>
                     <i onClick={cancelModal} className="ri-close-large-fill cursor-pointer font-normal text-gray-500"></i>
                 </div>
 
                 <div className='w-full h-auto flex items-center justify-start px-5 py-3 text-xs sm:text-sm text-gray-500'>
-                    <p>{modalConfig[mode]?.description || `Enter your ${mode} profile URL.`}</p>
+                    <p>{modalConfig[mode]?.description || `Enter your ${platformName} profile URL.`}</p>
                 </div>
 
                 {/* seperate input types for each field */}
@@ -117,10 +134,14 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                         mode === "name" ? (
                             <input
                                 value={formData?.name}
-                                onChange={(e) => formData?.setName(e.target.value)}
+                                onChange={(e) => {
+                                    formData?.setName(e.target.value)
+                                    setErrors((prev) => ({ ...prev, name: "" }))
+                                }}
                                 placeholder={`Enter ${modalConfig[mode]?.title}`}
                                 type="text"
                                 className="w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
+
                         )
 
                             :
@@ -129,7 +150,10 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                             mode === "bio" ? (
                                 <textarea
                                     value={formData?.bio}
-                                    onChange={(e) => formData?.setBio(e.target.value)}
+                                    onChange={(e) => {
+                                        formData?.setBio(e.target.value)
+                                        setErrors((prev) => ({ ...prev, bio: "" }))
+                                    }}
                                     placeholder={`Enter ${modalConfig[mode]?.title}`}
                                     type="text"
                                     className="resize-none w-full rounded-lg border h-18 text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
@@ -141,7 +165,10 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                                 mode === "gender" ? (
                                     <select
                                         value={formData?.gender}
-                                        onChange={(e) => formData?.setGender(e.target.value)}
+                                        onChange={(e) => {
+                                            formData?.setGender(e.target.value)
+                                            setErrors((prev) => ({ ...prev, gender: "" }))
+                                        }}
                                         className="w-full rounded-lg border border-neutral-100/30 text-sm outline-none px-4 py-1.5 appearance-none bg-[#1d1d24]" >
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
@@ -155,7 +182,10 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                                     mode === "location" ? (
                                         <input
                                             value={formData?.location}
-                                            onChange={(e) => formData?.setLocation(e.target.value)}
+                                            onChange={(e) => {
+                                                formData?.setLocation(e.target.value)
+                                                setErrors((prev) => ({ ...prev, location: "" }))
+                                            }}
                                             placeholder={`Enter ${modalConfig[mode]?.title}`}
                                             type="text"
                                             className="w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
@@ -167,7 +197,10 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                                         mode === "username" ? (
                                             <input
                                                 value={formData?.username}
-                                                onChange={(e) => formData?.setUsername(e.target.value)}
+                                                onChange={(e) => {
+                                                    formData?.setUsername(e.target.value)
+                                                    setErrors((prev) => ({ ...prev, username: "" }))
+                                                }}
                                                 placeholder={`Enter ${modalConfig[mode]?.title}`}
                                                 type="text"
                                                 className="w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
@@ -179,7 +212,10 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                                             mode === "email" ? (
                                                 <input
                                                     value={formData?.email}
-                                                    onChange={(e) => formData?.setEmail(e.target.value)}
+                                                    onChange={(e) => {
+                                                        formData?.setEmail(e.target.value)
+                                                        setErrors((prev) => ({ ...prev, email: "" }))
+                                                    }}
                                                     placeholder={`Enter ${modalConfig[mode]?.title}`}
                                                     type="email"
                                                     className="w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
@@ -191,7 +227,10 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                                                 mode === "instituteName" ? (
                                                     <input
                                                         value={formData?.instituteName}
-                                                        onChange={(e) => formData?.setInstituteName(e.target.value)}
+                                                        onChange={(e) => {
+                                                            formData?.setInstituteName(e.target.value)
+                                                            setErrors((prev) => ({ ...prev, 'others.instituteName': "" }));
+                                                        }}
                                                         placeholder={`Enter ${modalConfig[mode]?.title}`}
                                                         type="text"
                                                         className="w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
@@ -253,7 +292,7 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                                                                 :
 
                                                                 // input form for github URL edit
-                                                                mode === "Github" ? (
+                                                                mode === 0 ? (
                                                                     <input
                                                                         value={formData?.links?.find(link => link.platform === "Github")?.url}
                                                                         onChange={(e) => updateLink("Github", e.target.value)}
@@ -265,7 +304,7 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                                                                     :
 
                                                                     // input form for LinkedIn URL edit
-                                                                    mode === "LinkedIn" ? (
+                                                                    mode === 1 ? (
                                                                         <input
                                                                             value={formData?.links?.find(link => link.platform === "LinkedIn")?.url}
                                                                             onChange={(e) => updateLink("LinkedIn", e.target.value)}
@@ -279,15 +318,18 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                                                                         // input form for edit of other links than Github and LinkedIn
                                                                         (
                                                                             <input
-                                                                                value={formData?.links?.find(link => link.platform === mode)?.url}
-                                                                                onChange={(e) => updateLink(mode, e.target.value)}
-                                                                                placeholder={`Enter ${mode} URL`}
+                                                                                value={formData?.links?.find(link => link.platform === platformName)?.url}
+                                                                                onChange={(e) => updateLink(platformName, e.target.value)}
+                                                                                placeholder={`Enter ${platformName} URL`}
                                                                                 type="text"
                                                                                 className="w-full rounded-lg border text-sm border-neutral-100/30 outline-none px-4 py-1.5 bg-[#1d1d24]" />
                                                                         )
 
 
                     }
+                    {(errors[mode] || errors['others.' + mode] || errors['links.' + String(mode) + '.url']) && (
+                        <p className="text-red-500 text-xs px-1 pt-1">{errors[mode] || errors['others.' + mode] || errors['links.' + String(mode) + '.url']}</p>
+                    )}
 
                 </div>
 

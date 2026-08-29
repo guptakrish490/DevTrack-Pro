@@ -1,6 +1,6 @@
-import axios from "axios";
+import api from "../../../../api/api";
 
-const ConfirmRemoveModal = ({ setDeleteModal, deleteModal, links, linkToDelete }) => {
+const ConfirmRemoveModal = ({ setDeleteModal, deleteModal, links, linkToDelete, name, username, email, bio }) => {
     if (!deleteModal) return null;
 
     // delete a link from profiles section
@@ -10,9 +10,8 @@ const ConfirmRemoveModal = ({ setDeleteModal, deleteModal, links, linkToDelete }
         try {
             const updatedLinks = links.filter(l => l.platform !== linkToDelete.platform);
 
-            await axios.put(`${import.meta.env.VITE_API_URL}/profile`,
-                { links: updatedLinks },
-                { withCredentials: true }
+            await api.put(`${import.meta.env.VITE_API_URL}/profile`,
+                { links: updatedLinks, name, username, email, bio }
             )
             setDeleteModal(false);
         }
@@ -32,7 +31,7 @@ const ConfirmRemoveModal = ({ setDeleteModal, deleteModal, links, linkToDelete }
                 role="dialog"
                 aria-modal="true"
                 className="font-roboto fixed flex flex-col z-40 max-w-120 sm:w-[90%] w-[85%] h-auto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#111118] rounded-2xl border border-white/10 shadow-lg animate-scaleIn">
-                    
+
                 <div className='flex justify-between items-center px-5 py-1.5 sm:py-3 font-bold border-b border-white/10'>
                     <h1 className='w-full text-sm sm:text-xl '>Remove {linkToDelete?.platform} Profile</h1>
                     <i onClick={() => setDeleteModal(false)} className="ri-close-large-fill cursor-pointer font-normal text-gray-500"></i>
