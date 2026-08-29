@@ -127,10 +127,10 @@ export const useTasks = () => {
     // update status/priority
     const updatePriorityStatus = async (task, status, priority) => {
         try {
-            const res = await api.put(`/api/tasks/${task._id}`, {
+            const res = await api.patch(`/api/tasks/${task._id}`, {
                 status: status || task.status,
                 priority: priority || task.priority,
-                completedAt: status === "Completed" ? Date.now() : null
+                completedAt: status === "Completed" ? new Date() : null
             })
             const updatedTask = res.data
 

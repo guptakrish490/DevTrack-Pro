@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { NavLink } from 'react-router-dom'
 
 const TaskCard = ({ task, handleEdit, handleDelete, updatePriorityStatus }) => {
@@ -15,6 +15,11 @@ const TaskCard = ({ task, handleEdit, handleDelete, updatePriorityStatus }) => {
             console.error(err.response?.data || err.message);
         }
     };
+
+    useEffect(() => {
+        setStatus(task.status);
+        setPriority(task.priority);
+    }, [task]);
 
 
     return (

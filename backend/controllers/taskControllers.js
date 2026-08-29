@@ -31,7 +31,7 @@ export const createTasks = async (req, res) => {
 
         await updateStreak(user._id)
 
-        res.status(201).json(newTask)
+        res.status(201).json(await newTask.populate("relatedProject"))
     }
     catch (err) {
         res.status(500).json({ error: err.message })
@@ -108,7 +108,7 @@ export const updateTasks = async (req, res) => {
             completedAt,
             dueDate
         },
-            { new: true })
+            { new: true }).populate("relatedProject")
 
         if (updatedTask.status === "Completed" && existingStatus.status !== "Completed") {
             await logActivity({

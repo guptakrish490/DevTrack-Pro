@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const taskSchema = z.object({
+const baseSchema = z.object({
     title: z
         .string()
         .trim()
@@ -53,16 +53,29 @@ export const taskSchema = z.object({
         .optional(),
 
 
-}).refine(
-    (data) => !data.dueDate || data.startDate <= data.dueDate,
-    {
-        message: "Due date must be on or after start date",
-        path: ["dueDate"],
-    }
-).refine(
-    (data) => !data.completedAt || data.startDate <= data.completedAt,
-    {
-        message: "Completed date must be on or after start date",
-        path: ["completedAt"],
-    }
-)
+})
+
+export const taskSchema = baseSchema
+    .refine(
+        (data) => !data.dueDate || data.startDate <= data.dueDate,
+        {
+            message: "Due date must be on or after start date",
+            path: ["dueDate"],
+        }
+    )
+    .refine(
+        (data) => data.status !== "Completed" || data.completedAt !== null,
+        {
+            message: "End date is required when project is marked Completed",
+            path: ["completedAt"],
+        }
+    )
+    .refine(
+        (data) => !data.completedAt || data.startDate <= data.completedAt,
+        {
+            message: "Completed date must be on or after start date",
+            path: ["completedAt"],
+        }
+    )
+
+export const taskPatchSchema = baseSchema.partial();

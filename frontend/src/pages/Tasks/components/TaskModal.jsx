@@ -28,7 +28,7 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit, 
       setStartDate(taskToEdit.startDate?.slice(0, 10) || "");
       setCompletedAt(taskToEdit.completedAt?.slice(0, 10) || "");
       setDueDate(taskToEdit.dueDate?.slice(0, 10) || "");
-      setRelatedProject(taskToEdit.relatedProject || "");
+      setRelatedProject(taskToEdit?.relatedProject?._id || "");
     }
 
   }, [taskToEdit, mode, modal])
