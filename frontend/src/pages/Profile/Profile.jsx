@@ -11,6 +11,8 @@ const Profile = () => {
   const [userData, setUserData] = useState(null)
   const [logoutModal, setLogoutModal] = useState(false);
 
+  const [error, setError] = useState("");
+
 
   const fetchUser = async () => {
     try {
@@ -18,7 +20,7 @@ const Profile = () => {
       setUserData(res.data);
     }
     catch (err) {
-      console.log(err.response?.data || err.message);
+      setError(err.response?.data?.message || "Failed to fetch profile!");
     }
   }
 

@@ -7,6 +7,7 @@ export const useActivities = () => {
     const [limit, setLimit] = useState(10);
     const [hasMore, setHasMore] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const fetchActivities = useCallback(async (params = {}, pageNum = 1, reset = false) => {
         try {
@@ -22,7 +23,7 @@ export const useActivities = () => {
 
             setActivities(prev => reset ? activitiesPage : [...prev, ...activitiesPage]);
         } catch (err) {
-            console.error(err.response?.data || err.message);
+            setError(err.response?.message || "Failed to fetch activities!");
         } finally {
             setLoading(false);
         }
@@ -43,6 +44,7 @@ export const useActivities = () => {
         setActivities,
         page,
         hasMore,
-        loading
+        loading,
+        error, setError
     };
 };

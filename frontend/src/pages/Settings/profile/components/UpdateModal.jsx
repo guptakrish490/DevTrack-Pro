@@ -64,7 +64,6 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                 fieldErrors[e.field] = e.message;
             });
             setErrors(fieldErrors);
-            console.log(fieldErrors);
 
         }
     };

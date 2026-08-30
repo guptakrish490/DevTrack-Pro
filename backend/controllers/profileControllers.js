@@ -3,97 +3,92 @@ import Goal from "../models/goal.js";
 import Project from "../models/project.js";
 import Task from "../models/task.js";
 import User from "../models/user.js";
+import AppError from "../utils/AppError.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import { logActivity } from "../utils/logActivity.js";
-import { updateStreak } from "../utils/streakCount.js";
 
 // controller for profile retrieval
-export const getProfile = async (req, res) => {
+export const getProfile = asyncHandler(async (req, res) => {
     const user = req.user
-    try {
-        const [goals, projects, tasks, activities] = await Promise.all([
-            Goal.find({ user: user._id }).sort({ createdAt: -1 }),
-            Project.find({ user: user._id }).sort({ createdAt: -1 }),
-            Task.find({ user: user._id }).sort({ createdAt: -1 }),
-            Activity.find({ user: user._id }).sort({ createdAt: -1 })
-        ]);
+    const [goals, projects, tasks, activities] = await Promise.all([
+        Goal.find({ user: user._id }).sort({ createdAt: -1 }),
+        Project.find({ user: user._id }).sort({ createdAt: -1 }),
+        Task.find({ user: user._id }).sort({ createdAt: -1 }),
+        Activity.find({ user: user._id }).sort({ createdAt: -1 })
+    ]);
 
-        const goalCount = goals.length
-        const completedGoalCount = goals.filter(g => g.isCompleted === true).length
+    if (!(goals && projects && tasks && activities)) throw new AppError("No data found", 404);
 
-        const projectCount = projects.length
-        const completedProjectCount = projects.filter(p => p.status === "Completed").length
+    const goalCount = goals.length
+    const completedGoalCount = goals.filter(g => g.isCompleted === true).length
 
-        const taskCount = tasks.length
-        const completedTaskCount = tasks.filter(t => t.status === "Completed").length;
+    const projectCount = projects.length
+    const completedProjectCount = projects.filter(p => p.status === "Completed").length
 
-        const currentStreaksCount = user.currentStreak;
-        const maxStreaksCount = user.longestStreak;
+    const taskCount = tasks.length
+    const completedTaskCount = tasks.filter(t => t.status === "Completed").length;
+
+    const currentStreaksCount = user.currentStreak;
+    const maxStreaksCount = user.longestStreak;
 
 
-        res.status(200).json({
-            name: user.name,
-            username: user.username,
-            email: user.email,
-            bio: user.bio,
-            gender: user.gender,
-            location: user.location,
-            links: user.links,
-            others: user.others,
-            avatarURL: user.avatarURL,
-            joinedOn: user.createdAt,
-            lastActiveOn: activities.length > 0 ? activities[0].createdAt : null,
+    res.status(200).json({
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        bio: user.bio,
+        gender: user.gender,
+        location: user.location,
+        links: user.links,
+        others: user.others,
+        avatarURL: user.avatarURL,
+        joinedOn: user.createdAt,
+        lastActiveOn: activities.length > 0 ? activities[0].createdAt : null,
 
-            goalCount,
-            completedGoalCount,
+        goalCount,
+        completedGoalCount,
 
-            projectCount,
-            completedProjectCount,
+        projectCount,
+        completedProjectCount,
 
-            taskCount,
-            completedTaskCount,
+        taskCount,
+        completedTaskCount,
 
-            currentStreaksCount,
-            maxStreaksCount,
+        currentStreaksCount,
+        maxStreaksCount,
 
-            activities
-        })
-    }
-    catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-}
+        activities
+    })
+})
 
 // controller for profile updation
-export const updateProfile = async (req, res) => {
-    try {
-        const user = req.user
+export const updateProfile = asyncHandler(async (req, res) => {
+    const user = req.user
 
-        const { name, bio, gender, location, username, email, others, links, avatarURL } = req.body
+    const { name, bio, gender, location, username, email, others, links, avatarURL } = req.body
 
-        const updatedUser = await User.findByIdAndUpdate(user._id, {
-            name,
-            bio,
-            gender,
-            location,
-            username,
-            email,
-            others,
-            links,
-            avatarURL
-        }, { new: true })
+    const updatedUser = await User.findByIdAndUpdate(user._id, {
+        name,
+        bio,
+        gender,
+        location,
+        username,
+        email,
+        others,
+        links,
+        avatarURL
+    }, { new: true })
+
+    if (!updatedUser) throw new AppError("No data found", 404);
 
 
-        await logActivity({
-            user: user._id,
-            type: "profile_updated",
-            title: `Updated Profile`,
-        })
+    await logActivity({
+        user: user._id,
+        type: "profile_updated",
+        title: `Updated Profile`,
+    })
 
-      
-        res.status(200).json(updatedUser)
 
-    }
-    catch (err) {
-        res.status(500).json({ error: err.message })
-    }
-}
+    res.status(200).json(updatedUser)
+
+})

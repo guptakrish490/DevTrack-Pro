@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { toast } from "react-toastify";
-
 
 const ConfirmModal = ({ deleteModal, setDeleteModal, taskToDelete, deleteTask }) => {
 
   // hide delete modal on default
   if (!deleteModal || !taskToDelete) return null;
+
+  const [error, setError] = useState("");
 
   // handle delete confirmation
   const handleSubmit = async (e) => {
@@ -16,7 +18,7 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, taskToDelete, deleteTask })
 
     }
     catch (err) {
-      console.error(err.response?.data || err.message);
+      setError(err.response?.data?.message || "Something went wrong...");
       toast.error("Failed to delete Task", {
         autoClose: 3000,
         className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",

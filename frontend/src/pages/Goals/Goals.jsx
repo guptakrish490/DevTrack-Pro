@@ -3,7 +3,7 @@ import GoalContainer from "./components/GoalContainer.jsx"
 import GoalModal from "./components/GoalModal.jsx"
 import ConfirmModal from "./components/ConfirmModal.jsx"
 import { useGoals } from "../../hooks/useGoals.jsx"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 
 const Goals = () => {
 

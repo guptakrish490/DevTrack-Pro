@@ -7,6 +7,7 @@ export const useDashboard = () => {
     const [tasksLimit, setTasksLimit] = useState(10);
     const [projectsLimit, setProjectsLimit] = useState(6);
     const [activitiesLimit, setActivitiesLimit] = useState(8);
+    const [error, setError] = useState("");
 
     // Fetch dashboard data
     const fetchDashboard = useCallback(async () => {
@@ -16,7 +17,7 @@ export const useDashboard = () => {
             });
             setData(res.data);
         } catch (err) {
-            console.error(err.response?.data || err.message);
+            setError(err.response?.data?.message || "Failed to fetch dashboard!")
         }
     }, [goalsLimit, tasksLimit, projectsLimit, activitiesLimit]);
 
@@ -37,13 +38,14 @@ export const useDashboard = () => {
                 ),
             }));
         } catch (err) {
-            console.error(err.response?.data || err.message);
+            setError(err.response?.data?.message || "Failed to update task status!");
         }
     };
 
     return {
         data,
         fetchDashboard,
-        handleChange
+        handleChange,
+        error, setError
     };
 };

@@ -2,9 +2,11 @@ import Goal from "../models/goal.js";
 import Project from "../models/project.js";
 import Task from "../models/task.js";
 import Activity from "../models/activity.js";
+import AppError from "../utils/AppError.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 // Controller to retrieve dashboard data
-export const getDashboardData = async (req, res) => {
+export const getDashboardData = asyncHandler(async (req, res) => {
     try {
         const user = req.user;
         const goalsLimit = Math.max(1, parseInt(req.query.goalsLimit) || 5);
@@ -35,6 +37,8 @@ export const getDashboardData = async (req, res) => {
             Project.find({ user: user._id }),
             Task.find({ user: user._id }),
         ]);
+
+        if (!(goals && projects && tasks && activities)) throw new AppError("No data found", 404);
 
         const completedGoalCount = allGoals.filter((g) => g.isCompleted).length;
         const pendingGoalCount = allGoals.filter((g) => !g.isCompleted).length;
@@ -74,4 +78,4 @@ export const getDashboardData = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-};
+});

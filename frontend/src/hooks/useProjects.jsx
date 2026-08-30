@@ -12,6 +12,7 @@ export const useProjects = () => {
     const [completedProjects, setCompletedProjects] = useState(0)
     const [activeProjects, setActiveProjects] = useState(0)
     const [errors, setErrors] = useState({});
+    const [error, setError] = useState("");
 
     const handleValidationError = (err) => {
         if (err?.response?.status === 400 && Array.isArray(err.response?.data?.error)) {
@@ -41,7 +42,7 @@ export const useProjects = () => {
             const projectsPage = hasMoreFlag ? res.data.projects.slice(0, limit) : res.data.projects
             setProjects(prev => reset ? projectsPage : [...prev, ...projectsPage])
         } catch (err) {
-            console.error(err)
+            setError(err.response?.data?.message || "Failed to fetch projects!");
         } finally {
             setLoading(false)
         }
@@ -146,6 +147,7 @@ export const useProjects = () => {
         createProject, updateProject, deleteProject, updateStatus,
         page, setPage, setLimit, hasMore,
         totalProjects, completedProjects, activeProjects,
-        errors, setErrors
+        errors, setErrors,
+        error, setError
     }
 }

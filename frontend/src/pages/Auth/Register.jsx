@@ -27,6 +27,7 @@ const Register = ({ setIsRegistered }) => {
 
 
   const [errors, setErrors] = useState({});
+  const [error, setError] = useState("");
 
   const handleValidationError = (err) => {
     if (err?.response?.status === 400 && Array.isArray(err.response?.data?.error)) {
@@ -63,7 +64,7 @@ const Register = ({ setIsRegistered }) => {
       navigate("/dashboard")
 
     } catch (err) {
-      console.log(err.response)
+      setError(err.response?.data?.message);
       handleValidationError(err);
     }
   }

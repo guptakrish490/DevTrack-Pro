@@ -29,6 +29,7 @@ const ProfileSettings = () => {
     const [links, setLinks] = useState([]) // array of links object {platform,url} 
 
     const [platformName, setPlatformName] = useState("");
+    const [error, setError] = useState("");
 
     // states for formData to pass as props
     const formData =
@@ -69,7 +70,7 @@ const ProfileSettings = () => {
 
         }
         catch (err) {
-            console.log(err.response?.data || err.message);
+            setError(err.response?.data?.message || "Failed to fetch profile details...");
         }
     }
 

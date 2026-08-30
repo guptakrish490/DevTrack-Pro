@@ -10,6 +10,7 @@ import taskRoutes from "./routes/taskRoutes.js"
 import dashboardRoutes from "./routes/dashboardRoutes.js"
 import activityRoutes from "./routes/activityRoutes.js"
 import profileRoutes from "./routes/profileRoutes.js"
+import errorHandler from "./middlewares/errorHandler.js"
 
 dotenv.config({ path: "../.env" })
 
@@ -18,9 +19,9 @@ const app = express()
 connectDB()
 
 app.use(cors(
-    { 
+    {
         origin: process.env.FRONTEND_URL,
-        credentials: true 
+        credentials: true
     }
 ))
 app.use(express.json())
@@ -33,6 +34,8 @@ app.use("/api/tasks", taskRoutes)
 app.use("/api/activity", activityRoutes)
 app.use("/dashboard", dashboardRoutes)
 app.use("/profile", profileRoutes)
+
+app.use(errorHandler);
 
 
 const PORT = process.env.PORT

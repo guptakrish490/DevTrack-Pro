@@ -18,6 +18,8 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit, 
   const [dueDate, setDueDate] = useState("")
   let [relatedProject, setRelatedProject] = useState("")
 
+  const [error, setError] = useState("");
+
   // prefill modal on edit form
   useEffect(() => {
     if (mode === "edit" && taskToEdit) {
@@ -40,7 +42,7 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit, 
         const res = await api.get(`/api/projects`);
         setProjects(res.data.projects);
       } catch (err) {
-        console.error(err.response?.data || err.message);
+        setError(err.response?.data?.message || "Failed to fetch projects!");
       }
     };
 

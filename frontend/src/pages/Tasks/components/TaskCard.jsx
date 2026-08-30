@@ -7,12 +7,14 @@ const TaskCard = ({ task, handleEdit, handleDelete, updatePriorityStatus }) => {
     const [priority, setPriority] = useState(task.priority)
     const [expand, setExpand] = useState(false);
 
+    const [error, setError] = useState("");
+
     // update status/priority directly from select dropdown
     const handleChange = async (task, status, priority) => {
         try {
             await updatePriorityStatus(task, status, priority)
         } catch (err) {
-            console.error(err.response?.data || err.message);
+            setError(err.response?.data?.message || "Something went wrong!");
         }
     };
 

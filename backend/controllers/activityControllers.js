@@ -1,49 +1,44 @@
 import Activity from "../models/activity.js"
+import AppError from "../utils/AppError.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 // controller for activities retrieval
-export const getAllActivities = async (req, res) => {
-    try {
-        const user = req.user;
-        const { q, type, sortBy } = req.query;
+export const getAllActivities = asyncHandler(async (req, res) => {
+    const user = req.user;
+    const { q, type, sortBy } = req.query;
 
-        const page = Math.max(1, parseInt(req.query.page) || 1);
-        const limit = Math.max(1, parseInt(req.query.limit) || 10);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit) || 10);
 
-        const query = { user: user._id };
-        if (q) {
-            query.title = { $regex: q, $options: "i" };
-        }
-        if (type) {
-            query.type = { $regex: type, $options: "i" };
-        }
-
-        const sortOrder = sortBy === "oldest" ? 1 : -1;
-        const skip = (page - 1) * limit;
-
-        const activities = await Activity.find(query)
-            .sort({ createdAt: sortOrder })
-            .populate("relatedGoal")
-            .populate("relatedProject")
-            .populate("relatedTask")
-            .skip(skip)
-            .limit(limit + 1);
-
-        res.status(200).json(activities);
+    const query = { user: user._id };
+    if (q) {
+        query.title = { $regex: q, $options: "i" };
     }
-    catch (err) {
-        res.status(500).json({ error: err.message });
+    if (type) {
+        query.type = { $regex: type, $options: "i" };
     }
-};
+
+    const sortOrder = sortBy === "oldest" ? 1 : -1;
+    const skip = (page - 1) * limit;
+
+    const activities = await Activity.find(query)
+        .sort({ createdAt: sortOrder })
+        .populate("relatedGoal")
+        .populate("relatedProject")
+        .populate("relatedTask")
+        .skip(skip)
+        .limit(limit + 1);
+
+    if (!activities) throw new AppError("Activities not found!", 404);
+
+    res.status(200).json(activities);
+});
 
 // controller for activities deletion
-export const deleteAllActivities = async (req, res) => {
-    try {
-        const user = req.user
+export const deleteAllActivities = asyncHandler(async (req, res) => {
+    const user = req.user
 
-        await Activity.deleteMany({ user: user._id })
-        res.status(200).json({ message: "Activities deleted successfully" })
-    }
-    catch (err) {
-        res.status(500).json({ error: err.message })
-    }
-}
+    const deletedActivities = await Activity.deleteMany({ user: user._id })
+    if (!deletedActivities) throw new AppError("No activities found!", 404);
+    res.status(200).json({ message: "Activities deleted successfully" })
+});

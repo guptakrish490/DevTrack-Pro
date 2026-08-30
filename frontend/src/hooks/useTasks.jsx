@@ -13,6 +13,7 @@ export const useTasks = () => {
     const [pendingTasks, setPendingTasks] = useState(0)
     const [overdueTasks, setOverdueTasks] = useState(0)
     const [errors, setErrors] = useState({})
+    const [error, setError] = useState("");
 
 
     const handleValidationError = (err) => {
@@ -44,7 +45,7 @@ export const useTasks = () => {
             const tasksPage = hasMoreFlag ? res.data.tasks.slice(0, limit) : res.data.tasks
             setTasks(prev => reset ? tasksPage : [...prev, ...tasksPage])
         } catch (err) {
-            console.error(err.response?.data || err.message)
+            setError(err.response?.data?.message || "Failed to fetch tasks!");
         } finally {
             setLoading(false)
         }
@@ -165,6 +166,7 @@ export const useTasks = () => {
         createTask, updateTask, deleteTask, updatePriorityStatus,
         hasMore, page, setPage, setLimit,
         totalTasks, completedTasks, pendingTasks, overdueTasks,
-        errors, setErrors
+        errors, setErrors,
+        error, setError
     }
 }

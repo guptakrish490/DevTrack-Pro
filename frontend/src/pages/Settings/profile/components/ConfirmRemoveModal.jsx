@@ -1,7 +1,10 @@
+import { useState } from "react";
 import api from "../../../../api/api";
 
 const ConfirmRemoveModal = ({ setDeleteModal, deleteModal, links, linkToDelete, name, username, email, bio }) => {
     if (!deleteModal) return null;
+
+    const [error, setError] = useState("");
 
     // delete a link from profiles section
     const deleteLink = async (linkToDelete) => {
@@ -16,7 +19,7 @@ const ConfirmRemoveModal = ({ setDeleteModal, deleteModal, links, linkToDelete, 
             setDeleteModal(false);
         }
         catch (err) {
-            console.log(err.response?.data || err.message);
+            setError(err.response?.data?.message || "Can't delete Social profile, please try again!");
         }
     }
 

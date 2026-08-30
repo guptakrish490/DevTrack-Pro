@@ -5,7 +5,7 @@ import { useActivities } from "../../../hooks/useActivity.jsx";
 const ConfirmModal = ({ deleteModal, params, setDeleteModal, fetchActivities }) => {
     if (!deleteModal) return null;
 
-    const { deleteActivities } = useActivities();
+    const { deleteActivities, error, setError } = useActivities();
 
     // handle confirmation for activities deletion
     const handleSubmit = async (e) => {
@@ -16,7 +16,7 @@ const ConfirmModal = ({ deleteModal, params, setDeleteModal, fetchActivities }) 
             toast.success("Past activities deleted successfully!")
         }
         catch (err) {
-            console.error(err.response?.data || err.message);
+            setError(err.response?.data?.message || "Something went wrong...");
             toast.error("Failed to delete Activities", {
                 autoClose: 3000,
                 className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",

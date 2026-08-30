@@ -1,5 +1,4 @@
 import Activity from "../models/activity.js";
-import User from "../models/user.js";
 import { updateStreak } from "./streakCount.js";
 
 // utility function to create activity logs automatically
@@ -11,20 +10,16 @@ export const logActivity = async ({
     relatedProject = null,
     relatedTask = null
 }) => {
-    try {
-        await Activity.create({
-            user,
-            type,
-            title,
-            relatedGoal,
-            relatedProject,
-            relatedTask
-        });
+    const activity = await Activity.create({
+        user,
+        type,
+        title,
+        relatedGoal,
+        relatedProject,
+        relatedTask
+    });
 
-        await updateStreak(user._id);
+    await updateStreak(user._id);
+    return activity;
 
-    }
-    catch (err) {
-        console.log("Activity logging failed:", err.message)
-    }
 }

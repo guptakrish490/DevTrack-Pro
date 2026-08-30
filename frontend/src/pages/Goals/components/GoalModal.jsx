@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useGoals } from "../../../hooks/useGoals";
 
 const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal, errors, setErrors }) => {
 
@@ -8,6 +7,8 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal,
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  const [error, setError] = useState("");
 
 
   // escape character on modal
@@ -84,7 +85,7 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal,
         className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
         progressClassName: "bg-red-400"
       });
-      console.error(err);
+      setError(err.response?.data?.message || "Something went wrong...");
     }
   };
 

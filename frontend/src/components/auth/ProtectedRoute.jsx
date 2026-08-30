@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
-import axios from "axios"
+import api from "../../api/api"
 
 const ProtectedRoute = ({ children }) => {
     const [isAuth, setIsAuth] = useState(null)
@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                await axios.get(`${import.meta.env.VITE_API_URL}/dashboard`, { withCredentials: true })
+                await api.get(`/dashboard`)
                 setIsAuth(true)
             } catch {
                 setIsAuth(false)

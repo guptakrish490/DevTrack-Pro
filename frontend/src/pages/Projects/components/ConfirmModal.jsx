@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 const ConfirmModal = ({ deleteModal, setDeleteModal, projectToDelete, deleteProject }) => {
 
   // hide delete modal on default
   if (!deleteModal || !projectToDelete) return null;
+  const [error, setError] = useState("");
 
   // handle delete confirmation
   const handleSubmit = async (e) => {
@@ -18,7 +20,7 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, projectToDelete, deleteProj
         className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
         progressClassName: "bg-red-400"
       });
-      console.error(err.response?.data || err.message);
+      setError(err.response?.data?.message || "Something went wrong!");
     }
     finally {
       setDeleteModal(false)

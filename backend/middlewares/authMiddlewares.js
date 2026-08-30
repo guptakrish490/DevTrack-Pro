@@ -1,20 +1,23 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
+import AppError from "../utils/AppError.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
-// authorization middleware
-export const verifyUser = async (req, res, next) => {
-    try {
-        const decoded = jwt.verify(req.cookies.accessToken, process.env.JWT_SECRET)
-        const user = await User.findById(decoded.id).select("-password")
-
-        if (!user) {
-            return res.status(401).json({ message: "Unauthorized: User not found" });
-        }
-
-        req.user = user
-        next()
+export const verifyUser = asyncHandler(async (req, res, next) => {
+    const token = req.cookies.accessToken;
+    if (!token) {
+        throw new AppError("Access token missing!", 401);
     }
-    catch (err) {
-        return res.status(401).json({ message: "Unauthorized: Invalid or expired token" });
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // find user
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) {
+        throw new AppError("Unauthorized access, User not found", 401);
     }
-}
+
+    req.user = user;
+    next();
+});
