@@ -20,7 +20,7 @@ const ProfileImage = ({ profileData }) => {
                 const file = e.target.files[0];
                 if (file) {
                   // handle file upload here; left to do on backend
-                  console.log("Selected file:", file);
+
                 }
               }}
             />
