@@ -5,12 +5,15 @@ const ConfirmRemoveModal = ({ setDeleteModal, deleteModal, links, linkToDelete, 
     if (!deleteModal) return null;
 
     const [error, setError] = useState("");
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // delete a link from profiles section
     const deleteLink = async (linkToDelete) => {
         if (!linkToDelete) return;
 
         try {
+            setIsDeleting(true);
+
             const updatedLinks = links.filter(l => l.platform !== linkToDelete.platform);
 
             await api.put(`${import.meta.env.VITE_API_URL}/profile`,
@@ -20,6 +23,8 @@ const ConfirmRemoveModal = ({ setDeleteModal, deleteModal, links, linkToDelete, 
         }
         catch (err) {
             setError(err.response?.data?.message || "Can't delete Social profile, please try again!");
+        } finally {
+            setIsDeleting(false);
         }
     }
 
@@ -54,9 +59,10 @@ const ConfirmRemoveModal = ({ setDeleteModal, deleteModal, links, linkToDelete, 
                     </button>
 
                     <button
+                        disabled={isDeleting}
                         className='flex gap-3 justify-center items-center cursor-pointer text-xs sm:text-sm w-full h-7 sm:h-10 px-5 py-1 border border-red-500/50 rounded-xl bg-[#51222b] text-red-500'>
                         <i className="ri-delete-bin-6-line"></i>
-                        Remove
+                        {isDeleting ? "Removing..." : "Remove"}
                     </button>
 
                 </div>

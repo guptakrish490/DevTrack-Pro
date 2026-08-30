@@ -57,6 +57,8 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
     }
 
     const [errors, setErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleValidationError = (err) => {
         if (err?.response?.status === 400 && Array.isArray(err.response?.data?.error)) {
             const fieldErrors = {};
@@ -73,6 +75,8 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
         e.preventDefault();
         let result;
         try {
+            setIsSubmitting(true);
+
             result = await api.put(`/profile`,
                 {
                     name: formData?.name,
@@ -97,6 +101,8 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
         catch (err) {
             handleValidationError(err);
             throw err;
+        } finally {
+            setIsSubmitting(false);
         }
 
     }
@@ -342,9 +348,10 @@ const UpdateModal = ({ modal, setModal, mode, modalConfig, profileData, formData
                     </button>
 
                     <button
+                        disabled={isSubmitting}
                         className='flex gap-3 justify-center items-center cursor-pointer text-xs sm:text-sm w-full h-7 sm:h-10 px-5 py-1 border border-blue-500/50 rounded-xl bg-[#222751] text-blue-500'>
                         <i className="ri-file-edit-fill"></i>
-                        Update
+                        {isSubmitting ? "Updating..." : "Update"}
                     </button>
 
                 </div>

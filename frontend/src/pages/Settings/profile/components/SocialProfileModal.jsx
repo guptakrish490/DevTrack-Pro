@@ -17,6 +17,7 @@ const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks, name
     const [platform, setPlatform] = useState("");
     const [url, setUrl] = useState("");
     const [errors, setErrors] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // handle submission of form with checking of duplicate profiles for same platformF
     const handleSubmit = async (e) => {
@@ -27,6 +28,8 @@ const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks, name
             return;
         }
         try {
+            setIsSubmitting(true);
+
             const exists = links.some(link => link.platform === platform);
 
             const updatedLinks = exists ? links.map(
@@ -42,6 +45,8 @@ const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks, name
         }
         catch (err) {
             setErrors(err.response?.data?.error[0]?.message || err.message)
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -106,9 +111,10 @@ const SocialProfileModal = ({ socialModal, setSocialModal, links, setLinks, name
                     </button>
 
                     <button
+                        disabled={isSubmitting}
                         className='flex gap-1 justify-center items-center cursor-pointer text-xs sm:text-sm w-full h-7 sm:h-10 px-5 py-1 border border-blue-500/50 rounded-xl bg-[#222751] text-blue-500'>
                         <i className="ri-save-line text-[17px]"></i>
-                        Save
+                        {isSubmitting ? "Saving..." : "Save"}
                     </button>
 
                 </div>

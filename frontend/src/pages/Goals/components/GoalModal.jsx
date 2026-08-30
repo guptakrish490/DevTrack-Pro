@@ -9,6 +9,7 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal,
   const [endDate, setEndDate] = useState("");
 
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   // escape character on modal
@@ -53,6 +54,8 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal,
     e.preventDefault();
 
     try {
+      setIsSubmitting(true);
+
       let result;
 
       if (mode === "create") {
@@ -86,6 +89,8 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal,
         progressClassName: "bg-red-400"
       });
       setError(err.response?.data?.message || "Something went wrong...");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -191,8 +196,9 @@ const GoalModal = ({ modal, setModal, mode, initialData, createGoal, updateGoal,
             </button>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="cursor-pointer text-xs sm:text-sm w-full h-8 sm:h-10 px-5 py-1 border border-white/20 rounded-xl bg-violet-500">
-              Save Goal
+              {isSubmitting ? "Saving..." : "Save Goal"}
             </button>
           </div>
 

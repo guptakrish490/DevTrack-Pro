@@ -1,16 +1,20 @@
 import { toast } from "react-toastify";
 import { useActivities } from "../../../hooks/useActivity.jsx";
+import { useState } from "react";
 
 
 const ConfirmModal = ({ deleteModal, params, setDeleteModal, fetchActivities }) => {
     if (!deleteModal) return null;
 
     const { deleteActivities, error, setError } = useActivities();
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // handle confirmation for activities deletion
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setIsDeleting(true);
+
             await deleteActivities();
             await fetchActivities(params, true);
             toast.success("Past activities deleted successfully!")
@@ -24,6 +28,7 @@ const ConfirmModal = ({ deleteModal, params, setDeleteModal, fetchActivities }) 
             });
         }
         finally {
+            setIsDeleting(false);
             setDeleteModal(false)
         }
     }
@@ -59,9 +64,10 @@ const ConfirmModal = ({ deleteModal, params, setDeleteModal, fetchActivities }) 
                     </button>
 
                     <button
+                        disabled={isDeleting}
                         className='flex gap-3 justify-center items-center cursor-pointer text-xs sm:text-sm w-full h-7 sm:h-10 px-5 py-1 border border-red-500/50 rounded-xl bg-[#51222b] text-red-500'>
                         <i className="ri-delete-bin-6-line"></i>
-                        Delete
+                        {isDeleting ? "Deleting..." : "Delete"}
                     </button>
 
                 </div>

@@ -10,6 +10,7 @@ const Login = ({ setIsRegistered }) => {
   const [passwordError, setPasswordError] = useState("");
 
   const [loginErr, setLoginErr] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [visiblePassword, setVisiblePassword] = useState(false);
 
@@ -35,6 +36,8 @@ const Login = ({ setIsRegistered }) => {
 
     if (!emailErr && !passwordErr) {
       try {
+        setIsSubmitting(true);
+
         await axios.post(
           `${import.meta.env.VITE_API_URL}/api/auth/login`,
           { email, password },
@@ -43,6 +46,8 @@ const Login = ({ setIsRegistered }) => {
         navigate("/dashboard");
       } catch (err) {
         setLoginErr(err?.response?.data?.message || err.message)
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -128,8 +133,10 @@ const Login = ({ setIsRegistered }) => {
       )}
 
       <div className="flex flex-col gap-6 items-center">
-        <button className="w-full py-2 text-sm rounded-xl font-semibold bg-violet-600 hover:bg-violet-700 transition-colors">
-          Sign in
+        <button
+          disabled={isSubmitting}
+          className="w-full py-2 text-sm rounded-xl font-semibold bg-violet-600 hover:bg-violet-700 transition-colors">
+          {isSubmitting ? "Signing in..." : "Sign In"}
         </button>
         <div>
           <span className="text-sm text-neutral-300/60">

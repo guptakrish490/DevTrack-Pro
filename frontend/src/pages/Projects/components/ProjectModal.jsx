@@ -16,6 +16,8 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
   const [repoURL, setRepoURL] = useState("")
   const [liveURL, setLiveURL] = useState("")
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // escape key to close modal
   useEffect(() => {
     const handleEsc = (e) => {
@@ -99,6 +101,8 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
     let result;
 
     try {
+      setIsSubmitting(true);
+
       if (mode === "create") {
         result = await createProject(title, description, startDate, endDate, repoURL, techStack, status, liveURL);
         if (!result) throw new Error("Project creation failed!")
@@ -128,6 +132,8 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
         className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
         progressClassName: "bg-red-400"
       });
+    } finally {
+      setIsSubmitting(false);
     }
 
   }
@@ -310,8 +316,9 @@ const ProjectModal = ({ createProject, updateProject, mode, modal, setModal, pro
             </button>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="cursor-pointer text-xs sm:text-sm w-full h-8 sm:h-10 px-5 py-1 border border-white/20 rounded-xl bg-violet-500">
-              Save Project
+              {isSubmitting ? "Saving..." : "Save Project"}
             </button>
           </div>
 

@@ -2,7 +2,6 @@ import Project from "../models/project.js"
 import AppError from "../utils/AppError.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import { logActivity } from "../utils/logActivity.js"
-import { updateStreak } from "../utils/streakCount.js"
 
 // controller for project creation
 export const createProject = asyncHandler(async (req, res) => {
@@ -12,14 +11,12 @@ export const createProject = asyncHandler(async (req, res) => {
     const newProject = new Project({ user: user._id, title, description, relatedGoal, techStack, repoURL, liveURL, startDate, endDate, status })
     await newProject.save();
 
-    await logActivity({
+    logActivity({
         user: user._id,
         type: "project_created",
         title: `Created Project: ${newProject.title}`,
         relatedProject: newProject._id
     })
-
-    await updateStreak(user._id)
 
     res.status(201).json(newProject)
 })
@@ -98,14 +95,12 @@ export const updateProjects = asyncHandler(async (req, res) => {
     if (!updatedProject || !existingStatus) throw new AppError("Project not found", 404);
 
     if (updatedProject.status === "Completed" && existingStatus.status !== "Completed") {
-        await logActivity({
+        logActivity({
             user: user._id,
             type: "project_completed",
             title: `Completed Project: ${updatedProject.title}`,
             relatedProject: updatedProject._id
         })
-
-        await updateStreak(user._id)
     }
 
 

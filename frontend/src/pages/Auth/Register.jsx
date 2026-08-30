@@ -28,6 +28,7 @@ const Register = ({ setIsRegistered }) => {
 
   const [errors, setErrors] = useState({});
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleValidationError = (err) => {
     if (err?.response?.status === 400 && Array.isArray(err.response?.data?.error)) {
@@ -43,6 +44,8 @@ const Register = ({ setIsRegistered }) => {
     e.preventDefault();
     let result;
     try {
+      setIsSubmitting(true);
+
       const links = [];
       if (githubURL) links.push({ platform: "Github", url: githubURL });
       if (linkedinURL) links.push({ platform: "LinkedIn", url: linkedinURL });
@@ -66,6 +69,8 @@ const Register = ({ setIsRegistered }) => {
     } catch (err) {
       setError(err.response?.data?.message);
       handleValidationError(err);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -107,7 +112,7 @@ const Register = ({ setIsRegistered }) => {
 
       {step === 3 && (
         <div className="animate-fadeIn">
-          <Step3 handleSubmit={handleSubmit} formProps3={formProps3} setStep={setStep} errors={errors} setErrors={setErrors} />
+          <Step3 isSubmitting={isSubmitting} handleSubmit={handleSubmit} formProps3={formProps3} setStep={setStep} errors={errors} setErrors={setErrors} />
         </div>
       )}
 

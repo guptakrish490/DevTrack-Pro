@@ -1,4 +1,4 @@
-const Step3 = ({ setStep, formProps3, handleSubmit, errors, setErrors }) => {
+const Step3 = ({ setStep, formProps3, handleSubmit, errors, setErrors, isSubmitting}) => {
 
     return (
         <form
@@ -81,8 +81,9 @@ const Step3 = ({ setStep, formProps3, handleSubmit, errors, setErrors }) => {
                     <i className="ri-arrow-left-long-line"></i>
                 </button>
                 <button
+                    disabled={isSubmitting}
                     className="w-3/4 py-2 text-sm rounded-xl font-semibold flex items-center gap-1 justify-center bg-violet-600 hover:bg-violet-700 transition-colors">
-                    <span>Create Account</span>
+                    <span>{isSubmitting ? "Creating..." : "Create Account"}</span>
                 </button>
 
             </div>

@@ -2,7 +2,6 @@ import Goal from "../models/goal.js"
 import AppError from "../utils/AppError.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import { logActivity } from "../utils/logActivity.js"
-import { updateStreak } from "../utils/streakCount.js"
 
 // controller for goal creation
 export const createGoal = asyncHandler(async (req, res) => {
@@ -13,14 +12,12 @@ export const createGoal = asyncHandler(async (req, res) => {
     const newGoal = new Goal({ user: user._id, title, description, startDate, endDate })
     await newGoal.save()
 
-    await logActivity({
+    logActivity({
         user: user._id,
         type: "goal_created",
         title: `Created Goal: ${newGoal.title}`,
         relatedGoal: newGoal._id
     })
-
-    await updateStreak(user._id)
 
     res.status(201).json(newGoal)
 
@@ -86,14 +83,12 @@ export const updateGoals = asyncHandler(async (req, res) => {
     if (!updatedGoal) throw new AppError("Goal not found", 404);
 
     if (isCompleted && !existingStatus.isCompleted) {
-        await logActivity({
+        logActivity({
             user: user._id,
             type: "goal_completed",
             title: `Completed Goal: ${updatedGoal.title}`,
             relatedGoal: updatedGoal._id
         })
-
-        await updateStreak(user._id)
     }
 
     res.status(200).json(updatedGoal)

@@ -6,11 +6,14 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, projectToDelete, deleteProj
   // hide delete modal on default
   if (!deleteModal || !projectToDelete) return null;
   const [error, setError] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // handle delete confirmation
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setIsDeleting(true);
+
       await deleteProject(projectToDelete._id);
       toast.success("Project deleted successfully!")
     }
@@ -23,6 +26,7 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, projectToDelete, deleteProj
       setError(err.response?.data?.message || "Something went wrong!");
     }
     finally {
+      setIsDeleting(false)
       setDeleteModal(false)
     }
   }
@@ -58,9 +62,10 @@ const ConfirmModal = ({ deleteModal, setDeleteModal, projectToDelete, deleteProj
           </button>
 
           <button
+            disabled={isDeleting}
             className='flex gap-3 justify-center items-center cursor-pointer text-xs sm:text-sm w-full h-7 sm:h-10 px-5 py-1 border border-red-500/50 rounded-xl bg-[#51222b] text-red-500'>
             <i className="ri-delete-bin-6-line"></i>
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
 
         </div>

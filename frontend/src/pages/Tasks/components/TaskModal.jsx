@@ -19,6 +19,7 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit, 
   let [relatedProject, setRelatedProject] = useState("")
 
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // prefill modal on edit form
   useEffect(() => {
@@ -55,6 +56,8 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit, 
     if (!relatedProject) relatedProject = null;
 
     try {
+      setIsSubmitting(true);
+
       let result;
 
       if (mode === "create") {
@@ -89,6 +92,8 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit, 
         className: "bg-red-900 text-red-200 border border-red-500 rounded-lg",
         progressClassName: "bg-red-400"
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -284,8 +289,9 @@ const TaskModal = ({ mode, modal, setModal, createTask, updateTask, taskToEdit, 
             </button>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="cursor-pointer text-xs sm:text-sm w-full h-8 sm:h-10 px-5 py-1 border border-white/20 rounded-xl bg-violet-500">
-              Save Task
+              {isSubmitting ? "Saving..." : "Save Task"}
             </button>
           </div>
 

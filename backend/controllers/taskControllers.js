@@ -2,7 +2,6 @@ import Task from "../models/task.js"
 import AppError from "../utils/AppError.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import { logActivity } from "../utils/logActivity.js"
-import { updateStreak } from "../utils/streakCount.js"
 
 // controller for task craetion
 export const createTasks = asyncHandler(async (req, res) => {
@@ -23,14 +22,12 @@ export const createTasks = asyncHandler(async (req, res) => {
 
     await newTask.save()
 
-    await logActivity({
+    logActivity({
         user: user._id,
         type: "task_created",
         title: `Created Task: ${newTask.title}`,
         relatedTask: newTask._id
     })
-
-    await updateStreak(user._id)
 
     res.status(201).json(await newTask.populate("relatedProject"))
 })
@@ -105,14 +102,12 @@ export const updateTasks = asyncHandler(async (req, res) => {
     if (!updatedTask) throw new AppError("Task not found", 404)
 
     if (updatedTask.status === "Completed" && existingStatus.status !== "Completed") {
-        await logActivity({
+        logActivity({
             user: user._id,
             type: "task_completed",
             title: `Completed Task: ${updatedTask.title}`,
             relatedTask: updatedTask._id
         })
-
-        await updateStreak(user._id)
     }
 
     res.status(200).json(updatedTask)

@@ -1,8 +1,9 @@
 import Activity from "../models/activity.js";
+import asyncHandler from "./asyncHandler.js";
 import { updateStreak } from "./streakCount.js";
 
 // utility function to create activity logs automatically
-export const logActivity = async ({
+export const logActivity = asyncHandler(async ({
     user,
     type,
     title,
@@ -19,7 +20,7 @@ export const logActivity = async ({
         relatedTask
     });
 
-    await updateStreak(user._id);
+    updateStreak(user._id);
     return activity;
 
-}
+})
