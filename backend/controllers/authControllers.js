@@ -210,7 +210,6 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
     return res.status(200).json({
         success: true,
-        message: "Access token refreshed!",
-        accessToken: newAccessToken
+        message: "Access token refreshed!"
     })
 })
