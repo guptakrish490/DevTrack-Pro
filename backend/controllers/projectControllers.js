@@ -59,6 +59,7 @@ export const getProjects = asyncHandler(async (req, res) => {
         .populate("relatedGoal")
         .skip(skip)
         .limit(limit + 1)
+        .lean();
 
     if (!projects) throw new AppError("Project not found", 404);
 

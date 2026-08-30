@@ -11,10 +11,10 @@ import { logActivity } from "../utils/logActivity.js";
 export const getProfile = asyncHandler(async (req, res) => {
     const user = req.user
     const [goals, projects, tasks, activities] = await Promise.all([
-        Goal.find({ user: user._id }).sort({ createdAt: -1 }),
-        Project.find({ user: user._id }).sort({ createdAt: -1 }),
-        Task.find({ user: user._id }).sort({ createdAt: -1 }),
-        Activity.find({ user: user._id }).sort({ createdAt: -1 })
+        Goal.find({ user: user._id }).sort({ createdAt: -1 }).lean(),
+        Project.find({ user: user._id }).sort({ createdAt: -1 }).lean(),
+        Task.find({ user: user._id }).sort({ createdAt: -1 }).lean(),
+        Activity.find({ user: user._id }).sort({ createdAt: -1 }).lean()
     ]);
 
     if (!(goals && projects && tasks && activities)) throw new AppError("No data found", 404);

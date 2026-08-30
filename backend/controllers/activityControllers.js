@@ -27,7 +27,8 @@ export const getAllActivities = asyncHandler(async (req, res) => {
         .populate("relatedProject")
         .populate("relatedTask")
         .skip(skip)
-        .limit(limit + 1);
+        .limit(limit + 1)
+        .lean();
 
     if (!activities) throw new AppError("Activities not found!", 404);
 

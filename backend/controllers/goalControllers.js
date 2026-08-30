@@ -52,6 +52,7 @@ export const getGoals = asyncHandler(async (req, res) => {
         .sort({ createdAt: sortOrder })
         .skip(skip)
         .limit(limit + 1)
+        .lean();
 
     if (!goals)
         throw new AppError("No Goals found!", 404)
@@ -104,6 +105,6 @@ export const deleteGoals = asyncHandler(async (req, res) => {
     const deletedGoal = await Goal.findByIdAndDelete(req.params.id)
 
     if (!deletedGoal) throw new AppError("Goal not found", 404);
-    
+
     res.status(204).json({ message: "Goal deleted successfully" })
 })

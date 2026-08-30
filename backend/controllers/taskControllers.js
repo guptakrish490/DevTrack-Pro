@@ -70,6 +70,7 @@ export const readTasks = asyncHandler(async (req, res) => {
         .populate("relatedProject")
         .skip(skip)
         .limit(limit + 1)
+        .lean();
 
     if (!tasks) throw new AppError("Taks not found", 404);
 

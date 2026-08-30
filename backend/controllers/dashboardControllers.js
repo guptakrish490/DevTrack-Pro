@@ -17,25 +17,29 @@ export const getDashboardData = asyncHandler(async (req, res) => {
         const [goals, projects, tasks, activities] = await Promise.all([
             Goal.find({ user: user._id })
                 .sort({ createdAt: -1 })
-                .limit(goalsLimit),
+                .limit(goalsLimit)
+                .lean(),
             Project.find({ user: user._id })
                 .populate("relatedGoal")
                 .sort({ createdAt: -1 })
-                .limit(projectsLimit),
+                .limit(projectsLimit)
+                .lean(),
             Task.find({ user: user._id })
                 .populate("relatedProject")
                 .sort({ createdAt: -1 })
-                .limit(tasksLimit),
+                .limit(tasksLimit)
+                .lean(),
             Activity.find({ user: user._id })
                 .populate("relatedGoal relatedProject relatedTask")
                 .sort({ createdAt: -1 })
-                .limit(activitiesLimit),
+                .limit(activitiesLimit)
+                .lean(),
         ]);
 
         const [allGoals, allProjects, allTasks] = await Promise.all([
-            Goal.find({ user: user._id }),
-            Project.find({ user: user._id }),
-            Task.find({ user: user._id }),
+            Goal.find({ user: user._id }).lean(),
+            Project.find({ user: user._id }).lean(),
+            Task.find({ user: user._id }).lean(),
         ]);
 
         if (!(goals && projects && tasks && activities)) throw new AppError("No data found", 404);
