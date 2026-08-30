@@ -23,9 +23,7 @@ export const getAllActivities = asyncHandler(async (req, res) => {
 
     const activities = await Activity.find(query)
         .sort({ createdAt: sortOrder })
-        .populate("relatedGoal")
-        .populate("relatedProject")
-        .populate("relatedTask")
+        .select({ relatedGoal: 0, relatedProject: 0, relatedTask: 0, updatedAt: 0 })
         .skip(skip)
         .limit(limit + 1)
         .lean();
