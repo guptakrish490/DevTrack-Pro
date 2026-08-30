@@ -38,7 +38,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     const accessToken = jwt.sign(
         { id: newUser._id, username, email },
         process.env.JWT_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
     )
 
     const refreshToken = crypto.randomBytes(64).toString("hex");
@@ -57,14 +57,14 @@ export const registerUser = asyncHandler(async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "strict"
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none"
     });
 
     res.status(201).json({ message: "User created successfully!" });
@@ -87,13 +87,13 @@ export const loginUser = asyncHandler(async (req, res) => {
     const accessToken = jwt.sign(
         { id: user._id, username: user.username, email: user.email },
         process.env.JWT_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
     )
 
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict"
+        sameSite: "none"
     });
 
     const refreshToken = crypto.randomBytes(64).toString("hex");
@@ -112,7 +112,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
@@ -125,13 +125,13 @@ export const logoutUser = asyncHandler(async (req, res) => {
     res.clearCookie("accessToken", {
         httpOnly: true,
         secure: true,
-        sameSite: "strict"
+        sameSite: "none"
     });
 
     res.clearCookie("refreshToken", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax"
+        sameSite: "none"
     });
 
     const currentRefreshToken = req.cookies.refreshToken;
@@ -176,7 +176,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     const newAccessToken = jwt.sign(
         { id: user._id, username: user.username, email: user.email },
         process.env.JWT_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
     );
     const newRefreshToken = crypto.randomBytes(64).toString("hex");
 
@@ -198,13 +198,13 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     res.cookie("accessToken", newAccessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict"
+        sameSite: "none"
     });
 
     res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
