@@ -14,7 +14,7 @@ import errorHandler from "./middlewares/errorHandler.js"
 import helmet from 'helmet'
 import { authLimiter } from "./middlewares/rateLimiter.js"
 
-dotenv.config({ path: "../.env" })
+dotenv.config({ path: "./.env" })
 
 const app = express()
 
