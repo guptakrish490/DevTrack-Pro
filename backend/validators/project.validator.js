@@ -37,7 +37,7 @@ const baseFields = {
 
     status: z.enum(["Planned", "In Progress", "Completed"]).default("Planned"),
 
-    techStack: z.array(z.string().trim()).default([]),
+    techStack: z.array(z.string().trim()).optional(),
 };
 
 const baseSchema = z.object(baseFields);
@@ -70,5 +70,4 @@ export const projectSchema = baseSchema
         { message: "Duplicate values in TechStack.", path: ["techStack"] }
     );
 
-// Step 4: derive PATCH schema (no refinements)
 export const projectPatchSchema = baseSchema.partial();
