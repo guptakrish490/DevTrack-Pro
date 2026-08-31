@@ -9,7 +9,7 @@ import Tasks from "./pages/Tasks/Tasks"
 import Activity from "./pages/Activity/Activity"
 import ProfileSettings from './pages/Settings/profile/ProfileSettings';
 import ProtectedRoute from "./components/auth/ProtectedRoute"
-import Layout from "./components/layout/Layout"
+import Layout from "./components/Layout/Layout"
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
