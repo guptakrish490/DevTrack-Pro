@@ -39,16 +39,15 @@ app.use("/api/tasks", taskRoutes)
 app.use("/api/activity", activityRoutes)
 app.use("/dashboard", dashboardRoutes)
 app.use("/profile", profileRoutes)
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok"
+    })
+})
 app.use((req, res) => {
     res.status(404).json({
         success: false,
         message: "Route not found"
-    })
-})
-
-app.get("/health", (req, res) => {
-    res.status(200).json({
-        status: "ok"
     })
 })
 
