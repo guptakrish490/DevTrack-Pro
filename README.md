@@ -1,13 +1,15 @@
-# DevTrack-Pro
+# 🚀 DevTrack-Pro
 
 > **Code. Commit. Track. Consistent.**
 
-A production-deployed **MERN-based developer productivity platform** designed to help developers manage goals, projects, tasks, and activity history in one place. Unlike a traditional to-do application, DevTrack focuses on the complete developer workflow with secure authentication, automatic activity tracking, streak management, and production-ready backend architecture.
+A production‑deployed **MERN‑based developer productivity platform** designed to help developers manage goals, projects, tasks, and activity history in one place.  
+Unlike a traditional to‑do application, DevTrack focuses on the complete developer workflow with secure authentication, automatic activity tracking, streak management, and production‑ready backend architecture.
 
-• "Live Demo" (https://devtrackpro.vercel.app) <br>
-• "Backend API" (https://devtrack-pro-frb0.onrender.com) <br>
-• "Report Bug" (../../issues) <br>
-• "Request Feature" (../../issues)<br>
+- 🌐 [Live Demo](https://devtrackpro.vercel.app)  
+- 🔗 [Backend API](https://devtrack-pro-frb0.onrender.com)  
+- 🐛 [Report Bug](../../issues)  
+- ✨ [Request Feature](../../issues)
+
 
 ---
 
@@ -33,7 +35,7 @@ A production-deployed **MERN-based developer productivity platform** designed to
 
 ---
 
-## Problem Statement
+## ❗ Problem Statement
 
 Developers often split their workflow across multiple applications:
 
@@ -48,7 +50,7 @@ DevTrack-Pro combines these workflows into a single platform while automatically
 
 ---
 
-## Demo
+## 🎥 Demo
 
 ### Live Application
 
@@ -62,11 +64,21 @@ DevTrack-Pro combines these workflows into a single platform while automatically
 
 ### Screenshots
 
-> «📹 Coming Soon»
+| ***Auth*** | ***Dashboard 1*** | ***Dashboard 2*** |
+|-------------|-------------------|-------------------|
+| ![](./screenshots/auth.png) | ![](./screenshots/dashboard1.png) | ![](./screenshots/dashboard2.png) |
+
+| ***Goals*** | ***Projects*** |
+|-------------|----------------|
+| ![](./screenshots/goals.png) | ![](./screenshots/projects.png) |
+
+| ***Tasks*** | ***Activity*** |
+|-------------|----------------|
+| ![](./screenshots/tasks.png) | ![](./screenshots/activity.png) |
 
 ---
 
-## Features
+## ✨ Features
 
 ### Authentication & Security
 
@@ -126,11 +138,27 @@ DevTrack-Pro combines these workflows into a single platform while automatically
 | **API Communication** | Axios                            |
 
 
-## Architecture
+## 🏗️ Architecture
 
-### High-Level Architecture
+### High‑Level Architecture
 
-<AsyncImage query="clean MERN architecture diagram React Axios Express middleware controllers MongoDB JWT HTTP-only cookies" aspectRatio="16:9" width="100%" maxHeight=420/>
+```mermaid
+flowchart LR
+    U[User] --> R[React Frontend]
+    R -->|Axios + Credentials| E[Express Backend]
+
+    E --> M1[Auth Middleware]
+    M1 --> M2[Zod Validation]
+    M2 --> C[Controllers]
+    C --> DB[(MongoDB Atlas)]
+
+    C --> A[Activity Logger]
+    A --> DB
+
+    DB --> C
+    C -->|JSON Response| R
+    R --> U
+```
 
 #### Request Flow
 
